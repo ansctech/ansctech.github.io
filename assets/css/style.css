@@ -52,8 +52,8 @@ img { max-width: 100%; }
 
 .coming-soon .logo a {
 	display: inline-block;
-	width: 200px;
-	height: 110px;
+	width: 400px;
+	height: 220px;
 	background: url(../img/logo.png) center center no-repeat;
 	text-indent: -99999px;
 }
