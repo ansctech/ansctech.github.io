@@ -1,0 +1,45 @@
+These are the five Tables which are implemented
+  Tables         Url String
+item_master       /items  
+entity_master     /entity   
+cust_group_master  /custgroup
+acc_group_master   /accgroup
+container_master   /container
+
+http://localhost:3000/api/v1/
+
+To Retrieve all the data      GET      http://localhost:3000/api/v1/items
+To Retrieve one item with id  GET      http://localhost:3000/api/v1/items/<id>
+To Post an Item to DB         POST     http://localhost:3000/api/v1/items   with Json Body
+To Update an Item By ID       PUT      http://localhost:3000/api/v1/items/<id>   with Updated Json Body
+To Delete an Item By Id       DELETE   http://localhost:3000/api/v1/items/<id>
+
+remaining Tables also follow same Convention In place of items replace with the corresponding Url string mentioned above
+
+sale _bill query
+
+select 
+sr.sale_date as bill_date,
+sr.entity_id_cust, 
+sum(sr.sale_amount) as bill_amount, 
+sum(sr.sale_qty*cm.container_charge) as container_charge,
+sr.client_id
+from comm_schm.sale_record sr full outer join comm_schm.container_master cm 
+on cm.container_id=sr.unit_container_id
+where sale_date='2023-09-01' 
+group by sr.sale_date, sr.entity_id_cust, sr.client_id;
+
+container_issue_register
+
+select 
+sr.sale_date as issue_date,
+sr.entity_id_cust, 
+sr.entity_id_trader,
+sr.unit_container_id,
+sum(sr.sale_qty) as issue_qty,
+sr.client_id
+from comm_schm.sale_record sr, comm_schm.container_master cm 
+where cm.container_id=sr.unit_container_id and cm.maintain_inventory='YES'
+and sale_date='2023-09-01'
+group by sr.sale_date, sr.entity_id_cust, sr.entity_id_trader, sr.client_id, sr.unit_container_id;
+ 
