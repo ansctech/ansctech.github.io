@@ -30,7 +30,8 @@ const AddBusiness = ({
     if (editItem) {
       updateBusinessEntity({ values, id: editItem?.entity_id });
     } else {
-      addBusinessEntity({ values });
+      // Client_id is a temporary value till user authentiction takes place
+      addBusinessEntity({ values: { ...values, client_id: 2 } });
     }
   };
 

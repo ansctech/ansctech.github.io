@@ -130,7 +130,7 @@ const BusinessEntity = () => {
       dataSource={businessEntity}
       summary={(pageData) => {
         let totalBalance = pageData.reduce(
-          (acc, curr) => (acc += curr.curr_bal),
+          (acc, curr) => (acc += Number(curr.curr_bal)),
           0
         );
         return (

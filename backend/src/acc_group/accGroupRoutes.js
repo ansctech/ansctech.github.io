@@ -48,7 +48,9 @@ accGroupRouter.delete("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
   let { client_id } = req.headers;
   pool.query(
-    `DELETE FROM comm_schm.${tableName} WHERE client_id=${client_id} AND ${clauseKey}=${itemId};`,
+    `DELETE FROM comm_schm.${tableName} WHERE client_id=${
+      client_id || null
+    } AND ${clauseKey}=${itemId};`,
     (err, results) => {
       if (err) console.log(err);
 

@@ -4,6 +4,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Table, Button, Row, Col, DatePicker, Input, Modal } from "antd";
 import { DeleteOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import useSaleRecord from "../../../hooks/TransactionCustomers/useSaleRecord";
+import useVegetables from "../../../hooks/Masters/useVegetables";
+import useCustomerGroups from "../../../hooks/Masters/useCustomerGroups";
+import useUnits from "../../../hooks/Masters/useUnits";
 
 const AddedSaleRecord = () => {
   const [date, setDate] = useState("");
@@ -12,9 +15,19 @@ const AddedSaleRecord = () => {
   const navigate = useNavigate();
 
   const {
+    saleRecord: { selectSaleRecord: selectedSaleRecord },
     controllers: { selectSaleRecord },
     volatileState: { isLoading },
   } = useSaleRecord();
+  const {
+    vegetables: { vegetables },
+  } = useVegetables();
+  const {
+    customerGroups: { customerGroups },
+  } = useCustomerGroups();
+  const {
+    units: { units },
+  } = useUnits();
 
   useEffect(() => {
     selectSaleRecord(id);
@@ -23,14 +36,6 @@ const AddedSaleRecord = () => {
   const selectDate = (date, dateString) => {
     setDate(dateString);
   };
-
-  //   const calculateAmount = (amount) => {
-  //     return (
-  //       Number(amount.quantity) *
-  //       (amount.multepule ? Number(amount.kgUnit) : 1) *
-  //       Number(amount.rate)
-  //     );
-  //   };
 
   const deleteItem = (itemId) => {
     Modal.confirm({
@@ -41,9 +46,7 @@ const AddedSaleRecord = () => {
       okType: "danger",
       cancelText: "No",
       onOk() {
-        // selectSaleRecord is an object, the filter attribute is undefined
         // let arr = selectSaleRecord.filter((e) => e.entry_id !== itemId);
-        // updateSaleRecord({id: itemId, values: {...selectSaleRecord}})
         // dispatch(
         //   putSaleRecord({
         //     data: { ...selectSaleRecord, saleData: arr },
@@ -61,7 +64,13 @@ const AddedSaleRecord = () => {
     },
     {
       title: "Vegetable",
-      dataIndex: "item_id",
+      render: (e) => (
+        <>
+          {vegetables.find((veg) => {
+            return Number(veg.item_id) === Number(e?.item_id);
+          })?.item_name_eng || e?.item_id}
+        </>
+      ),
     },
     {
       title: "Qty",
@@ -70,7 +79,13 @@ const AddedSaleRecord = () => {
     },
     {
       title: "Unit",
-      dataIndex: "unit_container_id",
+      render: (e) => (
+        <>
+          {units.find((unit) => {
+            return Number(unit.container_id) === Number(e?.unit_container_id);
+          })?.container_name_eng || e?.unit_container_id}
+        </>
+      ),
     },
     {
       title: "Rate",
@@ -86,7 +101,6 @@ const AddedSaleRecord = () => {
       title: "Amount",
       align: "right",
       dataIndex: "sale_amount",
-      //   render: (e) => <>{calculateAmount(e)}</>,
     },
     {
       title: "Delete",
@@ -100,13 +114,13 @@ const AddedSaleRecord = () => {
     },
   ];
 
-  console.log(selectSaleRecord);
-
   return (
     <div>
       <div className="d-flex justify-content-between">
         <h4 style={{ fontWeight: 700 }}> Added Sale Record </h4>
-        {/* <Button type="primary" onClick={() => navigate('/customers/add-sales')}>Create new record</Button> */}
+        {/* <Button type="primary" onClick={() => navigate("/customers/add-sales")}>
+          Create new record
+        </Button> */}
       </div>
       <Row gutter={[30, 0]} className="mb-3 mt-4">
         <Col span={4}>
@@ -121,14 +135,23 @@ const AddedSaleRecord = () => {
         </Col>
         <Col>
           <label htmlFor="">Name of Customer</label>
-          <Input value={selectSaleRecord?.entity_id_trader} />
+          <Input
+            value={
+              customerGroups.find((cust) => {
+                return (
+                  cust.cust_group_id ===
+                  Number(selectedSaleRecord?.entity_id_trader)
+                );
+              })?.cust_group_name_eng || selectedSaleRecord?.entity_id_trader
+            }
+          />
         </Col>
       </Row>
       <Table
         bordered
         columns={columns}
         loading={isLoading}
-        dataSource={[selectSaleRecord]}
+        dataSource={[selectedSaleRecord]}
       />
     </div>
   );
