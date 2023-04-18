@@ -1,121 +1,155 @@
-import React, {useEffect, useState} from 'react';
-import {Table, Modal} from 'antd';
+import React, { useEffect, useState } from "react";
+import { Table, Modal } from "antd";
 import AddBusiness from "./addBusiness";
-import {useDispatch, useSelector} from 'react-redux';
-import {getUnits} from "../../../redux/actions/Masters/Units";
-import TableSearch from '../../../components/Table/tableSearch';
-import {getAccountGroups} from "../../../redux/actions/Masters/Account_Groups";
-import {getCustomerGroups} from "../../../redux/actions/Masters/Customer_Groups";
-import {DeleteOutlined, EditOutlined, ExclamationCircleFilled} from '@ant-design/icons';
-import {getBusinessEntity, deleteBusinessEntity, updateStateBusinessEntity} from "../../../redux/actions/Masters/Business_Entity";
-
+import { useDispatch } from "react-redux";
+import TableSearch from "../../../components/Table/tableSearch";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleFilled,
+} from "@ant-design/icons";
+import useBusinessEntity from "../../../hooks/Masters/useBusinessEntity";
+import useAccountGroups from "../../../hooks/Masters/useAccountGroups";
+import useCustomerGroups from "../../../hooks/Masters/useCustomerGroups";
+import useUnits from "../../../hooks/Masters/useUnits";
+import { businessEntityActions } from "../../../store/Masters/businessEntity";
 
 const BusinessEntity = () => {
-    const {businessEntity, isModal, tableLoader, isLoading} = useSelector(state => state.businessEntity);
-    const [editItem, setEditItem] = useState("");
-    const dispatch = useDispatch();
-    const {confirm} = Modal;
+  const [editItem, setEditItem] = useState("");
+  const dispatch = useDispatch();
+  const { confirm } = Modal;
 
-    useEffect(() => {
-        dispatch(getUnits());
-        dispatch(getAccountGroups());
-        dispatch(getCustomerGroups());
-        dispatch(getBusinessEntity());
-    }, []);
+  //   Business Entity Hook
+  const {
+    businessEntity: { businessEntity, isModal },
+    controllers,
+    volatileState: { isLoading },
+  } = useBusinessEntity();
 
-    useEffect(() => {
-        !isModal && setEditItem("");
-    }, [isModal]);
+  // Account groups hook
+  const {
+    accountGroups: { accountGroups },
+  } = useAccountGroups();
 
-    const deleteBusiness = (id) => {
-        confirm({
-            title: 'Do you Want to delete these items?',
-            icon: <ExclamationCircleFilled/>,
-            content: 'Some descriptions',
-            okText: 'Yes',
-            okType: 'danger',
-            cancelText: 'No',
-            onOk() {
-                dispatch(deleteBusinessEntity(id));
-            }
-        });
-    }
+  const {
+    customerGroups: { customerGroups },
+  } = useCustomerGroups();
 
-    const editBusiness = (item) => {
-        setEditItem(item);
-        dispatch(updateStateBusinessEntity({isModal: true}));
-    }
+  const {
+    units: { units },
+  } = useUnits();
 
-    const columns = [
-        {
-            title: "Name",
-            dataIndex: 'fullNameEn',
-            sorter: (a, b) => a.fullNameEn.localeCompare(b.fullNameEn),
-            ...TableSearch('fullNameEn'),
-            key: 'fullNameEn',
-        },
-        {
-            title: "Entity Type",
-            dataIndex: 'entityType',
-            sorter: (a, b) => a.entityType.localeCompare(b.entityType),
-            ...TableSearch('entityType'),
-            key: 'entityType',
-        },
-        {
-            title: "Current Balance",
-            dataIndex: 'currentBalance',
-            sorter: (a, b) => a.currentBalance - b.currentBalance,
-            ...TableSearch('currentBalance'),
-            key: 'currentBalance',
-            align: 'right',
-            render: (record) => <b className="notranslate">{record}</b>
-        },
-        {
-            title: "Phone",
-            dataIndex: 'phoneNumber',
-            sorter: (a, b) => a.phoneNumber - b.phoneNumber,
-            ...TableSearch('phoneNumber'),
-            key: 'phoneNumber',
-        },
-        {title: "Action", width: 100, fixed: 'right', render: (record) => 
-            <div className={'table-action'}>
-                <EditOutlined onClick={() => editBusiness(record)}/>
-                <DeleteOutlined onClick={() => deleteBusiness(record?.id)}/>
-            </div>
-        }
-    ]
+  useEffect(() => {
+    !isModal && setEditItem("");
+  }, [isModal]);
 
-    const tableHeader = (
-        <div className='table-headers'>
-            <h4> Business Entity </h4>
-            <AddBusiness editItem={editItem} modal={isModal} isLoading={isLoading}/>
+  const deleteBusiness = (entityId) => {
+    confirm({
+      title: "Do you Want to delete these items?",
+      icon: <ExclamationCircleFilled />,
+      content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        controllers.deleteBusinessEntity(entityId);
+      },
+    });
+  };
+
+  const editBusiness = (item) => {
+    setEditItem(item);
+    dispatch(businessEntityActions.update({ isModal: true }));
+  };
+
+  //   Schema
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "entityname_eng",
+      sorter: (a, b) => a.entityname_eng.localeCompare(b.entityname_eng),
+      ...TableSearch("entityname_eng"),
+      key: "entityname_eng",
+    },
+    {
+      title: "Entity Type",
+      dataIndex: "entity_type_id",
+      sorter: (a, b) => a.entity_type_id.localeCompare(b.entity_type_id),
+      ...TableSearch("entity_type_id"),
+      key: "entity_type_id",
+    },
+    {
+      title: "Current Balance",
+      dataIndex: "curr_bal",
+      sorter: (a, b) => a.curr_bal - b.curr_bal,
+      ...TableSearch("curr_bal"),
+      key: "curr_bal",
+      align: "right",
+      render: (record) => <b className="notranslate">{record}</b>,
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      sorter: (a, b) => a.phone - b.phone,
+      ...TableSearch("phone"),
+      key: "phone",
+    },
+    {
+      title: "Action",
+      width: 100,
+      fixed: "right",
+      render: (record) => (
+        <div className={"table-action"}>
+          <EditOutlined onClick={() => editBusiness(record)} />
+          <DeleteOutlined onClick={() => deleteBusiness(record?.entity_id)} />
         </div>
-    )
+      ),
+    },
+  ];
 
-    
-    return(
-        <Table 
-            title={() => tableHeader}
-            bordered
-            rowKey={'id'}
-            columns={columns} 
-            scroll={{x: 768}}
-            loading={tableLoader} 
-            dataSource={businessEntity} 
-            summary={(pageData) => {
-                let totalBalance = pageData.reduce((acc, curr) => acc += curr.currentBalance, 0);
-                return (
-                    <Table.Summary.Row>
-                        <Table.Summary.Cell index={0}><b>Total</b></Table.Summary.Cell>
-                        <Table.Summary.Cell index={1}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={2} align="right"> <b className="notranslate">{totalBalance}</b> </Table.Summary.Cell>
-                        <Table.Summary.Cell index={3}></Table.Summary.Cell>
-                        <Table.Summary.Cell index={4} fixed="right"></Table.Summary.Cell>
-                    </Table.Summary.Row>
-                )
-            }}
-        />
-    )
-}
+  const tableHeader = (
+    <div className="table-headers">
+      <h4> Business Entity </h4>
+      <AddBusiness
+        editItem={editItem}
+        modal={isModal}
+        isLoading={isLoading}
+        {...{ ...controllers, units, customerGroups, accountGroups }}
+      />
+    </div>
+  );
+
+  return (
+    <Table
+      title={() => tableHeader}
+      bordered
+      rowKey={"id"}
+      columns={columns}
+      scroll={{ x: 768 }}
+      loading={isLoading}
+      dataSource={businessEntity}
+      summary={(pageData) => {
+        let totalBalance = pageData.reduce(
+          (acc, curr) => (acc += curr.curr_bal),
+          0
+        );
+        return (
+          <Table.Summary.Row>
+            <Table.Summary.Cell index={0}>
+              <b>Total</b>
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={1}></Table.Summary.Cell>
+            <Table.Summary.Cell index={2} align="right">
+              {" "}
+              <b className="notranslate">{totalBalance}</b>{" "}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={3}></Table.Summary.Cell>
+            <Table.Summary.Cell index={4} fixed="right"></Table.Summary.Cell>
+          </Table.Summary.Row>
+        );
+      }}
+    />
+  );
+};
 
 export default BusinessEntity;

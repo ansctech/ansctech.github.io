@@ -29,6 +29,6 @@ app.use("/api/v1/salerecord",saleRecordRouter);
 
 app.use("/api/v1/salebill",saleBillRouter);
 
-app.listen(3000,()=>{
+app.listen(4000,()=>{
     console.log(`Server running on 3000 `);
 })
