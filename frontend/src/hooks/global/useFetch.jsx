@@ -28,16 +28,16 @@ const useFetch = () => {
 
       let data;
 
-      if (methodUpper !== "DELETE") {
+      if (methodUpper === "GET") {
         data = await response.json();
       }
 
       //   If request fails throw error
-      if (!response.ok) throw new Error(data.message);
+      // if (!response.ok) throw new Error(data.message);
 
       //   Call success function
       successFn && successFn(data);
-      console.log(data);
+
       //   Set loading to done
       setIsLoading(false);
       return data;

@@ -90,7 +90,17 @@ const AddSaleRecord = ({
       render: (a, b, index) => <b>{index + 1}</b>,
     },
     { title: "Customer of Name", dataIndex: "entity_id_cust" },
-    { title: "Vegetable", dataIndex: "item_id" },
+    {
+      title: "Vegetable",
+      // dataIndex: "item_id",
+      render: (e) => (
+        <>
+          {vegetable.find((veg) => {
+            return Number(veg.item_id) === Number(e?.item_id);
+          })?.item_name_eng || e.item_id}
+        </>
+      ),
+    },
     { title: "Qty", align: "right", dataIndex: "sale_qty" },
     { title: "Unit", dataIndex: "unit_container_id" },
     { title: "Rate", align: "right", dataIndex: "item_rate" },

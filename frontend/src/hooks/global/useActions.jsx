@@ -32,7 +32,12 @@ const useActions = (reducerState, reducerAction, { mainStorage, idField }) => {
       successFn: (newData) => {
         // Add new account to account groups
         const data = {};
-        data[mainStorage] = [...reducerState[mainStorage], newData];
+
+        if (newData) {
+          data[mainStorage] = [...reducerState[mainStorage], newData];
+        }
+
+        data.isModal = false;
 
         dispatch(reducerAction.update(data));
       },
@@ -45,12 +50,19 @@ const useActions = (reducerState, reducerAction, { mainStorage, idField }) => {
     reqFn({
       method: "PUT",
       url: `${reducerState.url}/${id}`,
-      successFn: (updatedData) => {
+      successFn: () => {
         const data = {};
+
+        const dataToBeUpdated = reducerState[mainStorage].find(
+          (data) => data[idField] === id
+        );
+
         data[mainStorage] = [
           ...reducerState[mainStorage].filter((acc) => acc[idField] !== id),
-          updatedData,
+          { ...dataToBeUpdated, ...values },
         ];
+
+        data.isModal = false;
 
         dispatch(reducerAction.update(data));
       },
@@ -78,7 +90,7 @@ const useActions = (reducerState, reducerAction, { mainStorage, idField }) => {
     reqFn({
       method: "GET",
       url: `${reducerState.url}/${id}`,
-      successFn: (newData) => {
+      successFn: ([newData]) => {
         const data = {};
         data[`select${mainStorage[0].toUpperCase()}${mainStorage.slice(1)}`] =
           newData;

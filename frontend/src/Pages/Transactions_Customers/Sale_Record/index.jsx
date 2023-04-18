@@ -56,21 +56,9 @@ const SaleRecord = () => {
     });
   };
 
-  //   const calcAmount = (amount) => {
-  //     return amount?.reduce(
-  //       (acc, curr) =>
-  //         (acc +=
-  //           curr.sale_qty *
-  //           curr.item_rate *
-  //           (curr.multiply_kg_qty === "YES" ? curr.kg_per_container : 1)),
-  //       0
-  //     );
-  //   };
-
   const columns = [
     {
       title: "Date of Sale",
-      //   dataIndex: "sale_date",
       align: "left",
       sorter: (a, b) => a.sale_date.localeCompare(b.sale_date),
       render: (e) => (
@@ -86,7 +74,14 @@ const SaleRecord = () => {
     },
     {
       title: "Customer Name",
-      dataIndex: "entity_id_cust",
+      render: (e) => (
+        <>
+          {customerGroups.find((cust) => {
+            console.log(cust, e);
+            return cust.cust_group_id === Number(e?.entity_id_cust);
+          })?.cust_group_name_eng || e.entity_id_cust}
+        </>
+      ),
       sorter: (a, b) => a.entity_id_cust.localeCompare(b.entity_id_cust),
       ...TableSearch("entity_id_cust"),
     },
