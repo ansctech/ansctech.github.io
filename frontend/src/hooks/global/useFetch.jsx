@@ -3,6 +3,18 @@ import { useState } from "react";
 const useFetch = () => {
   const [isLoading, setIsLoading] = useState();
 
+  // Request timeout in seconds
+  const globalRequestTimeout = 30;
+
+  // Network timeout function
+  const networkTimeout = function (timeout) {
+    return new Promise(function (_, reject) {
+      setTimeout(function () {
+        reject(new Error("Timeout exceeded"));
+      }, timeout * 1000);
+    });
+  };
+
   const reqFn = async ({ method, url, successFn, errorFn, values }) => {
     // Convert method to upper case
     const methodUpper = method.toUpperCase();
@@ -14,7 +26,6 @@ const useFetch = () => {
             method: methodUpper,
             headers: {
               "Content-Type": "application/json",
-              client_id: 2,
             },
             body: values && JSON.stringify(values),
           }
@@ -25,7 +36,10 @@ const useFetch = () => {
       setIsLoading(true);
 
       // Construct request
-      const response = await fetch(`/api/v1/${url}`, fetchOptions);
+      const response = await Promise.race([
+        fetch(`/api/v1/${url}`, fetchOptions),
+        networkTimeout(globalRequestTimeout),
+      ]);
 
       let data;
 
@@ -33,14 +47,13 @@ const useFetch = () => {
         data = await response.json();
       }
 
-      //   If request fails throw error
-      // if (!response.ok) throw new Error(data.message);
-
       //   Call success function
       successFn && successFn(data);
 
       //   Set loading to done
       setIsLoading(false);
+
+      // return data
       return data;
     } catch (error) {
       // If there's an error, call error function

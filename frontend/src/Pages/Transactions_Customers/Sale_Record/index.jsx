@@ -112,17 +112,21 @@ const SaleRecord = () => {
   ];
 
   const tableHeader = (
-    <div className="table-headers">
+    <div className="table-headers mr-auto">
       <h4>Sale Record</h4>
-      <AddSaleRecord
-        units={units}
-        modal={isModal}
-        editItem={editItem}
-        isLoading={isLoading}
-        vegetable={vegetables}
-        customers={customerGroups}
-        {...controllers}
-      />
+      <div className="" style={{ display: "flex", gap: "30px" }}>
+        <Button type="primary">Generate Bill</Button>
+        <Button type="primary">Show record</Button>
+        <AddSaleRecord
+          units={units}
+          modal={isModal}
+          editItem={editItem}
+          isLoading={isLoading}
+          vegetable={vegetables}
+          customers={customerGroups}
+          {...controllers}
+        />
+      </div>
     </div>
   );
 

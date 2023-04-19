@@ -1,4 +1,8 @@
 const generateUpdateQuery = (data, tableName, clauseKey, clauseValue) => {
+  // This is a fake authenticated detail
+  data.last_modified_by = "John Doe";
+  data.last_modified_date = new Date(Date.now()).toISOString();
+
   let part1 = `UPDATE comm_schm.${tableName} SET`;
   let part2 = `WHERE ${clauseKey} = ${clauseValue};`; //Add any number of filter clause statements here
   let updateString = "";
@@ -11,6 +15,13 @@ const generateUpdateQuery = (data, tableName, clauseKey, clauseValue) => {
 };
 
 const generateInsertQuery = (data, tableName) => {
+  // This is a fake authenticated detail
+  data.client_id = 643;
+  data.created_by = "John Doe";
+  data.created_date = new Date(Date.now()).toISOString();
+  data.last_modified_by = "John Doe";
+  data.last_modified_date = new Date(Date.now()).toISOString();
+
   let part1 = `INSERT INTO comm_schm.${tableName}`;
   let part2 = "(";
   let part3 = "(";

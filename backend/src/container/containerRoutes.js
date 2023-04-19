@@ -12,7 +12,7 @@ const tableName = "container_master";
 const clauseKey = "container_id";
 
 containerRouter.get("/", async (req, res) => {
-  let { client_id } = req.headers;
+  let client_id = req.headers.client_id || 643;
   pool.query(
     generateRetrieveQuery(tableName, "client_id", client_id),
     (err, results) => {
@@ -48,11 +48,9 @@ containerRouter.post("/", (req, res) => {
 
 containerRouter.delete("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
-  let { client_id } = req.headers;
+  let client_id = req.headers.client_id || 643;
   pool.query(
-    `DELETE FROM comm_schm.${tableName} WHERE client_id=${
-      client_id || null
-    } AND ${clauseKey}=${itemId};`,
+    `DELETE FROM comm_schm.${tableName} WHERE client_id=${client_id} AND ${clauseKey}=${itemId};`,
     (err, results) => {
       if (err) console.log(err);
 

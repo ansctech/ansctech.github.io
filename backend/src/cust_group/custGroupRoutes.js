@@ -12,7 +12,7 @@ const tableName = "cust_group_master";
 const clauseKey = "cust_group_id";
 
 custGroupRouter.get("/", async (req, res) => {
-  let { client_id } = req.headers;
+  let client_id = req.headers.client_id || 643;
   pool.query(
     generateRetrieveQuery(tableName, "client_id", client_id),
     (err, results) => {
@@ -46,11 +46,9 @@ custGroupRouter.post("/", (req, res) => {
 
 custGroupRouter.delete("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
-  let { client_id } = req.headers;
+  let client_id = req.headers.client_id || 643;
   pool.query(
-    `DELETE FROM comm_schm.${tableName} WHERE client_id=${
-      client_id || null
-    } AND ${clauseKey}=${itemId};`,
+    `DELETE FROM comm_schm.${tableName} WHERE client_id=${client_id} AND ${clauseKey}=${itemId};`,
     (err, results) => {
       if (err) console.log(err);
 

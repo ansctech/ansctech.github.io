@@ -7,20 +7,25 @@ const useActions = (reducerState, reducerAction, { mainStorage, idField }) => {
   const { reqFn, isLoading } = useFetch();
   const dispatch = useDispatch();
 
+  // Get action
+  const getAction = () => {
+    reqFn({
+      method: "GET",
+      url: reducerState.url,
+      successFn: (newData) => {
+        const data = {};
+        data[mainStorage] = newData;
+        data.loaded = true;
+
+        dispatch(reducerAction.update(data));
+      },
+    });
+  };
+
   //   Gets all reducer data from server
   useEffect(() => {
     if (!reducerState.loaded) {
-      reqFn({
-        method: "GET",
-        url: reducerState.url,
-        successFn: (newData) => {
-          const data = {};
-          data[mainStorage] = newData;
-          data.loaded = true;
-
-          dispatch(reducerAction.update(data));
-        },
-      });
+      getAction();
     }
   }, []);
 
