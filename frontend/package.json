@@ -1,7 +1,6 @@
 {
   "name": "agro-form",
   "version": "0.1.0",
-  "proxy": "http://localhost:4000",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
