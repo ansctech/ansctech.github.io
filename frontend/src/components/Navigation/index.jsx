@@ -157,7 +157,6 @@ const Navigation = () => {
       )}
       <Layout className={"side-layout"}>
         <LayoutContent />
-        {/* <div id="google_translate_element"></div> */}
       </Layout>
     </Layout>
   );
