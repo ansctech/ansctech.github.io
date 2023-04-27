@@ -16,8 +16,8 @@ const AddBusiness = ({
   editItem,
   modal,
   isLoading,
-  units,
   accountGroups,
+  entityTypes: { entityTypes },
   customerGroups,
   addBusinessEntity,
   updateBusinessEntity,
@@ -152,9 +152,9 @@ const AddBusiness = ({
                   ]}
                 >
                   <Select placeholder={"Select Entity Type"}>
-                    {units?.map(({ container_name_eng, container_id }) => (
-                      <Select.Option key={container_id} value={container_id}>
-                        {container_name_eng}
+                    {entityTypes?.map(({ entityname_eng, entity_id }) => (
+                      <Select.Option key={entity_id} value={entity_id}>
+                        {entityname_eng}
                       </Select.Option>
                     ))}
                   </Select>

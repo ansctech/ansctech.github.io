@@ -10,11 +10,14 @@ import {
 import TableSearch from "../../../components/Table/tableSearch";
 import useAccountGroups from "../../../hooks/Masters/useAccountGroups";
 import { accountGroupsActions } from "../../../store/Masters/accountGroups";
+import { useTranslation } from "react-i18next";
 
 const AccountGroups = () => {
   const [editItem, setEditItem] = useState("");
   const { confirm } = Modal;
   const dispatch = useDispatch();
+
+  const { t } = useTranslation();
 
   // Account Groups Hook
   const {
@@ -49,19 +52,22 @@ const AccountGroups = () => {
   // Schema
   const columns = [
     {
-      title: "Name (English)",
+      title: t("table.masters.subHeaders.accountGroups.labels.name.text"),
       dataIndex: "acc_group_name_eng",
       sorter: (a, b) => a.nameEn.localeCompare(b.nameEn),
       ...TableSearch("nameEn"),
     },
     {
-      title: "Name (Russian)",
-      dataIndex: "nameRu",
-      sorter: (a, b) => a.nameRu.localeCompare(b.nameRu),
-      ...TableSearch("nameRu"),
+      title: t(
+        "table.masters.subHeaders.accountGroups.labels.nameLocalLang.text"
+      ),
+      dataIndex: "acc_group_name_local_lang",
+      sorter: (a, b) =>
+        a.acc_group_name_local_lang.localeCompare(b.acc_group_name_local_lang),
+      ...TableSearch("acc_group_name_local_lang"),
     },
     {
-      title: "Action",
+      title: t("table.masters.subHeaders.accountGroups.labels.action.text"),
       width: 100,
       fixed: "right",
       render: (record) => (
@@ -77,7 +83,7 @@ const AccountGroups = () => {
 
   const tableHeader = (
     <div className="table-headers">
-      <h4>Account Groups</h4>
+      <h4>{t("table.masters.subHeaders.accountGroups.text")}</h4>
       <AddAccount
         modal={isModal}
         editItem={editItem}

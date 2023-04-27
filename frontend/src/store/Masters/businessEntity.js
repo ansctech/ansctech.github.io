@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 // Initial state of slice
 const initialState = {
   businessEntity: [],
+  entityTypes: { loaded: false, entityTypes: [] },
   isModal: false,
   isLoading: false,
   tableLoader: true,

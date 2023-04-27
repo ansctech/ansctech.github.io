@@ -5,6 +5,7 @@ import customerGroupsReducer from "./Masters/customerGroups";
 import vegetablesReducer from "./Masters/vegetables";
 import unitsReducer from "./Masters/units";
 import saleRecordReducer from "./TransactionCustomers/saleRecord";
+import userReducer from "./Authentication/user";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     vegetablesReducer,
     unitsReducer,
     saleRecordReducer,
+    userReducer,
   },
 });
 

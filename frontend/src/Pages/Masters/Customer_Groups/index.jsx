@@ -10,11 +10,14 @@ import {
 } from "@ant-design/icons";
 import useCustomerGroups from "../../../hooks/Masters/useCustomerGroups";
 import { customerGroupsActions } from "../../../store/Masters/customerGroups";
+import { useTranslation } from "react-i18next";
 
 const CustomerGroups = () => {
   const [editItem, setEditItem] = useState("");
   const { confirm } = Modal;
   const dispatch = useDispatch();
+
+  const { t } = useTranslation();
 
   //   Customer Groups Hook
   const {
@@ -49,20 +52,27 @@ const CustomerGroups = () => {
   //   Schema
   const columns = [
     {
-      title: "Name (English)",
+      title: t("table.masters.subHeaders.customerGroups.labels.name.text"),
       dataIndex: "cust_group_name_eng",
       sorter: (a, b) =>
         a.cust_group_name_eng.localeCompare(b.cust_group_name_eng),
       ...TableSearch("cust_group_name_eng"),
     },
     {
-      title: "Name (Russian)",
-      dataIndex: "nameRu",
-      sorter: (a, b) => a.nameRu.localeCompare(b.nameRu),
-      ...TableSearch("nameRu"),
+      title: t(
+        "table.masters.subHeaders.customerGroups.labels.nameLocalLang.text"
+      ),
+      dataIndex: "cust_group_name_local_lang",
+      sorter: (a, b) =>
+        a.cust_group_name_local_lang.localeCompare(
+          b.cust_group_name_local_lang
+        ),
+      ...TableSearch("cust_group_name_local_lang"),
     },
     {
-      title: "Action",
+      title: t(
+        "table.masters.subHeaders.customerGroups.labels.nameLocalLang.text"
+      ),
       width: 100,
       fixed: "right",
       render: (record) => (
@@ -78,7 +88,7 @@ const CustomerGroups = () => {
 
   const tableHeader = (
     <div className="table-headers">
-      <h4>Customer Groups</h4>
+      <h4>{t("table.masters.subHeaders.customerGroups.text")}</h4>
       <AddCustomer
         modal={isModal}
         editItem={editItem}

@@ -10,14 +10,17 @@ import {
 } from "@ant-design/icons";
 import useUnits from "../../../hooks/Masters/useUnits";
 import { unitsActions } from "../../../store/Masters/units";
+import { useTranslation } from "react-i18next";
 
 const Units = () => {
   const [editItem, setEditItem] = useState("");
   const dispatch = useDispatch();
   const { confirm } = Modal;
 
+  const { t } = useTranslation();
+
   const {
-    units: { units, isModal, tableLoader },
+    units: { units, isModal },
     controllers,
     volatileState: { isLoading },
   } = useUnits();
@@ -47,14 +50,14 @@ const Units = () => {
 
   const columns = [
     {
-      title: "Name",
+      title: t("table.masters.subHeaders.units.labels.name.text"),
       dataIndex: "container_name_eng",
       sorter: (a, b) =>
         a.container_name_eng.localeCompare(b.container_name_eng),
       ...TableSearch("container_name_eng"),
     },
     {
-      title: "Container Charge",
+      title: t("table.masters.subHeaders.units.labels.containerCharge.text"),
       dataIndex: "container_charge",
       sorter: (a, b) => a.container_charge - b.container_charge,
       ...TableSearch("container_charge"),
@@ -64,10 +67,11 @@ const Units = () => {
       title: "Maintain Inventory",
       dataIndex: "maintain_inventory",
       sorter: (a, b) => a.maintain_inventory - b.maintain_inventory,
-      render: (record) => <Checkbox checked={record} />,
+      // Maintain should always come as true
+      render: () => <Checkbox checked={true} />,
     },
     {
-      title: "Action",
+      title: t("table.masters.subHeaders.units.labels.action.text"),
       width: 100,
       fixed: "right",
       render: (record) => (
@@ -81,7 +85,7 @@ const Units = () => {
 
   const tableHeader = (
     <div className="table-headers">
-      <h4>Units</h4>
+      <h4>{t("table.masters.subHeaders.units.text")}</h4>
       <AddUnits
         editItem={editItem}
         modal={isModal}

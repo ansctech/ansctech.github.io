@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const useFetch = () => {
   const [isLoading, setIsLoading] = useState();
+  const navigate = useNavigate();
 
   // Request timeout in seconds
   const globalRequestTimeout = 30;
@@ -41,20 +43,30 @@ const useFetch = () => {
         networkTimeout(globalRequestTimeout),
       ]);
 
-      let data;
+      const data = await response.json();
 
-      if (methodUpper === "GET") {
-        data = await response.json();
+      // If user gets a forbidden response, redirect to login
+      if (response.status === 403) {
+        navigate("/login");
+        throw new Error(data.data.message);
       }
 
-      //   Call success function
+      // If payment is required due to customer subscription expiration
+      if (response.status === 402) {
+        navigate("/payment");
+        throw new Error(data.message);
+      }
+
+      // If any error occurs return the error message
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+
+      //   Call success function since request is successful
       successFn && successFn(data);
 
       //   Set loading to done
       setIsLoading(false);
-
-      // return data
-      return data;
     } catch (error) {
       // If there's an error, call error function
       errorFn && errorFn(error);

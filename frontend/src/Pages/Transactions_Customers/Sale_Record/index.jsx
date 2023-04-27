@@ -13,11 +13,14 @@ import useSaleRecord from "../../../hooks/TransactionCustomers/useSaleRecord";
 import useUnits from "../../../hooks/Masters/useUnits";
 import useCustomerGroups from "../../../hooks/Masters/useCustomerGroups";
 import useVegetables from "../../../hooks/Masters/useVegetables";
+import { useTranslation } from "react-i18next";
 
 const SaleRecord = () => {
   const [editItem, setEditItem] = useState("");
   const navigate = useNavigate();
   const { confirm } = Modal;
+
+  const { t } = useTranslation();
 
   const {
     units: { units },
@@ -58,7 +61,7 @@ const SaleRecord = () => {
 
   const columns = [
     {
-      title: "Date of Sale",
+      title: t("table.masters.subHeaders.saleRecord.labels.dateOfSale.text"),
       align: "left",
       sorter: (a, b) => a.sale_date.localeCompare(b.sale_date),
       render: (e) => (
@@ -73,7 +76,7 @@ const SaleRecord = () => {
       ...TableSearch("sale_date"),
     },
     {
-      title: "Customer Name",
+      title: t("table.masters.subHeaders.saleRecord.labels.customerName.text"),
       render: (e) => (
         <>
           {customerGroups.find((cust) => {
@@ -86,13 +89,13 @@ const SaleRecord = () => {
       ...TableSearch("entity_id_cust"),
     },
     {
-      title: "Amount",
+      title: t("table.masters.subHeaders.saleRecord.labels.amount.text"),
       align: "right",
       dataIndex: "sale_amount",
       sorter: (a, b) => a.sale_amount - b.sale_amount,
     },
     {
-      title: "Total Items",
+      title: t("table.masters.subHeaders.saleRecord.labels.totalItems.text"),
       align: "right",
       sorter: (a, b) => a.sale_qty - b.sale_qty,
       render: (e) => <>{e.sale_qty}</>,
@@ -113,7 +116,7 @@ const SaleRecord = () => {
 
   const tableHeader = (
     <div className="table-headers mr-auto">
-      <h4>Sale Record</h4>
+      <h4>{t("table.masters.subHeaders.saleRecord.text")}</h4>
       <div className="" style={{ display: "flex", gap: "30px" }}>
         <Button type="primary">Generate Bill</Button>
         <Button type="primary">Show record</Button>

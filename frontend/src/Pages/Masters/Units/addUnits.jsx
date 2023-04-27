@@ -4,7 +4,7 @@ import { Button, Modal, Form, Input, InputNumber, Checkbox } from "antd";
 import { unitsActions } from "../../../store/Masters/units";
 
 const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
-  const [inventory, setInventory] = useState(false);
+  const [inventory, setInventory] = useState(true);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
@@ -24,7 +24,7 @@ const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
   useEffect(() => {
     if (!modal) {
       form.resetFields();
-      setInventory(false);
+      setInventory(true);
     }
   }, [modal]);
 
@@ -34,7 +34,7 @@ const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
       setInventory(editItem?.maintain_inventory);
     } else {
       form.resetFields();
-      setInventory(false);
+      setInventory(true);
       form.setFieldsValue({ unit: "0" });
     }
   }, [editItem]);

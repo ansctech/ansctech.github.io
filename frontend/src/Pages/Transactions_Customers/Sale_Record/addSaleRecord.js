@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { DeleteOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -35,6 +35,7 @@ const AddSaleRecord = ({
   const { Item } = Form;
   const { Option } = Select;
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.userReducer);
 
   useEffect(() => {
     if (!modal) {
@@ -134,7 +135,11 @@ const AddSaleRecord = ({
     <>
       <Button
         type="primary"
-        onClick={() => dispatch(saleRecordActions.update({ isModal: true }))}
+        onClick={() => {
+          // Check for subscription_last_date
+          if (user.subscription_last_date) return;
+          dispatch(saleRecordActions.update({ isModal: true }));
+        }}
       >
         + Add Sale Record
       </Button>

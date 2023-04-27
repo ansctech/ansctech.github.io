@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const { useDispatch } = require("react-redux");
 const { default: useFetch } = require("./useFetch");
@@ -6,6 +6,8 @@ const { default: useFetch } = require("./useFetch");
 const useActions = (reducerState, reducerAction, { mainStorage, idField }) => {
   const { reqFn, isLoading } = useFetch();
   const dispatch = useDispatch();
+
+  const [actionPerformed, setActionPerformed] = useState(false);
 
   // Get action
   const getAction = () => {
@@ -17,6 +19,8 @@ const useActions = (reducerState, reducerAction, { mainStorage, idField }) => {
         data[mainStorage] = newData;
         data.loaded = true;
 
+        setActionPerformed(false);
+
         dispatch(reducerAction.update(data));
       },
     });
@@ -27,22 +31,21 @@ const useActions = (reducerState, reducerAction, { mainStorage, idField }) => {
     if (!reducerState.loaded) {
       getAction();
     }
-  }, []);
+  }, [actionPerformed]);
 
   //   Adds data to server and reflects on frontend
   const addAction = ({ values }) => {
     reqFn({
       method: "POST",
       url: reducerState.url,
-      successFn: (newData) => {
+      successFn: () => {
         // Add new account to account groups
         const data = {};
 
-        if (newData) {
-          data[mainStorage] = [...reducerState[mainStorage], newData];
-        }
-
         data.isModal = false;
+        data.loaded = false;
+
+        setActionPerformed(true);
 
         dispatch(reducerAction.update(data));
       },
@@ -58,16 +61,11 @@ const useActions = (reducerState, reducerAction, { mainStorage, idField }) => {
       successFn: () => {
         const data = {};
 
-        const dataToBeUpdated = reducerState[mainStorage].find(
-          (data) => data[idField] === id
-        );
-
-        data[mainStorage] = [
-          ...reducerState[mainStorage].filter((acc) => acc[idField] !== id),
-          { ...dataToBeUpdated, ...values },
-        ];
-
         data.isModal = false;
+
+        data.loaded = false;
+
+        setActionPerformed(true);
 
         dispatch(reducerAction.update(data));
       },
@@ -82,9 +80,11 @@ const useActions = (reducerState, reducerAction, { mainStorage, idField }) => {
       url: `${reducerState.url}/${id}`,
       successFn: () => {
         const data = {};
-        data[mainStorage] = reducerState[mainStorage].filter(
-          (acc) => acc[idField] !== id
-        );
+
+        data.loaded = false;
+
+        setActionPerformed(true);
+
         dispatch(reducerAction.update(data));
       },
     });

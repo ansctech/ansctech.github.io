@@ -11,17 +11,18 @@ import {
 import useBusinessEntity from "../../../hooks/Masters/useBusinessEntity";
 import useAccountGroups from "../../../hooks/Masters/useAccountGroups";
 import useCustomerGroups from "../../../hooks/Masters/useCustomerGroups";
-import useUnits from "../../../hooks/Masters/useUnits";
 import { businessEntityActions } from "../../../store/Masters/businessEntity";
+import { useTranslation } from "react-i18next";
 
 const BusinessEntity = () => {
   const [editItem, setEditItem] = useState("");
   const dispatch = useDispatch();
   const { confirm } = Modal;
+  const { t } = useTranslation();
 
   //   Business Entity Hook
   const {
-    businessEntity: { businessEntity, isModal },
+    businessEntity: { businessEntity, isModal, entityTypes },
     controllers,
     volatileState: { isLoading },
   } = useBusinessEntity();
@@ -34,10 +35,6 @@ const BusinessEntity = () => {
   const {
     customerGroups: { customerGroups },
   } = useCustomerGroups();
-
-  const {
-    units: { units },
-  } = useUnits();
 
   useEffect(() => {
     !isModal && setEditItem("");
@@ -65,21 +62,25 @@ const BusinessEntity = () => {
   //   Schema
   const columns = [
     {
-      title: "Name",
+      title: t("table.masters.subHeaders.businessEntity.labels.name.text"),
       dataIndex: "entityname_eng",
       sorter: (a, b) => a.entityname_eng.localeCompare(b.entityname_eng),
       ...TableSearch("entityname_eng"),
       key: "entityname_eng",
     },
     {
-      title: "Entity Type",
+      title: t(
+        "table.masters.subHeaders.businessEntity.labels.entityType.text"
+      ),
       dataIndex: "entity_type_id",
       sorter: (a, b) => a.entity_type_id.localeCompare(b.entity_type_id),
       ...TableSearch("entity_type_id"),
       key: "entity_type_id",
     },
     {
-      title: "Current Balance",
+      title: t(
+        "table.masters.subHeaders.businessEntity.labels.currentBalance.text"
+      ),
       dataIndex: "curr_bal",
       sorter: (a, b) => a.curr_bal - b.curr_bal,
       ...TableSearch("curr_bal"),
@@ -88,14 +89,14 @@ const BusinessEntity = () => {
       render: (record) => <b className="notranslate">{record}</b>,
     },
     {
-      title: "Phone",
+      title: t("table.masters.subHeaders.businessEntity.labels.phone.text"),
       dataIndex: "phone",
       sorter: (a, b) => a.phone - b.phone,
       ...TableSearch("phone"),
       key: "phone",
     },
     {
-      title: "Action",
+      title: t("table.masters.subHeaders.businessEntity.labels.action.text"),
       width: 100,
       fixed: "right",
       render: (record) => (
@@ -109,12 +110,17 @@ const BusinessEntity = () => {
 
   const tableHeader = (
     <div className="table-headers">
-      <h4> Business Entity </h4>
+      <h4>{t("table.masters.subHeaders.businessEntity.text")}</h4>
       <AddBusiness
         editItem={editItem}
         modal={isModal}
         isLoading={isLoading}
-        {...{ ...controllers, units, customerGroups, accountGroups }}
+        {...{
+          ...controllers,
+          customerGroups,
+          accountGroups,
+          entityTypes,
+        }}
       />
     </div>
   );

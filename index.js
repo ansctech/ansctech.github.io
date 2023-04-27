@@ -1,5 +1,7 @@
 const express = require("express");
 const path = require("path");
+const cookieParser = require("cookie-parser");
+
 const accGroupRouter = require("./src/acc_group/accGroupRoutes");
 const containerRouter = require("./src/container/containerRoutes");
 const custGroupRouter = require("./src/cust_group/custGroupRoutes");
@@ -8,12 +10,24 @@ const app = express();
 const itemRoutes = require("./src/items/routes");
 const saleBillRouter = require("./src/sale_bill/salebillRouter");
 const saleRecordRouter = require("./src/sale_record/salerecordRoutes");
+const {
+  protect,
+  login,
+  signup,
+  logout,
+} = require("./src/authentication/authRoutes");
 
 app.use(express.json());
+app.use(cookieParser());
 
-// app.get("/", (req, res) => {
-//   res.send("Welcome");
-// });
+app.post("/api/v1/signup", signup);
+
+app.post("/api/v1/login", login);
+
+app.post("/api/v1/logout", logout);
+
+// Check for client authentication here
+app.use("/api/v1/*", protect);
 
 app.use("/api/v1/items", itemRoutes);
 

@@ -12,11 +12,13 @@ import SaleRecord from "../../Pages/Transactions_Customers/Sale_Record";
 // import ContainerReturn from "../../Pages/Transactions_Farmers/Container_Return";
 // import ContainerRecepit from "../../Pages/Transactions_Customers/Container_Recepit";
 import AddedSaleRecord from "../../Pages/Transactions_Customers/Sale_Record/AddedSaleRecord";
+import Login from "../../Pages/Auth/Login";
 
 const Content = () => {
   return (
     <Routes>
       <Route path={"/"} element={<BusinessEntity />} />
+      <Route path={"/login"} element={<Login />} />
       <Route path={"/masters/units"} element={<Units />} />
       <Route path={"/masters/vegetables"} element={<Vegetables />} />
       <Route path={"/masters/account-groups"} element={<AccountGroups />} />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Modal } from "antd";
 import AddVegetables from "./addVegetables";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -9,19 +9,26 @@ import {
 } from "@ant-design/icons";
 import TableSearch from "../../../components/Table/tableSearch";
 import useVegetables from "../../../hooks/Masters/useVegetables";
+import useUnits from "../../../hooks/Masters/useUnits";
 import { vegetablesActions } from "../../../store/Masters/vegetables";
+import { useTranslation } from "react-i18next";
 
 const Vegetables = () => {
   const [editItem, setEditItem] = useState("");
   const { confirm } = Modal;
   const dispatch = useDispatch();
 
+  const { t } = useTranslation();
+
   // Items Hook
   const {
-    vegetables: { vegetables, isModal, tableLoader },
+    vegetables: { vegetables, isModal },
     controllers,
     volatileState: { isLoading },
   } = useVegetables();
+  const {
+    units: { units },
+  } = useUnits();
 
   useEffect(() => {
     !isModal && setEditItem("");
@@ -48,20 +55,20 @@ const Vegetables = () => {
 
   const columns = [
     {
-      title: "Name (English)",
+      title: t("table.masters.subHeaders.vegetables.labels.name.text"),
       dataIndex: "item_name_eng",
       sorter: (a, b) => a.item_name_eng.localeCompare(b.item_name_eng),
       ...TableSearch("item_name_eng"),
     },
     {
-      title: "Name (Russian)",
+      title: t("table.masters.subHeaders.vegetables.labels.nameLocalLang.text"),
       dataIndex: "item_name_local_lang",
       sorter: (a, b) =>
         a.item_name_local_lang.localeCompare(b.item_name_local_lang),
       ...TableSearch("item_name_local_lang"),
     },
     {
-      title: "Action",
+      title: t("table.masters.subHeaders.vegetables.labels.action.text"),
       width: 100,
       fixed: "right",
       render: (record) => (
@@ -75,11 +82,12 @@ const Vegetables = () => {
 
   const tableHeader = (
     <div className="table-headers">
-      <h4>Vegetables</h4>
+      <h4>{t("table.masters.subHeaders.vegetables.text")}</h4>
       <AddVegetables
         editItem={editItem}
         modal={isModal}
         isLoading={isLoading}
+        units={units}
         {...controllers}
       />
     </div>

@@ -12,7 +12,7 @@ const tableName = "acc_group_master";
 const clauseKey = "acc_group_id";
 
 accGroupRouter.get("/", async (req, res) => {
-  let client_id = req.headers.client_id || 643;
+  const client_id = req.user.clientid;
   pool.query(
     generateRetrieveQuery(tableName, "client_id", client_id),
     (err, results) => {
@@ -38,15 +38,20 @@ accGroupRouter.get("/:id", (req, res) => {
 });
 
 accGroupRouter.post("/", (req, res) => {
-  pool.query(generateInsertQuery(req.body, tableName), (err, results) => {
-    if (err) console.log(err);
-    res.status(201).send("Item Added Successfully");
-  });
+  pool.query(
+    generateInsertQuery(req.body, tableName, req.user),
+    (err, results) => {
+      if (err) console.log(err);
+      res
+        .status(201)
+        .json({ status: "success", message: "Item added successfully" });
+    }
+  );
 });
 
 accGroupRouter.delete("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
-  let client_id = req.headers.client_id || 643;
+  const client_id = req.user.clientid;
   pool.query(
     `DELETE FROM comm_schm.${tableName} WHERE client_id=${client_id} AND ${clauseKey}=${itemId};`,
     (err, results) => {
@@ -56,7 +61,9 @@ accGroupRouter.delete("/:id", (req, res) => {
       if (noItemFound) {
         res.send(" Item does not exist in Database");
       } else {
-        res.status(200).send("Item Deleted Successfully");
+        res
+          .status(200)
+          .json({ status: "success", message: "Item deleted successfully" });
       }
     }
   );
@@ -66,7 +73,7 @@ accGroupRouter.put("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
 
   pool.query(
-    generateUpdateQuery(req.body, tableName, clauseKey, itemId),
+    generateUpdateQuery(req.body, tableName, clauseKey, itemId, req.user),
     (err, results) => {
       if (err) console.log(err);
 
@@ -74,7 +81,9 @@ accGroupRouter.put("/:id", (req, res) => {
       if (noItemFound) {
         res.send(" Item does not exist in Database");
       } else {
-        res.status(200).send("Item Updated Successfully");
+        res
+          .status(200)
+          .json({ status: "success", message: "Item updated successfully" });
       }
     }
   );

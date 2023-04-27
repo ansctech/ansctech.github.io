@@ -1,45 +1,52 @@
-const { Router }= require('express');
-const { generateInsertQuery, generateUpdateQuery, generateRetrieveQuery, generateDeleteQuery } = require('../utils/general');
+const { Router } = require("express");
+const {
+  generateInsertQuery,
+  generateUpdateQuery,
+  generateRetrieveQuery,
+  generateDeleteQuery,
+} = require("../utils/general");
 const saleBillRouter = Router();
-const pool = require('../../db');
+const pool = require("../../db");
 
-const util = require('util');
-
+const util = require("util");
 
 const tableName = "sale_bill";
-const clauseKey ="bill_id";
+const clauseKey = "bill_id";
 
+saleBillRouter.get("/", async (req, res) => {
+  pool.query(generateRetrieveQuery(tableName), (err, results) => {
+    if (err) console.log(err);
+    res.status(200).json(results.rows);
+  });
+});
 
+saleBillRouter.get("/:id", (req, res) => {
+  const itemId = parseInt(req.params.id);
+  pool.query(
+    generateRetrieveQuery(tableName, clauseKey, itemId),
+    (err, results) => {
+      if (err) console.log(err);
+      let noItemFound = !results.rows.length;
+      if (noItemFound) {
+        res.send(" Item does not exist in Database");
+      }
+      res.status(200).json(results.rows);
+    }
+  );
+});
 
-saleBillRouter.get("/", async (req,res)=>{
-    pool.query(generateRetrieveQuery(tableName),(err,results)=>{
-        if(err)console.log(err);
-        res.status(200).json(results.rows);
-    });
-
-})
-
-saleBillRouter.get("/:id", ( req,res )=>{
-    const itemId = parseInt(req.params.id);
-    pool.query(generateRetrieveQuery(tableName,clauseKey,itemId),(err,results)=>{
-        if(err)console.log(err);
-        let noItemFound =!results.rows.length;
-        if(noItemFound){
-            res.send(" Item does not exist in Database");
-        }
-        res.status(200).json(results.rows);
-    })
-})
-
-saleBillRouter.post("/",async (req,res)=>{
+saleBillRouter.post("/", async (req, res) => {
   let { bill_date } = req.body;
   console.log(new Date(bill_date).toISOString());
-  let { client_id }=req.headers;
+  let { client_id } = req.headers;
 
   // Delete the records from sale bill on the existing date
-  const deletedrecords = await pool.query(`DELETE FROM comm_schm.sale_bill WHERE bill_date = '${bill_date}' AND client_id = '${client_id}'`);
-  const deletedrecordsContainerIssueRegister = await pool.query(`DELETE FROM comm_schm.container_issue_register WHERE issue_date = '${bill_date}' AND client_id = '${client_id}'`);
-
+  const deletedrecords = await pool.query(
+    `DELETE FROM comm_schm.sale_bill WHERE bill_date = '${bill_date}' AND client_id = '${client_id}'`
+  );
+  const deletedrecordsContainerIssueRegister = await pool.query(
+    `DELETE FROM comm_schm.container_issue_register WHERE issue_date = '${bill_date}' AND client_id = '${client_id}'`
+  );
 
   let sale_bill_query = `select 
     sr.sale_date as bill_date,
@@ -50,9 +57,9 @@ saleBillRouter.post("/",async (req,res)=>{
     from comm_schm.sale_record sr full outer join comm_schm.container_master cm 
     on cm.container_id=sr.unit_container_id
     where sale_date='${bill_date}' AND sr.client_id='${client_id}'
-    group by sr.sale_date, sr.entity_id_cust, sr.client_id;`
+    group by sr.sale_date, sr.entity_id_cust, sr.client_id;`;
 
-  let container_issue_register_query =`select 
+  let container_issue_register_query = `select 
     sr.sale_date as issue_date,
     sr.entity_id_cust, 
     sr.entity_id_trader,
@@ -63,7 +70,6 @@ saleBillRouter.post("/",async (req,res)=>{
     where cm.container_id=sr.unit_container_id and cm.maintain_inventory='YES'
     and sale_date= '${bill_date}' AND sr.client_id='${client_id}'
     group by sr.sale_date, sr.entity_id_cust, sr.entity_id_trader, sr.client_id, sr.unit_container_id`;
-
 
   // try {
   //       // Retrieve data from the database
@@ -94,7 +100,7 @@ saleBillRouter.post("/",async (req,res)=>{
   //         "last_modified_by": "akhi",
   //         "last_modified_date": new Date().toISOString()
   //       };
-  //     } 
+  //     }
   //   }
   //   let rec=[]
 
@@ -105,7 +111,6 @@ saleBillRouter.post("/",async (req,res)=>{
   //       rec.push(...result.rows);
   //     }
   //   }
-
 
   //   const results1 = await pool.query(container_issue_register_query);
   //   const leng = results.rows.length;
@@ -135,7 +140,7 @@ saleBillRouter.post("/",async (req,res)=>{
   //         "last_modified_by": "akhi",
   //         "last_modified_date": new Date().toISOString()
   //       };
-  //     } 
+  //     }
   //   }
   //   let con=[]
 
@@ -146,7 +151,7 @@ saleBillRouter.post("/",async (req,res)=>{
   //       con.push(...result.rows);
   //     }
   //   }
- 
+
   //   // Send response
   //   await res.send({message:"Successfully Retrieved data","sale_bill_rows":rec,"caontainer_issue_register_rows":con});
   // } catch (err) {
@@ -154,36 +159,36 @@ saleBillRouter.post("/",async (req,res)=>{
   //   res.status(500).send("Unable to Retrieve Info");
   // }
 
-  try{
-  const obj = {};
-  const conObj = {};
+  try {
+    const obj = {};
+    const conObj = {};
 
-  const results = await pool.query(sale_bill_query);
-  processRetrievedData(results, obj,tableName);
+    const results = await pool.query(sale_bill_query);
+    processRetrievedData(results, obj, tableName);
 
-  const results1 = await pool.query(container_issue_register_query);
-  processRetrievedData(results1, conObj,"container_issue_register");
+    const results1 = await pool.query(container_issue_register_query);
+    processRetrievedData(results1, conObj, "container_issue_register");
 
-  const rec = await insertData(obj, tableName);
-  const con = await insertData(conObj, "container_issue_register");
+    const rec = await insertData(obj, tableName);
+    const con = await insertData(conObj, "container_issue_register");
 
     //Send response
-  res.send({message:"Successfully Retrieved data","sale_bill_rows":rec,"caontainer_issue_register_rows":con});
-   
+    res.send({
+      message: "Successfully Retrieved data",
+      sale_bill_rows: rec,
+      caontainer_issue_register_rows: con,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Unable to Retrieve Info");
   }
-  catch (err) {
-      console.log(err);
-      res.status(500).send("Unable to Retrieve Info");
-  }
- 
-   
 });
 
 async function insertData(obj, tableName) {
   const rec = [];
 
   for (const ele of Object.keys(obj)) {
-    if(ele){
+    if (ele) {
       const result = await pool.query(generateInsertQuery(obj[ele], tableName));
       rec.push(...result.rows);
     }
@@ -192,8 +197,7 @@ async function insertData(obj, tableName) {
   return rec;
 }
 
-
-function processRetrievedData(results, obj,tableName) {
+function processRetrievedData(results, obj, tableName) {
   const len = results.rows.length;
   let rows;
 
@@ -202,80 +206,86 @@ function processRetrievedData(results, obj,tableName) {
   } else {
     rows = results.rows;
   }
-  if(tableName == "sale_bill"){
+  if (tableName == "sale_bill") {
     for (let i = 0; i < len; i++) {
       const row = rows[i];
       let dt = new Date(row.bill_date).toLocaleDateString();
-  
+
       if (!obj[row.entity_id_cust]) {
         obj[row.entity_id_cust] = {
-          "bill_date": dt,
-          "entity_id_cust": row.entity_id_cust,
-          "bill_amount":row.bill_amount,
-          "total_container_amount": row.container_charge,
-          "client_id": row.client_id,
-          "created_by": "adodla",
-          "created_date": new Date().toISOString(),
-          "last_modified_by": "akhi",
-          "last_modified_date": new Date().toISOString()
+          bill_date: dt,
+          entity_id_cust: row.entity_id_cust,
+          bill_amount: row.bill_amount,
+          total_container_amount: row.container_charge,
+          client_id: row.client_id,
+          created_by: "adodla",
+          created_date: new Date().toISOString(),
+          last_modified_by: "akhi",
+          last_modified_date: new Date().toISOString(),
         };
-      } 
+      }
     }
-  }else{
-      for (let i = 0; i < len; i++) {
+  } else {
+    for (let i = 0; i < len; i++) {
       const row = rows[i];
 
       if (!obj[row.entity_id_cust]) {
         obj[row.entity_id_cust] = {
-          "issue_date": new Date(row.issue_date).toISOString(),
-          "entity_id_cust": row.entity_id_cust,
-          "entity_id_trader":row.entity_id_trader,
-          "container_id":row.unit_container_id,
-          "issue_qty":row.issue_qty,
-          "client_id": row.client_id,
-          "created_by": "adodla",
-          "created_date": new Date().toISOString(),
-          "last_modified_by": "akhi",
-          "last_modified_date": new Date().toISOString()
+          issue_date: new Date(row.issue_date).toISOString(),
+          entity_id_cust: row.entity_id_cust,
+          entity_id_trader: row.entity_id_trader,
+          container_id: row.unit_container_id,
+          issue_qty: row.issue_qty,
+          client_id: row.client_id,
+          created_by: "adodla",
+          created_date: new Date().toISOString(),
+          last_modified_by: "akhi",
+          last_modified_date: new Date().toISOString(),
         };
-      } 
+      }
     }
   }
-
 
   return obj;
 }
 
+saleBillRouter.delete("/:id", (req, res) => {
+  const itemId = parseInt(req.params.id);
+  pool.query(
+    generateDeleteQuery(tableName, clauseKey, itemId),
+    (err, results) => {
+      if (err) console.log(err);
 
-saleBillRouter.delete("/:id",( req,res )=>{
-    const itemId = parseInt(req.params.id);
-    pool.query(generateDeleteQuery(tableName,clauseKey,itemId),(err,results)=>{
-        if(err)console.log(err);
-      
-        let noItemFound =!results.rowCount;
-        if(noItemFound){
-            res.send(" Item does not exist in Database");
-        }
-        else{
-            res.status(200).send("Item Deleted Successfully")
-        }
-    })
+      let noItemFound = !results.rowCount;
+      if (noItemFound) {
+        res.send(" Item does not exist in Database");
+      } else {
+        res
+          .status(200)
+          .json({ status: "success", message: "Item deleted successfully" });
+      }
+    }
+  );
 });
 
-saleBillRouter.put("/:id",(req,res)=>{
-    const itemId = parseInt(req.params.id);
+saleBillRouter.put("/:id", (req, res) => {
+  const itemId = parseInt(req.params.id);
 
-    pool.query(generateUpdateQuery(req.body,tableName,clauseKey,itemId),(err,results)=>{
-        if(err)console.log(err);
-      
-        let noItemFound =!results.rowCount;
-        if(noItemFound){
-            res.send(" Item does not exist in Database");
-        }
-        else{
-            res.status(200).send("Item Updated Successfully")
-        }
-    })
+  pool.query(
+    generateUpdateQuery(req.body, tableName, clauseKey, itemId),
+    (err, results) => {
+      if (err) console.log(err);
+
+      let noItemFound = !results.rowCount;
+      if (noItemFound) {
+        res.send(" Item does not exist in Database");
+      } else {
+        res
+          .status(200)
+          .json({ status: "success", message: "Item updated successfully" });
+      }
+    }
+  );
 });
 
 module.exports = saleBillRouter;

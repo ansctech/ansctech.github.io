@@ -12,8 +12,8 @@ const queries = require("../items/queries");
 const tableName = "entity_master";
 const clauseKey = "entity_id";
 
-entityRouter.get("/", async (req, res) => {
-  let client_id = req.headers.client_id || 643;
+entityRouter.get("/", (req, res) => {
+  const client_id = req.user.clientid;
   pool.query(
     generateRetrieveQuery(tableName, "client_id", client_id),
     (err, results) => {
@@ -21,6 +21,13 @@ entityRouter.get("/", async (req, res) => {
       res.status(200).json(results.rows);
     }
   );
+});
+
+entityRouter.get("/entity-types", (_, res) => {
+  pool.query(generateRetrieveQuery(tableName), (err, results) => {
+    if (err) console.log(err);
+    res.status(200).json(results.rows);
+  });
 });
 
 entityRouter.get("/:id", (req, res) => {
@@ -39,15 +46,20 @@ entityRouter.get("/:id", (req, res) => {
 });
 
 entityRouter.post("/", (req, res) => {
-  pool.query(generateInsertQuery(req.body, tableName), (err, results) => {
-    if (err) console.log(err);
-    res.status(201).send("Item Added Successfully");
-  });
+  pool.query(
+    generateInsertQuery(req.body, tableName, req.user),
+    (err, results) => {
+      if (err) console.log(err);
+      res
+        .status(201)
+        .json({ status: "success", message: "Item added successfully" });
+    }
+  );
 });
 
 entityRouter.delete("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
-  let client_id = req.headers.client_id || 643;
+  const client_id = req.user.clientid;
   pool.query(
     `DELETE FROM comm_schm.${tableName} WHERE client_id=${client_id} AND ${clauseKey}=${itemId};`,
     (err, results) => {
@@ -57,7 +69,9 @@ entityRouter.delete("/:id", (req, res) => {
       if (noItemFound) {
         res.send(" Item does not exist in Database");
       } else {
-        res.status(200).send("Item Deleted Successfully");
+        res
+          .status(200)
+          .json({ status: "success", message: "Item deleted successfully" });
       }
     }
   );
@@ -67,7 +81,7 @@ entityRouter.put("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
 
   pool.query(
-    generateUpdateQuery(req.body, tableName, clauseKey, itemId),
+    generateUpdateQuery(req.body, tableName, clauseKey, itemId, req.user),
     (err, results) => {
       if (err) console.log(err);
 
@@ -75,7 +89,9 @@ entityRouter.put("/:id", (req, res) => {
       if (noItemFound) {
         res.send(" Item does not exist in Database");
       } else {
-        res.status(200).send("Item Updated Successfully");
+        res
+          .status(200)
+          .json({ status: "success", message: "Item updated successfully" });
       }
     }
   );

@@ -12,7 +12,7 @@ const tableName = "sale_record";
 const clauseKey = "entry_id";
 
 saleRecordRouter.get("/", async (req, res) => {
-  let client_id = req.headers.client_id || 643;
+  const client_id = req.user.clientid;
   pool.query(
     generateRetrieveQuery(tableName, "client_id", client_id),
     (err, results) => {
@@ -52,7 +52,9 @@ saleRecordRouter.post("/", async (req, res) => {
     }
 
     if (rec.length == noOfRecords) {
-      res.status(201).send("Data Inserted Successfully");
+      res
+        .status(201)
+        .json({ status: "success", message: "Data Inserted Successfully" });
     } else {
       let missedRows = noOfRecords - rec.length;
       res
@@ -76,7 +78,9 @@ saleRecordRouter.delete("/:id", (req, res) => {
       if (noItemFound) {
         res.send(" Item does not exist in Database");
       } else {
-        res.status(200).send("Item Deleted Successfully");
+        res
+          .status(200)
+          .json({ status: "success", message: "Item deleted successfully" });
       }
     }
   );
@@ -86,7 +90,7 @@ saleRecordRouter.put("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
 
   pool.query(
-    generateUpdateQuery(req.body, tableName, clauseKey, itemId),
+    generateUpdateQuery(req.body, tableName, clauseKey, itemId, req.user),
     (err, results) => {
       if (err) console.log(err);
 
@@ -94,7 +98,9 @@ saleRecordRouter.put("/:id", (req, res) => {
       if (noItemFound) {
         res.send(" Item does not exist in Database");
       } else {
-        res.status(200).send("Item Updated Successfully");
+        res
+          .status(200)
+          .json({ status: "success", message: "Item updated successfully" });
       }
     }
   );
