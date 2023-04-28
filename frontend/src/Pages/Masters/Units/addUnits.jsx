@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Button, Modal, Form, Input, InputNumber, Checkbox } from "antd";
+import { Button, Modal, Form, Input, Checkbox } from "antd";
 import { unitsActions } from "../../../store/Masters/units";
 
 const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
-  const [inventory, setInventory] = useState(true);
+  const [inventory, setInventory] = useState(false);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
   const onFinish = (values) => {
+    console.log(inventory);
     if (editItem) {
       update({
         values: { ...values, maintain_inventory: inventory ? "YES" : "NO" },
@@ -94,7 +95,9 @@ const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
           </Form.Item>
           <Checkbox
             checked={inventory}
-            onChange={(e) => setInventory(e.target.checked)}
+            onChange={(e) => {
+              setInventory(e.target.checked);
+            }}
           >
             Maintain Inventory
           </Checkbox>

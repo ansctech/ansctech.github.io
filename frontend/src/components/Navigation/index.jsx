@@ -17,8 +17,10 @@ export function getItem(label, key, icon, children) {
 const Navigation = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   const [userInfoOpen, setUserInfoOpen] = useState(false);
   const user = useSelector((state) => state.userReducer);
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
   const { Sider } = Layout;
   const items = useItems();
   const navigate = useNavigate();
@@ -26,6 +28,12 @@ const Navigation = () => {
 
   const { reqFn: authRequest } = useFetch();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const lang = user.default_lang?.slice(0, 2).toLowerCase();
+    setSelectedLanguage(lang);
+    i18next.changeLanguage(lang);
+  }, [user]);
 
   const logoutHandler = () => {
     authRequest({
@@ -51,59 +59,21 @@ const Navigation = () => {
   useEffect(() => {
     window.addEventListener("resize", () => {
       setWindowSize(window.innerWidth);
+      setWindowHeight(window.innerHeight);
     });
   }, [windowSize]);
 
   // If this is login route
   if (location.pathname === "/login") {
-    return <LayoutContent />;
+    return (
+      <div style={{ height: `${windowHeight}px` }}>
+        <LayoutContent />
+      </div>
+    );
   }
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <nav className="nav-bar">
-        <select
-          className="language-selector"
-          onChange={(event) => {
-            i18next.changeLanguage(event.target.value);
-          }}
-        >
-          <option value="en" className="">
-            English
-          </option>
-          <option value="hi" className="">
-            Hindi
-          </option>
-        </select>
-        <div
-          className="user-avatar"
-          onClick={() => {
-            setUserInfoOpen((prevState) => !prevState);
-          }}
-        >
-          {user.client_name_eng?.[0].toUpperCase()}
-        </div>
-        {userInfoOpen && (
-          <div className="user-info">
-            {/* Logo */}
-            <span className="user-avatar"></span>
-            {/* Company name */}
-            <h2 className="user-title">{user.client_name_eng}</h2>
-            {/* Company slogan */}
-            <h4 className="user-tag">{user.tagline}</h4>
-            {/* Logout button */}
-            <button
-              className="logout"
-              onClick={() => {
-                logoutHandler();
-                setUserInfoOpen(false);
-              }}
-            >
-              Logout
-            </button>
-          </div>
-        )}
-      </nav>
       {windowSize > 768 ? (
         <Sider
           width={"270"}
@@ -156,6 +126,61 @@ const Navigation = () => {
         </>
       )}
       <Layout className={"side-layout"}>
+        <nav className="nav-bar">
+          {/* Client title */}
+          <div className="title">
+            <h1 className="">{user.client_name_eng}</h1>
+            <h3 className="">{user.tagline}</h3>
+          </div>
+
+          <div className="actions">
+            {/* Language selector */}
+            <select
+              className="language-selector"
+              value={selectedLanguage}
+              onChange={(event) => {
+                i18next.changeLanguage(event.target.value);
+                setSelectedLanguage(event.target.value);
+              }}
+              selected="hi"
+            >
+              <option value="en" className="">
+                English
+              </option>
+              <option value="hi" className="" name="hi">
+                Hindi
+              </option>
+            </select>
+            <div
+              className="user-avatar"
+              onClick={() => {
+                setUserInfoOpen((prevState) => !prevState);
+              }}
+            >
+              {user.client_name_eng?.[0].toUpperCase()}
+            </div>
+            {userInfoOpen && (
+              <div className="user-info">
+                {/* Logo */}
+                <span className="user-avatar"></span>
+                {/* Company name */}
+                <h2 className="user-title">{user.client_name_eng}</h2>
+                {/* Company slogan */}
+                <h4 className="user-tag">{user.tagline}</h4>
+                {/* Logout button */}
+                <button
+                  className="logout"
+                  onClick={() => {
+                    logoutHandler();
+                    setUserInfoOpen(false);
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        </nav>
         <LayoutContent />
       </Layout>
     </Layout>

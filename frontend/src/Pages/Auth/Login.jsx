@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import i18next from "i18next";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./authSyles.module.css";
-import ReCAPTCHA from "react-google-recaptcha";
 import useFetch from "../../hooks/global/useFetch";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../../store/Authentication/user";
@@ -11,9 +11,16 @@ import { useRef } from "react";
 function Login() {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
-  const [captchaValue, setCaptchaValue] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const recaptchaRef = useRef();
+
+  // Captcha calculations
+  function generateRandomNumber() {
+    const randomNumber = Math.floor(Math.random() * 10) + 1;
+    return randomNumber;
+  }
+  const [firstNumber, setFirstNumber] = useState(generateRandomNumber());
+  const [secondNumber, setSecondNumber] = useState(generateRandomNumber());
 
   // User data
   const user = useSelector((state) => state.userReducer);
@@ -29,6 +36,9 @@ function Login() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    const captchaValue =
+      Number(recaptchaRef.current.value) === firstNumber + secondNumber;
+
     if (captchaValue) {
       // Send login request
       authRequest({
@@ -41,6 +51,11 @@ function Login() {
         successFn: (data) => {
           // Update user data
           dispatch(userActions.update({ ...data.data.user }));
+
+          // Set the language
+          i18next.changeLanguage(
+            data.data.user.default_lang?.slice(0, 2).toLowerCase()
+          );
 
           // Save data to localstorage
           localStorage.setItem(
@@ -57,9 +72,11 @@ function Login() {
           // Reset all data
           setEmail("");
           setPassword("");
-          recaptchaRef.current.reset();
+          recaptchaRef.current.value = "";
         },
       });
+    } else {
+      setErrorMessage("Captcha Failed");
     }
   };
 
@@ -95,7 +112,14 @@ function Login() {
           action=""
           className={styles.form}
           onSubmit={handleSubmit}
-          onFocus={() => errorMessage && setErrorMessage(null)}
+          onFocus={() => {
+            if (errorMessage) {
+              setErrorMessage(null);
+              setFirstNumber(generateRandomNumber());
+              setSecondNumber(generateRandomNumber());
+              recaptchaRef.current.value = "";
+            }
+          }}
         >
           <div className={styles["form-group"]}>
             {/* Email */}
@@ -128,11 +152,11 @@ function Login() {
           </div>
 
           <div className={styles.recaptcha}>
-            <ReCAPTCHA
-              ref={recaptchaRef}
-              sitekey="6LezdL0lAAAAAKNNfCLwFwjJiXhmlG43msHRLaTE"
-              onChange={(value) => setCaptchaValue(value)}
-            />
+            <span>
+              Show us you're not a robot, What is {firstNumber} + {secondNumber}
+              ?
+            </span>
+            <input type="text" ref={recaptchaRef} />
           </div>
 
           <button className={styles.button} type="submit">

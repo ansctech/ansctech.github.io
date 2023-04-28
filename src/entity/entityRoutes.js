@@ -24,6 +24,7 @@ entityRouter.get("/", (req, res) => {
 });
 
 entityRouter.get("/entity-types", (_, res) => {
+  const tableName = "entity_type";
   pool.query(generateRetrieveQuery(tableName), (err, results) => {
     if (err) console.log(err);
     res.status(200).json(results.rows);

@@ -48,12 +48,13 @@ const useFetch = () => {
       // If user gets a forbidden response, redirect to login
       if (response.status === 403) {
         navigate("/login");
-        throw new Error(data.data.message);
+        throw new Error(data.message);
       }
 
       // If payment is required due to customer subscription expiration
       if (response.status === 402) {
-        navigate("/payment");
+        alert(data.message);
+
         throw new Error(data.message);
       }
 

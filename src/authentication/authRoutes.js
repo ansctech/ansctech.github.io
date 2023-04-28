@@ -147,18 +147,21 @@ exports.protect = async (req, res, next) => {
 
       req.user = results.rows[0];
 
-      // Check for user subscription last date
-      const currentDateString = Date.now();
-      const subscriptionEndsDateString = new Date(
-        req.user.subscription_last_date
-      ).getTime();
+      // Only check for this when user makes post/put request to database
+      if (req.method === "POST" || req.method === "PUT") {
+        // Check for user subscription last date
+        const currentDateString = Date.now();
+        const subscriptionEndsDateString = new Date(
+          req.user.subscription_last_date
+        ).getTime();
 
-      // If subscription date end is passed, i.e less than the current time
-      if (subscriptionEndsDateString < currentDateString) {
-        return res.status(402).json({
-          status: "error",
-          message: "Your subscription has expired, Kindly renew it.",
-        });
+        // If subscription date end is passed, i.e less than the current time
+        if (subscriptionEndsDateString < currentDateString) {
+          return res.status(402).json({
+            status: "error",
+            message: "Your subscription has expired, Kindly renew it.",
+          });
+        }
       }
 
       next();

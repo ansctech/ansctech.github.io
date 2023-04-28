@@ -72,7 +72,13 @@ const BusinessEntity = () => {
       title: t(
         "table.masters.subHeaders.businessEntity.labels.entityType.text"
       ),
-      dataIndex: "entity_type_id",
+      render: (e) => (
+        <>
+          {entityTypes.entityTypes.find((entityType) => {
+            return entityType.entity_type_id === Number(e?.entity_type_id);
+          })?.entity_type_eng || e.entity_type_id}
+        </>
+      ),
       sorter: (a, b) => a.entity_type_id.localeCompare(b.entity_type_id),
       ...TableSearch("entity_type_id"),
       key: "entity_type_id",

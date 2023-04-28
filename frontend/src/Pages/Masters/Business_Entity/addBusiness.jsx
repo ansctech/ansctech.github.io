@@ -152,9 +152,12 @@ const AddBusiness = ({
                   ]}
                 >
                   <Select placeholder={"Select Entity Type"}>
-                    {entityTypes?.map(({ entityname_eng, entity_id }) => (
-                      <Select.Option key={entity_id} value={entity_id}>
-                        {entityname_eng}
+                    {entityTypes?.map(({ entity_type_eng, entity_type_id }) => (
+                      <Select.Option
+                        key={entity_type_id}
+                        value={entity_type_id}
+                      >
+                        {entity_type_eng}
                       </Select.Option>
                     ))}
                   </Select>

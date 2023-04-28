@@ -65,10 +65,10 @@ const Units = () => {
     },
     {
       title: "Maintain Inventory",
-      dataIndex: "maintain_inventory",
       sorter: (a, b) => a.maintain_inventory - b.maintain_inventory,
-      // Maintain should always come as true
-      render: () => <Checkbox checked={true} />,
+      render: (e) => (
+        <Checkbox checked={e.maintain_inventory === "YES" ? true : false} />
+      ),
     },
     {
       title: t("table.masters.subHeaders.units.labels.action.text"),

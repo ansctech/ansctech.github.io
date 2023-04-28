@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Button, Modal, Form, Input, Select, Upload } from "antd";
+import { Button, Modal, Form, Input, Select, Upload, Image } from "antd";
 import { vegetablesActions } from "../../../store/Masters/vegetables";
 import { UploadOutlined } from "@ant-design/icons";
 import { useState } from "react";
@@ -55,12 +55,16 @@ const AddVegetables = ({
   };
 
   useEffect(() => {
-    !modal && form.resetFields();
+    if (!modal) {
+      form.resetFields();
+      setUploadBase64Format();
+    }
   }, [modal]);
 
   useEffect(() => {
     if (editItem) {
       form.setFieldsValue(editItem);
+      setUploadBase64Format(editItem.photo);
     } else {
       form.resetFields();
     }
@@ -134,7 +138,17 @@ const AddVegetables = ({
             </Form.Item>
           </Form.Item>
           <Form.Item label="Upload Photo">
-            <Upload name="photo" beforeUpload={validateImageSize}>
+            <Upload
+              name="photo"
+              beforeUpload={validateImageSize}
+              showUploadList={false}
+              onRemove={() => {
+                setUploadBase64Format();
+              }}
+            >
+              {uploadBase64Format && (
+                <Image src={uploadBase64Format} alt="Uploaded photo" />
+              )}
               <Button icon={<UploadOutlined />} />
             </Upload>
           </Form.Item>
