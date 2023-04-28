@@ -1,0 +1,62 @@
+{
+  "table": {
+    "masters": {
+      "text": "Masters",
+      "subHeaders": {
+        "businessEntity": {
+          "text": "ग्राहक / किसान",
+          "labels": {
+            "name": { "text": "Name" },
+            "entityType": { "text": "Entity Type" },
+            "currentBalance": { "text": "Current Balance" },
+            "phone": { "text": "Phone" },
+            "action": { "text": "Action" }
+          }
+        },
+        "vegetables": {
+          "text": "Vegetables",
+          "labels": {
+            "name": { "text": "Name (English)" },
+            "nameLocalLang": { "text": "Name (Local)" },
+            "action": { "text": "Action" }
+          }
+        },
+        "units": {
+          "text": "Units",
+          "labels": {
+            "name": { "text": "Name" },
+            "containerCharge": { "text": "Container Charge" },
+            "maintainInventory": { "text": "Maintain Inventory" },
+            "action": { "text": "Action" }
+          }
+        },
+        "customerGroups": {
+          "text": "Customer Groups",
+          "labels": {
+            "name": { "text": "Name (English)" },
+            "nameLocalLang": { "text": "Name (Local)" },
+            "action": { "text": "Action" }
+          }
+        },
+        "accountGroups": {
+          "text": "Account Groups",
+          "labels": {
+            "name": { "text": "Name (English)" },
+            "nameLocalLang": { "text": "Name (Local)" },
+            "action": { "text": "Action" }
+          }
+        },
+        "saleRecord": {
+          "text": "Sale Record",
+          "labels": {
+            "dateOfSale": { "text": "Date Of Sale" },
+            "customerName": { "text": "Customer Name" },
+            "amount": { "text": "Amount" },
+            "totalItems": { "text": "Total Items" },
+            "action": { "text": "Action" }
+          }
+        }
+      }
+    }
+  }
+}
