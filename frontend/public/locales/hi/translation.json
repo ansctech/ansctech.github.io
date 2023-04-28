@@ -6,10 +6,10 @@
         "businessEntity": {
           "text": "ग्राहक / किसान",
           "labels": {
-            "name": { "text": "Name" },
+            "name": { "text": "नाम" },
             "entityType": { "text": "Entity Type" },
-            "currentBalance": { "text": "Current Balance" },
-            "phone": { "text": "Phone" },
+            "currentBalance": { "text": "वर्तमान बकाया" },
+            "phone": { "text": "फोन" },
             "action": { "text": "Action" }
           }
         },
