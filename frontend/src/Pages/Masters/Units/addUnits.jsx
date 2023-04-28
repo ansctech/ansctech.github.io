@@ -9,7 +9,6 @@ const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
   const dispatch = useDispatch();
 
   const onFinish = (values) => {
-    console.log(inventory);
     if (editItem) {
       update({
         values: { ...values, maintain_inventory: inventory ? "YES" : "NO" },
@@ -32,7 +31,7 @@ const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
   useEffect(() => {
     if (editItem) {
       form.setFieldsValue(editItem);
-      setInventory(editItem?.maintain_inventory);
+      setInventory(editItem?.maintain_inventory === "YES" ? true : false);
     } else {
       form.resetFields();
       setInventory(true);
