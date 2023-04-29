@@ -10,6 +10,8 @@ const app = express();
 const itemRoutes = require("./src/items/routes");
 const saleBillRouter = require("./src/sale_bill/salebillRouter");
 const saleRecordRouter = require("./src/sale_record/salerecordRoutes");
+const moneyReceiptRouter = require("./src/moneyReceipt/moneyReceiptRoutes");
+const containerReturnRouter = require("./src/containerReturn/containerReturnRoutes");
 const {
   protect,
   login,
@@ -42,6 +44,10 @@ app.use("/api/v1/container", containerRouter);
 app.use("/api/v1/salerecord", saleRecordRouter);
 
 app.use("/api/v1/salebill", saleBillRouter);
+
+app.use("/api/v1/money-receipt", moneyReceiptRouter);
+
+app.use("/api/v1/container-return", containerReturnRouter);
 
 // Serve frontend folder
 app.use(express.static(path.join(__dirname, "frontend", "build")));

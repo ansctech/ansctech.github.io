@@ -1,5 +1,4 @@
 const generateUpdateQuery = (data, tableName, clauseKey, clauseValue, user) => {
-  // This is a fake authenticated detail
   data.last_modified_by = user.client_name_eng;
   data.last_modified_date = new Date(Date.now()).toISOString();
 

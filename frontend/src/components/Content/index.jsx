@@ -8,9 +8,9 @@ import CustomerGroups from "../../Pages/Masters/Customer_Groups";
 import BusinessEntity from "../../Pages/Masters/Business_Entity";
 import SaleBill from "../../Pages/Transactions_Customers/Sale_Bill";
 import SaleRecord from "../../Pages/Transactions_Customers/Sale_Record";
-// import MoneyRecepit from "../../Pages/Transactions_Customers/Money_Recepit";
+import MoneyReceipt from "../../Pages/Transactions_Customers/Money_Receipt";
 // import ContainerReturn from "../../Pages/Transactions_Farmers/Container_Return";
-// import ContainerRecepit from "../../Pages/Transactions_Customers/Container_Recepit";
+import ContainerReturn from "../../Pages/Transactions_Customers/Container_Return";
 import AddedSaleRecord from "../../Pages/Transactions_Customers/Sale_Record/AddedSaleRecord";
 import Login from "../../Pages/Auth/Login";
 
@@ -19,21 +19,30 @@ const Content = () => {
     <Routes>
       <Route path={"/"} element={<BusinessEntity />} />
       <Route path={"/login"} element={<Login />} />
+
+      {/* Masters */}
       <Route path={"/masters/units"} element={<Units />} />
       <Route path={"/masters/vegetables"} element={<Vegetables />} />
       <Route path={"/masters/account-groups"} element={<AccountGroups />} />
       <Route path={"/masters/customer-groups"} element={<CustomerGroups />} />
       <Route path={"/masters/business-entity"} element={<BusinessEntity />} />
+
+      {/* Transaction Customers */}
       {/* <Route path={"/customers/add-sales"} element={<From />} /> */}
       <Route path={"/customers/sale-bill"} element={<SaleBill />} />
       <Route
         path={"/customers/added-sale-record/:id"}
         element={<AddedSaleRecord />}
       />
-      {/* <Route path={'/customers/money-recepit'} element={<MoneyRecepit/>}/> */}
+      <Route path={"/customers/money-receipt"} element={<MoneyReceipt />} />
       <Route path={"/customers/sale-record"} element={<SaleRecord />} />
-      {/* <Route path={'/customers/container-recepit'} element={<ContainerRecepit/>}/> */}
-      {/* <Route path={'/farmers/container-return'} element={<ContainerReturn/>}/>   */}
+      <Route
+        path={"/customers/container-return"}
+        element={<ContainerReturn />}
+      />
+
+      {/* Farmers */}
+      {/* <Route path={"/farmers/container-return"} element={<ContainerReturn />} /> */}
     </Routes>
   );
 };

@@ -15,6 +15,7 @@ import {
   Table,
 } from "antd";
 import { saleRecordActions } from "../../../store/TransactionCustomers/saleRecord";
+import useContainerReturn from "../../../hooks/TransactionCustomers/useContainerReturn";
 
 const AddSaleRecord = ({
   modal,
@@ -36,6 +37,8 @@ const AddSaleRecord = ({
   const { Option } = Select;
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer);
+
+  const { controllers } = useContainerReturn();
 
   useEffect(() => {
     if (!modal) {
@@ -123,12 +126,32 @@ const AddSaleRecord = ({
     },
   ];
 
-  const submit = () => {
+  const submit = async () => {
     if (!tableData.length) return;
 
-    tableData.forEach((data) => delete data.id);
+    const maintainInventoryUnits = [];
 
-    addSaleRecord({ values: tableData });
+    tableData.forEach((data) => {
+      units.find((unit) => unit.container_id == data.unit_container_id)
+        ?.maintain_inventory === "YES" && maintainInventoryUnits.push(data);
+
+      // Remove temporary id
+      delete data.id;
+    });
+
+    await addSaleRecord({ values: tableData });
+
+    maintainInventoryUnits.forEach((record) => {
+      controllers.addContainerReturn({
+        values: {
+          cont_txn_date: record.sale_date,
+          qty_received: 0,
+          qty_issued: Number(record.sale_qty),
+          entity_id: record.entity_id_cust,
+          container_id: record.unit_container_id,
+        },
+      });
+    });
   };
 
   return (
@@ -137,7 +160,6 @@ const AddSaleRecord = ({
         type="primary"
         onClick={() => {
           // Check for subscription_last_date
-          if (user.subscription_last_date) return;
           dispatch(saleRecordActions.update({ isModal: true }));
         }}
       >

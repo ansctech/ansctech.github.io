@@ -34,7 +34,7 @@ const useActions = (reducerState, reducerAction, { mainStorage, idField }) => {
   }, [actionPerformed]);
 
   //   Adds data to server and reflects on frontend
-  const addAction = ({ values }) => {
+  const addAction = async ({ values }) => {
     reqFn({
       method: "POST",
       url: reducerState.url,

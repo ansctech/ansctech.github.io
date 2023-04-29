@@ -80,7 +80,6 @@ const SaleRecord = () => {
       render: (e) => (
         <>
           {customerGroups.find((cust) => {
-            console.log(cust, e);
             return cust.cust_group_id === Number(e?.entity_id_cust);
           })?.cust_group_name_eng || e.entity_id_cust}
         </>

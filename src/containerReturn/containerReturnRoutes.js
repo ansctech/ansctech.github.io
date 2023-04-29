@@ -1,17 +1,20 @@
 const { Router } = require("express");
+
 const {
   generateInsertQuery,
   generateUpdateQuery,
   generateRetrieveQuery,
   generateDeleteQuery,
 } = require("../utils/general");
-const saleRecordRouter = Router();
+
+const containerReturnRouter = Router();
+
 const pool = require("../../db");
 
-const tableName = "sale_record";
-const clauseKey = "entry_id";
+const tableName = "container_in_out";
+const clauseKey = "cont_txn_id";
 
-saleRecordRouter.get("/", async (req, res) => {
+containerReturnRouter.get("/", async (req, res) => {
   const client_id = req.user.clientid;
   pool.query(
     generateRetrieveQuery(tableName, "client_id", client_id),
@@ -22,7 +25,7 @@ saleRecordRouter.get("/", async (req, res) => {
   );
 });
 
-saleRecordRouter.get("/:id", (req, res) => {
+containerReturnRouter.get("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
   pool.query(
     generateRetrieveQuery(tableName, clauseKey, itemId),
@@ -37,40 +40,23 @@ saleRecordRouter.get("/:id", (req, res) => {
   );
 });
 
-saleRecordRouter.post("/", async (req, res) => {
-  try {
-    let noOfRecords = req.body.length;
-
-    let rec = [];
-
-    for (let i = 0; i < noOfRecords; i++) {
-      req.body[i].sale_date = new Date(req.body[i].sale_date).toISOString();
-      let results = await pool.query(
-        generateInsertQuery(req.body[i], tableName, req.user)
-      );
-      rec.push(...results.rows);
-    }
-
-    if (rec.length == noOfRecords) {
+containerReturnRouter.post("/", (req, res) => {
+  pool.query(
+    generateInsertQuery(req.body, tableName, req.user),
+    (err, results) => {
+      if (err) console.log(err);
       res
         .status(201)
-        .json({ status: "success", message: "Data Inserted Successfully" });
-    } else {
-      let missedRows = noOfRecords - rec.length;
-      res
-        .status(500)
-        .send(`${missedRows} are not inserted out of ${noOfRecords} records`);
+        .json({ status: "success", message: "Item added successfully" });
     }
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Unable to insert the Data");
-  }
+  );
 });
 
-saleRecordRouter.delete("/:id", (req, res) => {
+containerReturnRouter.delete("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
+  const client_id = req.user.clientid;
   pool.query(
-    generateDeleteQuery(tableName, clauseKey, itemId),
+    `DELETE FROM comm_schm.${tableName} WHERE client_id=${client_id} AND ${clauseKey}=${itemId};`,
     (err, results) => {
       if (err) console.log(err);
 
@@ -86,7 +72,7 @@ saleRecordRouter.delete("/:id", (req, res) => {
   );
 });
 
-saleRecordRouter.put("/:id", (req, res) => {
+containerReturnRouter.put("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
 
   pool.query(
@@ -106,4 +92,4 @@ saleRecordRouter.put("/:id", (req, res) => {
   );
 });
 
-module.exports = saleRecordRouter;
+module.exports = containerReturnRouter;

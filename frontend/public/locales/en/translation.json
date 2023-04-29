@@ -57,6 +57,21 @@
           }
         }
       }
+    },
+    "transaction-customer": {
+      "text": "Transactions(Customers)",
+      "subHeaders": {
+        "moneyReceipt": {
+          "text": "Money Receipt",
+          "labels": {
+            "dateOfReceipt": { "text": "Date Of Receipt" },
+            "customerName": { "text": "Customer Name" },
+            "amount": { "text": "Amount" },
+            "remarks": { "text": "Remarks" },
+            "action": { "text": "Action" }
+          }
+        }
+      }
     }
   }
 }

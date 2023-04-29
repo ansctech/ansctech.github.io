@@ -24,13 +24,13 @@ const useItems = () => {
     getItem("Transactions (Customers)", "/customers", "", [
       getItem(t("table.masters.subHeaders.saleRecord.text"), "/sale-record"),
       // getItem('Sale Bill', '/sale-bill'),
-      getItem("Money Recepit", "/money-recepit"),
-      getItem("Container Return", "/container-recepit"),
+      getItem("Money Receipt", "/money-receipt"),
+      getItem("Container Return", "/container-return"),
     ]),
     getItem("Transactions (Farmers)", "/farmers", "", [
       getItem("Sale Bill", "9"),
       getItem("Payment", "10"),
-      getItem("Container Return", "/container-return"),
+      getItem("Container Return", "/container-receipt"),
     ]),
     getItem("Reports", "/reports", "", [
       getItem("Bill Print", "11"),
