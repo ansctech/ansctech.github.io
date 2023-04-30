@@ -16,6 +16,7 @@ const unitsSlice = createSlice({
   reducers: {
     // Action to update account groups
     update: (state, { payload }) => ({ ...state, ...payload }),
+    clear: () => initialState,
   },
 });
 

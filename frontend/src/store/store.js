@@ -6,6 +6,7 @@ import vegetablesReducer from "./Masters/vegetables";
 import unitsReducer from "./Masters/units";
 import saleRecordReducer from "./TransactionCustomers/saleRecord";
 import userReducer from "./Authentication/user";
+import clientReducer from "./Authentication/client";
 import containerReturnReducer from "./TransactionCustomers/containerReturn";
 import moneyReceiptReducer from "./TransactionCustomers/moneyReceipt";
 
@@ -18,6 +19,7 @@ const store = configureStore({
     unitsReducer,
     saleRecordReducer,
     userReducer,
+    clientReducer,
     moneyReceiptReducer,
     containerReturnReducer,
   },

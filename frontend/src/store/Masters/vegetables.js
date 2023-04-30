@@ -14,6 +14,7 @@ const vegetablesSlice = createSlice({
   initialState,
   reducers: {
     update: (state, { payload }) => ({ ...state, ...payload }),
+    clear: () => initialState,
   },
 });
 

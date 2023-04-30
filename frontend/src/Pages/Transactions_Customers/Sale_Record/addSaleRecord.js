@@ -16,12 +16,13 @@ import {
 } from "antd";
 import { saleRecordActions } from "../../../store/TransactionCustomers/saleRecord";
 import useContainerReturn from "../../../hooks/TransactionCustomers/useContainerReturn";
+import moment from "moment";
 
 const AddSaleRecord = ({
   modal,
   isLoading,
   editItem,
-  customers,
+  businessEntity,
   vegetable,
   units,
   addSaleRecord,
@@ -36,12 +37,21 @@ const AddSaleRecord = ({
   const { Item } = Form;
   const { Option } = Select;
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.userReducer);
 
   const { controllers } = useContainerReturn();
 
   useEffect(() => {
-    if (!modal) {
+    if (modal) {
+      const date = new Date(Date.now());
+      form.setFieldsValue({ sale_date: moment(date.toISOString()) });
+      setDate(
+        new Date(
+          `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${(
+            "0" + date.getDate()
+          ).slice(-2)}`
+        )
+      );
+    } else {
       form.resetFields();
       setTableData([]);
     }
@@ -290,12 +300,16 @@ const AddSaleRecord = ({
                   ]}
                 >
                   <Select placeholder={"Select Customer"}>
-                    {customers?.map(
-                      ({ cust_group_name_eng, cust_group_id }) => (
-                        <Option key={cust_group_id} value={cust_group_id}>
-                          {cust_group_name_eng}
-                        </Option>
-                      )
+                    {businessEntity?.map(
+                      ({ entityname_eng, entity_id, entity_type_id }) => {
+                        return (
+                          entity_type_id === 1 && (
+                            <Select.Option key={entity_id} value={entity_id}>
+                              {entityname_eng}
+                            </Select.Option>
+                          )
+                        );
+                      }
                     )}
                   </Select>
                 </Item>

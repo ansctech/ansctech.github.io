@@ -1,5 +1,5 @@
 const generateUpdateQuery = (data, tableName, clauseKey, clauseValue, user) => {
-  data.last_modified_by = user.client_name_eng;
+  data.last_modified_by = user.user_name;
   data.last_modified_date = new Date(Date.now()).toISOString();
 
   let part1 = `UPDATE comm_schm.${tableName} SET`;
@@ -14,11 +14,10 @@ const generateUpdateQuery = (data, tableName, clauseKey, clauseValue, user) => {
 };
 
 const generateInsertQuery = (data, tableName, user) => {
-  // This is a fake authenticated detail
-  data.client_id = user.clientid;
-  data.created_by = user.client_name_eng;
+  data.client_id = user.client_id;
+  data.created_by = user.user_name;
   data.created_date = new Date(Date.now()).toISOString();
-  data.last_modified_by = user.client_name_eng;
+  data.last_modified_by = user.user_name;
   data.last_modified_date = new Date(Date.now()).toISOString();
 
   let part1 = `INSERT INTO comm_schm.${tableName}`;

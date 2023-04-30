@@ -15,7 +15,7 @@ const tableName = "receipt_master";
 const clauseKey = "receipt_id";
 
 moneyReceiptRouter.get("/", async (req, res) => {
-  const client_id = req.user.clientid;
+  const client_id = req.user.client_id;
   pool.query(
     generateRetrieveQuery(tableName, "client_id", client_id),
     (err, results) => {
@@ -54,7 +54,7 @@ moneyReceiptRouter.post("/", (req, res) => {
 
 moneyReceiptRouter.delete("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
-  const client_id = req.user.clientid;
+  const client_id = req.user.client_id;
   pool.query(
     `DELETE FROM comm_schm.${tableName} WHERE client_id=${client_id} AND ${clauseKey}=${itemId};`,
     (err, results) => {

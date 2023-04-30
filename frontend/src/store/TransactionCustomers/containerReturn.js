@@ -15,6 +15,7 @@ const containerReturnSlice = createSlice({
   initialState,
   reducers: {
     update: (state, { payload }) => ({ ...state, ...payload }),
+    clear: () => initialState,
   },
 });
 

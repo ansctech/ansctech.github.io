@@ -34,6 +34,7 @@ const AddMoneyReceipt = ({
 
   const onFinish = (values) => {
     values.receipt_date = new Date(date).toISOString();
+    values.remarks = values.remarks || "";
 
     if (editItem) {
       updateMoneyReceipt({ values, id: editItem.receipt_id });
@@ -43,23 +44,28 @@ const AddMoneyReceipt = ({
   };
 
   useEffect(() => {
+    let date;
+
     if (editItem) {
       form.setFieldsValue({
         ...editItem,
         receipt_date: moment(editItem.receipt_date),
       });
 
-      const date = new Date(editItem.receipt_date);
-      setDate(
-        new Date(
-          `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${(
-            "0" + date.getDate()
-          ).slice(-2)}`
-        )
-      );
+      date = new Date(editItem.receipt_date);
     } else {
+      date = new Date(Date.now());
       form.resetFields();
+      form.setFieldsValue({ receipt_date: moment(date.toISOString()) });
     }
+
+    setDate(
+      new Date(
+        `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${(
+          "0" + date.getDate()
+        ).slice(-2)}`
+      )
+    );
   }, [editItem]);
 
   return (
@@ -102,11 +108,17 @@ const AddMoneyReceipt = ({
               ]}
             >
               <Select placeholder={"Select Customer"}>
-                {businessEntity?.map(({ entityname_eng, entity_id }) => (
-                  <Select.Option key={entity_id} value={entity_id}>
-                    {entityname_eng}
-                  </Select.Option>
-                ))}
+                {businessEntity?.map(
+                  ({ entityname_eng, entity_id, entity_type_id }) => {
+                    return (
+                      entity_type_id === 1 && (
+                        <Select.Option key={entity_id} value={entity_id}>
+                          {entityname_eng}
+                        </Select.Option>
+                      )
+                    );
+                  }
+                )}
               </Select>
             </Form.Item>
           </Form.Item>
@@ -119,10 +131,7 @@ const AddMoneyReceipt = ({
             </Form.Item>
           </Form.Item>
           <Form.Item label="Remarks">
-            <Form.Item
-              name="remarks"
-              rules={[{ required: true, message: "Remarks is required" }]}
-            >
+            <Form.Item name="remarks">
               <Input />
             </Form.Item>
           </Form.Item>

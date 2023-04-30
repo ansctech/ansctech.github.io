@@ -15,7 +15,7 @@ const tableName = "container_in_out";
 const clauseKey = "cont_txn_id";
 
 containerReturnRouter.get("/", async (req, res) => {
-  const client_id = req.user.clientid;
+  const client_id = req.user.client_id;
   pool.query(
     generateRetrieveQuery(tableName, "client_id", client_id),
     (err, results) => {
@@ -54,7 +54,7 @@ containerReturnRouter.post("/", (req, res) => {
 
 containerReturnRouter.delete("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
-  const client_id = req.user.clientid;
+  const client_id = req.user.client_id;
   pool.query(
     `DELETE FROM comm_schm.${tableName} WHERE client_id=${client_id} AND ${clauseKey}=${itemId};`,
     (err, results) => {

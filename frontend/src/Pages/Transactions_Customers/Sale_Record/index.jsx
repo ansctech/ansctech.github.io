@@ -11,9 +11,9 @@ import {
 } from "@ant-design/icons";
 import useSaleRecord from "../../../hooks/TransactionCustomers/useSaleRecord";
 import useUnits from "../../../hooks/Masters/useUnits";
-import useCustomerGroups from "../../../hooks/Masters/useCustomerGroups";
 import useVegetables from "../../../hooks/Masters/useVegetables";
 import { useTranslation } from "react-i18next";
+import useBusinessEntity from "../../../hooks/Masters/useBusinessEntity";
 
 const SaleRecord = () => {
   const [editItem, setEditItem] = useState("");
@@ -29,8 +29,8 @@ const SaleRecord = () => {
     vegetables: { vegetables },
   } = useVegetables();
   const {
-    customerGroups: { customerGroups },
-  } = useCustomerGroups();
+    businessEntity: { businessEntity },
+  } = useBusinessEntity();
   const {
     saleRecord: { saleRecord, isModal },
     controllers,
@@ -79,9 +79,9 @@ const SaleRecord = () => {
       title: t("table.masters.subHeaders.saleRecord.labels.customerName.text"),
       render: (e) => (
         <>
-          {customerGroups.find((cust) => {
-            return cust.cust_group_id === Number(e?.entity_id_cust);
-          })?.cust_group_name_eng || e.entity_id_cust}
+          {businessEntity.find((entity) => {
+            return Number(entity.entity_id) === Number(e?.entity_id);
+          })?.entityname_eng || e.entity_id}
         </>
       ),
       sorter: (a, b) => a.entity_id_cust.localeCompare(b.entity_id_cust),
@@ -125,7 +125,7 @@ const SaleRecord = () => {
           editItem={editItem}
           isLoading={isLoading}
           vegetable={vegetables}
-          customers={customerGroups}
+          businessEntity={businessEntity}
           {...controllers}
         />
       </div>

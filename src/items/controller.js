@@ -11,7 +11,7 @@ const tableName = "item_master";
 const clauseKey = "item_id";
 
 const getItems = (req, res) => {
-  const client_id = req.user.clientid;
+  const client_id = req.user.client_id;
   pool.query(
     generateRetrieveQuery(tableName, "client_id", client_id),
     (err, results) => {
@@ -51,7 +51,7 @@ const addItem = (req, res) => {
 
 const deleteItemById = (req, res) => {
   const itemId = parseInt(req.params.id);
-  const client_id = req.user.clientid;
+  const client_id = req.user.client_id;
   pool.query(
     `DELETE FROM comm_schm.${tableName} WHERE client_id=${client_id} AND ${clauseKey}=${itemId};`,
     (err, results) => {

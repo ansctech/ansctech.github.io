@@ -14,16 +14,20 @@ const tableName = "client_master";
 const clauseKey = "clientid";
 
 // Create json token for user
-const signToken = (clientId) => {
-  return jwt.sign({ clientId }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+const signToken = (clientId, userName) => {
+  return jwt.sign(
+    { data: JSON.stringify({ clientId, userName }) },
+    process.env.JWT_SECRET_KEY,
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    }
+  );
 };
 
 // Create token to cookie
 const assignTokenToCookie = async (res, user, statusCode) => {
   // Create token
-  const token = signToken(user.client_id);
+  const token = signToken(user.client_id, user.user_name);
 
   // Cookie options
   const cookieOptions = {
@@ -52,7 +56,8 @@ const assignTokenToCookie = async (res, user, statusCode) => {
       return res.status(statusCode).json({
         status: "success",
         data: {
-          user: results.rows[0],
+          client: results.rows[0],
+          user,
         },
       });
     }
@@ -133,9 +138,11 @@ exports.protect = async (req, res, next) => {
 
   const decodedToken = await jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-  // Get user details
+  payload = JSON.parse(decodedToken.data);
+
+  // Get client details
   pool.query(
-    generateRetrieveQuery(tableName, clauseKey, decodedToken.clientId),
+    generateRetrieveQuery(tableName, clauseKey, payload.clientId),
     (err, results) => {
       if (err) console.log(err);
       let noItemFound = !results.rows.length;
@@ -145,14 +152,14 @@ exports.protect = async (req, res, next) => {
         });
       }
 
-      req.user = results.rows[0];
+      // req.client = results.rows[0];
 
       // Only check for this when user makes post/put request to database
       if (req.method === "POST" || req.method === "PUT") {
         // Check for user subscription last date
         const currentDateString = Date.now();
         const subscriptionEndsDateString = new Date(
-          req.user.subscription_last_date
+          req.client.subscription_last_date
         ).getTime();
 
         // If subscription date end is passed, i.e less than the current time
@@ -164,7 +171,27 @@ exports.protect = async (req, res, next) => {
         }
       }
 
-      next();
+      // Get user details
+      pool.query(
+        generateRetrieveQuery(
+          "client_user",
+          "user_name",
+          `'${payload.userName}'`
+        ),
+        (err, results) => {
+          if (err) console.log(err);
+          let noItemFound = !results.rows.length;
+          if (noItemFound) {
+            return res.status(404).json({
+              message: "Client account not found",
+            });
+          }
+
+          req.user = results.rows[0];
+
+          next();
+        }
+      );
     }
   );
 };

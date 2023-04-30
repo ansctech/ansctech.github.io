@@ -7,12 +7,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../../store/Authentication/user";
 import { useEffect } from "react";
 import { useRef } from "react";
+import useAuth from "../../hooks/Authentication/useAuth";
 
 function Login() {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const recaptchaRef = useRef();
+  const { loginRequest, isLoading, logoutRequest } = useAuth();
 
   // Captcha calculations
   function generateRandomNumber() {
@@ -24,10 +26,6 @@ function Login() {
 
   // User data
   const user = useSelector((state) => state.userReducer);
-
-  const { reqFn: authRequest, isLoading } = useFetch();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const handleChange = (event, stateUpdate) => {
     stateUpdate(event.target.value);
@@ -41,31 +39,9 @@ function Login() {
 
     if (captchaValue) {
       // Send login request
-      authRequest({
-        url: "login",
-        method: "POST",
-        values: {
-          email,
-          password,
-        },
-        successFn: (data) => {
-          // Update user data
-          dispatch(userActions.update({ ...data.data.user }));
-
-          // Set the language
-          i18next.changeLanguage(
-            data.data.user.default_lang?.slice(0, 2).toLowerCase()
-          );
-
-          // Save data to localstorage
-          localStorage.setItem(
-            "agroCurrentUser",
-            JSON.stringify(data.data.user)
-          );
-
-          // Redirect to main page
-          navigate("/", { replace: true });
-        },
+      loginRequest({
+        email,
+        password,
         errorFn: (data) => {
           setErrorMessage(data.message);
 
@@ -83,17 +59,7 @@ function Login() {
   useEffect(() => {
     if (user.user_id) {
       // logout if user is already logged in, log them out
-      authRequest({
-        url: "logout",
-        method: "POST",
-        successFn: () => {
-          // Update user data
-          dispatch(userActions.clear());
-
-          // Save data to localstorage
-          localStorage.clear("agroCurrentUser");
-        },
-      });
+      logoutRequest();
     }
   }, []);
 

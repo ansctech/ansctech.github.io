@@ -12,7 +12,7 @@ const tableName = "sale_record";
 const clauseKey = "entry_id";
 
 saleRecordRouter.get("/", async (req, res) => {
-  const client_id = req.user.clientid;
+  const client_id = req.user.client_id;
   pool.query(
     generateRetrieveQuery(tableName, "client_id", client_id),
     (err, results) => {

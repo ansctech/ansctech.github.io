@@ -2,21 +2,33 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Modal, Form, InputNumber, Select, DatePicker } from "antd";
 import { containerReturnActions } from "../../../store/TransactionCustomers/containerReturn";
+import moment from "moment";
 
 const AddContainerReturn = ({
   modal,
   isLoading,
   units,
-  customerGroups,
+  businessEntity,
   addContainerReturn,
-  updateContainerReturn,
 }) => {
   const [date, setDate] = useState("");
   const [form] = Form.useForm();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    !modal && form.resetFields();
+    if (modal) {
+      const date = new Date(Date.now());
+      form.setFieldsValue({ cont_txn_date: moment(date.toISOString()) });
+      setDate(
+        new Date(
+          `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${(
+            "0" + date.getDate()
+          ).slice(-2)}`
+        )
+      );
+    } else {
+      form.resetFields();
+    }
   }, [modal]);
 
   const selectDate = (date, dateString) => {
@@ -71,12 +83,16 @@ const AddContainerReturn = ({
               ]}
             >
               <Select placeholder={"Select Customer"}>
-                {customerGroups?.map(
-                  ({ cust_group_name_eng, cust_group_id }) => (
-                    <Select.Option key={cust_group_id} value={cust_group_id}>
-                      {cust_group_name_eng}
-                    </Select.Option>
-                  )
+                {businessEntity?.map(
+                  ({ entityname_eng, entity_id, entity_type_id }) => {
+                    return (
+                      entity_type_id === 1 && (
+                        <Select.Option key={entity_id} value={entity_id}>
+                          {entityname_eng}
+                        </Select.Option>
+                      )
+                    );
+                  }
                 )}
               </Select>
             </Form.Item>

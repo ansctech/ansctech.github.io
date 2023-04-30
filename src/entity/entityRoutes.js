@@ -13,7 +13,7 @@ const tableName = "entity_master";
 const clauseKey = "entity_id";
 
 entityRouter.get("/", (req, res) => {
-  const client_id = req.user.clientid;
+  const client_id = req.user.client_id;
   pool.query(
     generateRetrieveQuery(tableName, "client_id", client_id),
     (err, results) => {
@@ -60,7 +60,7 @@ entityRouter.post("/", (req, res) => {
 
 entityRouter.delete("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
-  const client_id = req.user.clientid;
+  const client_id = req.user.client_id;
   pool.query(
     `DELETE FROM comm_schm.${tableName} WHERE client_id=${client_id} AND ${clauseKey}=${itemId};`,
     (err, results) => {

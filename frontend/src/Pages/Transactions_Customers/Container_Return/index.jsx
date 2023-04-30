@@ -5,7 +5,7 @@ import TableSearch from "../../../components/Table/tableSearch";
 import { DeleteOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import useContainerReturn from "../../../hooks/TransactionCustomers/useContainerReturn";
 import useUnits from "../../../hooks/Masters/useUnits";
-import useCustomerGroups from "../../../hooks/Masters/useCustomerGroups";
+import useBusinessEntity from "../../../hooks/Masters/useBusinessEntity";
 
 const ContainerReturn = () => {
   const { confirm } = Modal;
@@ -17,8 +17,8 @@ const ContainerReturn = () => {
   } = useContainerReturn();
 
   const {
-    customerGroups: { customerGroups },
-  } = useCustomerGroups();
+    businessEntity: { businessEntity },
+  } = useBusinessEntity();
 
   const {
     units: { units },
@@ -57,9 +57,9 @@ const ContainerReturn = () => {
       title: "Customer Name",
       render: (e) => (
         <>
-          {customerGroups.find((cust) => {
-            return cust.cust_group_id === Number(e?.entity_id);
-          })?.cust_group_name_eng || e.entity_id}
+          {businessEntity.find((entity) => {
+            return Number(entity.entity_id) === Number(e?.entity_id);
+          })?.entityname_eng || e.entity_id}
         </>
       ),
       sorter: (a, b) => a.customer.localeCompare(b.customer),
@@ -108,7 +108,7 @@ const ContainerReturn = () => {
         modal={isModal}
         isLoading={isLoading}
         units={units}
-        customerGroups={customerGroups}
+        businessEntity={businessEntity}
         {...controllers}
       />
     </div>

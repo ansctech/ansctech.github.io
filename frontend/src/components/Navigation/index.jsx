@@ -9,6 +9,7 @@ import useItems from "./menu-items";
 import { useDispatch, useSelector } from "react-redux";
 import useFetch from "../../hooks/global/useFetch";
 import { userActions } from "../../store/Authentication/user";
+import useAuth from "../../hooks/Authentication/useAuth";
 
 export function getItem(label, key, icon, children) {
   return { key, icon, children, label };
@@ -20,35 +21,24 @@ const Navigation = () => {
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   const [userInfoOpen, setUserInfoOpen] = useState(false);
   const user = useSelector((state) => state.userReducer);
+  const client = useSelector((state) => state.clientReducer);
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const { Sider } = Layout;
   const items = useItems();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { reqFn: authRequest } = useFetch();
-  const dispatch = useDispatch();
+  const { logoutRequest } = useAuth();
 
   useEffect(() => {
-    const lang = user.default_lang?.slice(0, 2).toLowerCase();
+    const lang = client.default_lang?.slice(0, 2).toLowerCase();
     setSelectedLanguage(lang);
     i18next.changeLanguage(lang);
-  }, [user]);
+  }, [client]);
 
   const logoutHandler = () => {
-    authRequest({
-      url: "logout",
-      method: "POST",
-      successFn: () => {
-        // Update user data
-        dispatch(userActions.clear());
-
-        // Save data to localstorage
-        localStorage.clear("agroCurrentUser");
-
-        navigate("/login");
-      },
-    });
+    logoutRequest({ redirect: true });
+    navigate("/login", { replace: true });
   };
 
   const pathname =
@@ -129,8 +119,8 @@ const Navigation = () => {
         <nav className="nav-bar">
           {/* Client title */}
           <div className="title">
-            <h1 className="">{user.client_name_eng}</h1>
-            <h3 className="">{user.tagline}</h3>
+            <h1 className="">{client.client_name_eng}</h1>
+            <h3 className="">{client.tagline}</h3>
           </div>
 
           <div className="actions">
@@ -157,16 +147,16 @@ const Navigation = () => {
                 setUserInfoOpen((prevState) => !prevState);
               }}
             >
-              {user.client_name_eng?.[0].toUpperCase()}
+              {user.user_name?.[0].toUpperCase()}
             </div>
             {userInfoOpen && (
               <div className="user-info">
                 {/* Logo */}
                 <span className="user-avatar"></span>
                 {/* Company name */}
-                <h2 className="user-title">{user.client_name_eng}</h2>
+                <h2 className="user-title">{user.user_name}</h2>
                 {/* Company slogan */}
-                <h4 className="user-tag">{user.tagline}</h4>
+                {/* <h4 className="user-tag">{user.tagline}</h4> */}
                 {/* Logout button */}
                 <button
                   className="logout"
