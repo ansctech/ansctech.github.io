@@ -54,8 +54,9 @@ const AccountGroups = () => {
     {
       title: t("table.masters.subHeaders.accountGroups.labels.name.text"),
       dataIndex: "acc_group_name_eng",
-      sorter: (a, b) => a.nameEn.localeCompare(b.nameEn),
-      ...TableSearch("nameEn"),
+      sorter: (a, b) =>
+        a.acc_group_name_eng.localeCompare(b.acc_group_name_eng),
+      ...TableSearch("acc_group_name_eng"),
     },
     {
       title: t(

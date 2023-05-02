@@ -5,12 +5,13 @@ import { clientActions } from "../../store/Authentication/client";
 import { userActions } from "../../store/Authentication/user";
 import { accountGroupsActions } from "../../store/Masters/accountGroups";
 import { businessEntityActions } from "../../store/Masters/businessEntity";
-import customerGroups from "../../store/Masters/customerGroups";
+import { customerGroupsActions } from "../../store/Masters/customerGroups";
 import { unitsActions } from "../../store/Masters/units";
 import { vegetablesActions } from "../../store/Masters/vegetables";
 import { containerReturnActions } from "../../store/TransactionCustomers/containerReturn";
 import { moneyReceiptActions } from "../../store/TransactionCustomers/moneyReceipt";
 import { saleRecordActions } from "../../store/TransactionCustomers/saleRecord";
+import { saleBillActions } from "../../store/TransactionFarmers/saleBill";
 import useFetch from "../global/useFetch";
 
 const useAuth = () => {
@@ -63,15 +64,18 @@ const useAuth = () => {
         dispatch(accountGroupsActions.clear());
         dispatch(businessEntityActions.clear());
         dispatch(unitsActions.clear());
-        dispatch(customerGroups.clear());
+        dispatch(customerGroupsActions.clear());
         dispatch(vegetablesActions.clear());
         dispatch(containerReturnActions.clear());
         dispatch(moneyReceiptActions.clear());
         dispatch(saleRecordActions.clear());
+        dispatch(saleBillActions.clear());
 
         // Clear data from localstorage
         localStorage.clear("agroCurrentUser");
         localStorage.clear("agroCurrentClient");
+
+        navigate("/login", { replace: true });
       },
     });
   };

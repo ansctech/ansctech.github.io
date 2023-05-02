@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Table } from "antd";
+import { Button, DatePicker, Form, Modal, Table } from "antd";
 import AddSaleRecord from "./addSaleRecord";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,11 +14,16 @@ import useUnits from "../../../hooks/Masters/useUnits";
 import useVegetables from "../../../hooks/Masters/useVegetables";
 import { useTranslation } from "react-i18next";
 import useBusinessEntity from "../../../hooks/Masters/useBusinessEntity";
+import moment from "moment";
 
 const SaleRecord = () => {
   const [editItem, setEditItem] = useState("");
   const navigate = useNavigate();
   const { confirm } = Modal;
+
+  const [form] = Form.useForm();
+  const [duplicateData, setDuplicateData] = useState();
+  const [date, setDate] = useState();
 
   const { t } = useTranslation();
 
@@ -36,6 +41,33 @@ const SaleRecord = () => {
     controllers,
     volatileState: { isLoading },
   } = useSaleRecord();
+
+  useEffect(() => {
+    // Set date to today
+    const today = new Date(Date.now());
+    form.setFieldsValue({ selected_date: moment(today.toISOString()) });
+    setDate(
+      `${today.getFullYear()}-${("0" + (today.getMonth() + 1)).slice(-2)}-${(
+        "0" + today.getDate()
+      ).slice(-2)}`
+    );
+  }, []);
+
+  useEffect(() => {
+    setDuplicateData(
+      saleRecord.filter(({ sale_date }) => {
+        if (!date) return true;
+
+        let dataDate = new Date(sale_date);
+        dataDate = `${dataDate.getFullYear()}-${(
+          "0" +
+          (dataDate.getMonth() + 1)
+        ).slice(-2)}-${("0" + dataDate.getDate()).slice(-2)}`;
+
+        return dataDate === date;
+      })
+    );
+  }, [date, saleRecord]);
 
   useEffect(() => {
     !isModal && setEditItem("");
@@ -80,8 +112,8 @@ const SaleRecord = () => {
       render: (e) => (
         <>
           {businessEntity.find((entity) => {
-            return Number(entity.entity_id) === Number(e?.entity_id);
-          })?.entityname_eng || e.entity_id}
+            return Number(entity.entity_id) === Number(e?.entity_id_cust);
+          })?.entityname_eng || e.entity_id_cust}
         </>
       ),
       sorter: (a, b) => a.entity_id_cust.localeCompare(b.entity_id_cust),
@@ -117,8 +149,16 @@ const SaleRecord = () => {
     <div className="table-headers mr-auto">
       <h4>{t("table.masters.subHeaders.saleRecord.text")}</h4>
       <div className="" style={{ display: "flex", gap: "30px" }}>
+        <Form form={form}>
+          <Form.Item name="selected_date">
+            <DatePicker
+              onChange={(_, dateString) => setDate(dateString)}
+              format="YYYY-MM-DD"
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+        </Form>
         <Button type="primary">Generate Bill</Button>
-        <Button type="primary">Show record</Button>
         <AddSaleRecord
           units={units}
           modal={isModal}
@@ -139,7 +179,7 @@ const SaleRecord = () => {
       scroll={{ x: 800 }}
       columns={columns}
       loading={isLoading}
-      dataSource={saleRecord}
+      dataSource={duplicateData}
       title={() => tableHeader}
     />
   );

@@ -37,8 +37,7 @@ const Navigation = () => {
   }, [client]);
 
   const logoutHandler = () => {
-    logoutRequest({ redirect: true });
-    navigate("/login", { replace: true });
+    logoutRequest();
   };
 
   const pathname =

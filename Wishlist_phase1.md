@@ -31,15 +31,15 @@ Unit master table - Maintain inventory is coming selected even if the value is f
 ==================MILESTONE 4========================
 Transactions
 
-Add date range (from and to date) above the table with show button - this will show the transactional data for that date range only. The default would be current date in both the date control.
+Add date range (from and to date) above the table with show button - this will show the transactional data for that date range only. The default would be current date in both the date control. =======DONE AND TESTED======
 
 In sale record screen - add a button to generate bills for the date selected (one date only)
 
 Sale bill - activate/resolve issue in table and add/edit screen (it is already there)
 
-Money receipt - activate table and add/edit screen (it is already there) ======= DONE AND TESTED======
+Money receipt - activate table and add/edit screen (it is already there) =======DONE AND TESTED======
 
-Container Return - activate table and add/edit screen (it is already there) ======= DONE AND TESTED======
+Container Return - activate table and add/edit screen (it is already there) =======DONE AND TESTED======
 
 ==================MILESTONE 5========================
 Reports

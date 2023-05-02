@@ -5,11 +5,13 @@ import { containerReturnActions } from "../../../store/TransactionCustomers/cont
 import moment from "moment";
 
 const AddContainerReturn = ({
+  editItem,
   modal,
   isLoading,
   units,
   businessEntity,
   addContainerReturn,
+  updateContainerReturn,
 }) => {
   const [date, setDate] = useState("");
   const [form] = Form.useForm();
@@ -37,9 +39,42 @@ const AddContainerReturn = ({
 
   const onFinish = (values) => {
     values.cont_txn_date = date;
-    values.qty_issued = 0;
-    addContainerReturn({ values });
+
+    if (editItem) {
+      updateContainerReturn({
+        id: editItem.cont_txn_id,
+        values,
+      });
+    } else {
+      values.qty_issued = 0;
+      addContainerReturn({ values });
+    }
   };
+
+  useEffect(() => {
+    let date;
+
+    if (editItem) {
+      form.setFieldsValue({
+        ...editItem,
+        cont_txn_date: moment(editItem.cont_txn_date),
+      });
+
+      date = new Date(editItem.cont_txn_date);
+    } else {
+      date = new Date(Date.now());
+      form.resetFields();
+      form.setFieldsValue({ cont_txn_date: moment(date.toISOString()) });
+    }
+
+    setDate(
+      new Date(
+        `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${(
+          "0" + date.getDate()
+        ).slice(-2)}`
+      )
+    );
+  }, [editItem]);
 
   return (
     <>

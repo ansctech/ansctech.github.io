@@ -29,7 +29,7 @@ const Content = () => {
 
       {/* Transaction Customers */}
       {/* <Route path={"/customers/add-sales"} element={<From />} /> */}
-      <Route path={"/customers/sale-bill"} element={<SaleBill />} />
+      <Route path={"/farmers/sale-bill"} element={<SaleBill />} />
       <Route
         path={"/customers/added-sale-record/:id"}
         element={<AddedSaleRecord />}

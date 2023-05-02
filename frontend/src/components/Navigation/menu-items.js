@@ -28,7 +28,7 @@ const useItems = () => {
       getItem("Container Return", "/container-return"),
     ]),
     getItem("Transactions (Farmers)", "/farmers", "", [
-      getItem("Sale Bill", "9"),
+      getItem("Sale Bill", "/sale-bill"),
       getItem("Payment", "10"),
       getItem("Container Return", "/container-receipt"),
     ]),

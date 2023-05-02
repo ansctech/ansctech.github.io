@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Modal } from "antd";
+import { Table, Modal, Form, DatePicker } from "antd";
 import AddMoneyReceipt from "./addMoneyReceipt";
 import { useDispatch } from "react-redux";
 import TableSearch from "../../../components/Table/tableSearch";
@@ -13,11 +13,16 @@ import { moneyReceiptActions } from "../../../store/TransactionCustomers/moneyRe
 import useBusinessEntity from "../../../hooks/Masters/useBusinessEntity";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+import moment from "moment";
 
 const MoneyReceipt = () => {
   const [editItem, setEditItem] = useState("");
   const { confirm } = Modal;
   const dispatch = useDispatch();
+
+  const [duplicateData, setDuplicateData] = useState();
+  const [form] = Form.useForm();
+  const [date, setDate] = useState();
 
   const { t } = useTranslation();
 
@@ -34,6 +39,33 @@ const MoneyReceipt = () => {
   useEffect(() => {
     !isModal && setEditItem("");
   }, [isModal]);
+
+  useEffect(() => {
+    // Set date to today
+    const today = new Date(Date.now());
+    form.setFieldsValue({ selected_date: moment(today.toISOString()) });
+    setDate(
+      `${today.getFullYear()}-${("0" + (today.getMonth() + 1)).slice(-2)}-${(
+        "0" + today.getDate()
+      ).slice(-2)}`
+    );
+  }, []);
+
+  useEffect(() => {
+    setDuplicateData(
+      moneyReceipt.filter(({ receipt_date }) => {
+        if (!date) return true;
+
+        let dataDate = new Date(receipt_date);
+        dataDate = `${dataDate.getFullYear()}-${(
+          "0" +
+          (dataDate.getMonth() + 1)
+        ).slice(-2)}-${("0" + dataDate.getDate()).slice(-2)}`;
+
+        return dataDate === date;
+      })
+    );
+  }, [date, moneyReceipt]);
 
   const deleteItem = (id) => {
     confirm({
@@ -121,13 +153,24 @@ const MoneyReceipt = () => {
   const tableHeader = (
     <div className="table-headers">
       <h4>{t("table.transaction-customer.subHeaders.moneyReceipt.text")}</h4>
-      <AddMoneyReceipt
-        editItem={editItem}
-        isLoading={isLoading}
-        modal={isModal}
-        businessEntity={businessEntity}
-        {...controllers}
-      />
+      <div className="" style={{ display: "flex", gap: "30px" }}>
+        <Form form={form}>
+          <Form.Item name="selected_date">
+            <DatePicker
+              onChange={(_, dateString) => setDate(dateString)}
+              format="YYYY-MM-DD"
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+        </Form>
+        <AddMoneyReceipt
+          editItem={editItem}
+          isLoading={isLoading}
+          modal={isModal}
+          businessEntity={businessEntity}
+          {...controllers}
+        />
+      </div>
     </div>
   );
 
@@ -136,7 +179,7 @@ const MoneyReceipt = () => {
       bordered
       columns={colums}
       title={() => tableHeader}
-      dataSource={moneyReceipt}
+      dataSource={duplicateData}
       loading={isLoading}
       rowKey={"id"}
       scroll={{ x: 768 }}

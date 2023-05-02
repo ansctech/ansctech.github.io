@@ -103,10 +103,18 @@ const AddSaleRecord = ({
       align: "center",
       render: (a, b, index) => <b>{index + 1}</b>,
     },
-    { title: "Customer of Name", dataIndex: "entity_id_cust" },
+    {
+      title: "Customer of Name",
+      render: (e) => (
+        <>
+          {businessEntity.find((entity) => {
+            return Number(entity.entity_id) === Number(e?.entity_id_cust);
+          })?.entityname_eng || e.entity_id_cust}
+        </>
+      ),
+    },
     {
       title: "Vegetable",
-      // dataIndex: "item_id",
       render: (e) => (
         <>
           {vegetable.find((veg) => {
@@ -264,12 +272,13 @@ const AddSaleRecord = ({
               <Item
                 label={
                   <>
-                    Frist Unit{" "}
+                    First Unit {"("}{" "}
                     {
                       units.find(
                         (e) => e.container_id === selectUnit?.container_id
                       )?.container_charge
-                    }
+                    }{" "}
+                    {")"}
                   </>
                 }
               >

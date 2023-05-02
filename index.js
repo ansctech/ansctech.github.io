@@ -31,6 +31,8 @@ app.post("/api/v1/logout", logout);
 // Check for client authentication here
 app.use("/api/v1/*", protect);
 
+app.use("/api/v1/salebill", saleBillRouter);
+
 app.use("/api/v1/items", itemRoutes);
 
 app.use("/api/v1/entity", entityRouter);
@@ -42,8 +44,6 @@ app.use("/api/v1/accgroup", accGroupRouter);
 app.use("/api/v1/container", containerRouter);
 
 app.use("/api/v1/salerecord", saleRecordRouter);
-
-app.use("/api/v1/salebill", saleBillRouter);
 
 app.use("/api/v1/money-receipt", moneyReceiptRouter);
 

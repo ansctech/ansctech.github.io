@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 const { useDispatch } = require("react-redux");
 const { default: useFetch } = require("./useFetch");
 
-const useActions = (reducerState, reducerAction, { mainStorage, idField }) => {
+const useActions = (
+  { loaded, ...reducerState },
+  reducerAction,
+  { mainStorage, idField }
+) => {
   const { reqFn, isLoading } = useFetch();
   const dispatch = useDispatch();
 
@@ -28,10 +32,11 @@ const useActions = (reducerState, reducerAction, { mainStorage, idField }) => {
 
   //   Gets all reducer data from server
   useEffect(() => {
-    if (!reducerState.loaded) {
+    if (!loaded) {
+      console.log("Getting ", mainStorage);
       getAction();
     }
-  }, [actionPerformed]);
+  }, [actionPerformed, loaded]);
 
   //   Adds data to server and reflects on frontend
   const addAction = async ({ values }) => {

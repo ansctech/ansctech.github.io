@@ -9,6 +9,7 @@ import userReducer from "./Authentication/user";
 import clientReducer from "./Authentication/client";
 import containerReturnReducer from "./TransactionCustomers/containerReturn";
 import moneyReceiptReducer from "./TransactionCustomers/moneyReceipt";
+import saleBillReducer from "./TransactionFarmers/saleBill";
 
 const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ const store = configureStore({
     clientReducer,
     moneyReceiptReducer,
     containerReturnReducer,
+    saleBillReducer,
   },
 });
 
