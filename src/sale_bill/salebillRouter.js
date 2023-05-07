@@ -8,8 +8,6 @@ const {
 const saleBillRouter = Router();
 const pool = require("../../db");
 
-const util = require("util");
-
 const tableName = "sale_bill";
 const clauseKey = "bill_id";
 
@@ -37,36 +35,36 @@ saleBillRouter.get("/:id", (req, res) => {
 
 saleBillRouter.post("/", async (req, res) => {
   let { bill_date } = req.body;
-  console.log(new Date(bill_date).toISOString());
-  let { client_id } = req.headers;
+  const client_id = req.user.client_id;
 
   // Delete the records from sale bill on the existing date
-  const deletedrecords = await pool.query(
+  await pool.query(
     `DELETE FROM comm_schm.sale_bill WHERE bill_date = '${bill_date}' AND client_id = '${client_id}'`
   );
-  const deletedrecordsContainerIssueRegister = await pool.query(
+
+  await pool.query(
     `DELETE FROM comm_schm.container_issue_register WHERE issue_date = '${bill_date}' AND client_id = '${client_id}'`
   );
 
-  let sale_bill_query = `select 
+  let sale_bill_query = `select
     sr.sale_date as bill_date,
-    sr.entity_id_cust, 
-    sum(sr.sale_amount) as bill_amount, 
+    sr.entity_id_cust,
+    sum(sr.sale_amount) as bill_amount,
     sum(sr.sale_qty*cm.container_charge) as container_charge,
     sr.client_id
-    from comm_schm.sale_record sr full outer join comm_schm.container_master cm 
+    from comm_schm.sale_record sr full outer join comm_schm.container_master cm
     on cm.container_id=sr.unit_container_id
     where sale_date='${bill_date}' AND sr.client_id='${client_id}'
     group by sr.sale_date, sr.entity_id_cust, sr.client_id;`;
 
-  let container_issue_register_query = `select 
+  let container_issue_register_query = `select
     sr.sale_date as issue_date,
-    sr.entity_id_cust, 
+    sr.entity_id_cust,
     sr.entity_id_trader,
     sr.unit_container_id,
     sum(sr.sale_qty) as issue_qty,
     sr.client_id
-    from comm_schm.sale_record sr, comm_schm.container_master cm 
+    from comm_schm.sale_record sr, comm_schm.container_master cm
     where cm.container_id=sr.unit_container_id and cm.maintain_inventory='YES'
     and sale_date= '${bill_date}' AND sr.client_id='${client_id}'
     group by sr.sale_date, sr.entity_id_cust, sr.entity_id_trader, sr.client_id, sr.unit_container_id`;
@@ -169,11 +167,11 @@ saleBillRouter.post("/", async (req, res) => {
     const results1 = await pool.query(container_issue_register_query);
     processRetrievedData(results1, conObj, "container_issue_register");
 
-    const rec = await insertData(obj, tableName);
-    const con = await insertData(conObj, "container_issue_register");
+    const rec = await insertData(obj, tableName, req);
+    const con = await insertData(conObj, "container_issue_register", req);
 
     //Send response
-    res.send({
+    res.status(201).json({
       message: "Successfully Retrieved data",
       sale_bill_rows: rec,
       caontainer_issue_register_rows: con,
@@ -184,12 +182,14 @@ saleBillRouter.post("/", async (req, res) => {
   }
 });
 
-async function insertData(obj, tableName) {
+async function insertData(obj, tableName, req) {
   const rec = [];
 
   for (const ele of Object.keys(obj)) {
     if (ele) {
-      const result = await pool.query(generateInsertQuery(obj[ele], tableName));
+      const result = await pool.query(
+        generateInsertQuery(obj[ele], tableName, req.user)
+      );
       rec.push(...result.rows);
     }
   }
@@ -272,7 +272,7 @@ saleBillRouter.put("/:id", (req, res) => {
   const itemId = parseInt(req.params.id);
 
   pool.query(
-    generateUpdateQuery(req.body, tableName, clauseKey, itemId),
+    generateUpdateQuery(req.body, tableName, clauseKey, itemId, req.user),
     (err, results) => {
       if (err) console.log(err);
 

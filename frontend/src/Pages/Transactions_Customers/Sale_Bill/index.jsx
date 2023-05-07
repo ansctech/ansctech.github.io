@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Table } from "antd";
+import { Button, DatePicker, Form, Modal, Table } from "antd";
 // import AddAccount from "./addAccount";
 import { useDispatch } from "react-redux";
 import {
@@ -12,35 +12,92 @@ import { saleBillActions } from "../../../store/TransactionFarmers/saleBill";
 import { useTranslation } from "react-i18next";
 import useSaleBill from "../../../hooks/TransactionFarmers/useSaleBill";
 import useBusinessEntity from "../../../hooks/Masters/useBusinessEntity";
+import AddSaleRecord from "./addSaleRecord";
+import useVegetables from "../../../hooks/Masters/useVegetables";
+import useUnits from "../../../hooks/Masters/useUnits";
+import moment from "moment";
+import useSaleRecord from "../../../hooks/TransactionCustomers/useSaleRecord";
+import { useNavigate } from "react-router-dom";
+import useDate from "../../../hooks/global/useDate";
 
 const SaleBill = () => {
   const [editItem, setEditItem] = useState("");
   const { confirm } = Modal;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [form] = Form.useForm();
+  const [duplicateData, setDuplicateData] = useState();
+  const [date, setDate] = useState();
 
   const { t } = useTranslation();
 
   // Sale bill Hook
   const {
-    saleBill: { saleBill, isModal },
+    saleBill: { saleBill },
     controllers,
     volatileState: { isLoading },
   } = useSaleBill();
 
   const {
+    units: { units },
+  } = useUnits();
+  const {
+    vegetables: { vegetables },
+  } = useVegetables();
+  const {
     businessEntity: { businessEntity },
   } = useBusinessEntity();
+
+  const { convertDateToNormalFormat } = useDate();
+
+  // Initialize Sale Record
+  const {
+    saleRecord: { isModal },
+    controllers: { addSaleRecord },
+    volatileState: { isLoading: saleRecordIsLoading },
+  } = useSaleRecord();
+
+  useEffect(() => {
+    // Set date to today
+    const today = new Date(Date.now());
+    form.setFieldsValue({ selected_date: moment(today.toISOString()) });
+    setDate(
+      `${today.getFullYear()}-${("0" + (today.getMonth() + 1)).slice(-2)}-${(
+        "0" + today.getDate()
+      ).slice(-2)}`
+    );
+  }, []);
+
+  useEffect(() => {
+    setDuplicateData(
+      saleBill.filter(({ bill_date }) => {
+        if (!date) return true;
+
+        let dataDate = new Date(bill_date);
+        dataDate = `${dataDate.getFullYear()}-${(
+          "0" +
+          (dataDate.getMonth() + 1)
+        ).slice(-2)}-${("0" + dataDate.getDate()).slice(-2)}`;
+
+        return dataDate === date;
+      })
+    );
+  }, [date, saleBill]);
 
   useEffect(() => {
     !isModal && setEditItem("");
   }, [isModal]);
 
-  const editAccountItem = (item) => {
-    setEditItem(item);
-    dispatch(saleBillActions.update({ isModal: true }));
+  const editSaleBill = (bill) => {
+    navigate(
+      `./${bill.bill_id}/${convertDateToNormalFormat(bill.bill_date)}/${
+        bill.entity_id_cust
+      }`
+    );
   };
 
-  const deleteAccountItem = (accountId) => {
+  const deleteSaleBill = (accountId) => {
     confirm({
       title: "Do you Want to delete these items?",
       icon: <ExclamationCircleFilled />,
@@ -94,31 +151,51 @@ const SaleBill = () => {
       fixed: "right",
       render: (record) => (
         <div className={"table-action"}>
-          <EditOutlined onClick={() => editAccountItem(record)} />
-          <DeleteOutlined onClick={() => deleteAccountItem(record?.bill_id)} />
+          <EditOutlined onClick={() => editSaleBill(record)} />
+          <DeleteOutlined onClick={() => deleteSaleBill(record?.bill_id)} />
         </div>
       ),
     },
   ];
 
   const tableHeader = (
-    <div className="table-headers">
-      <h4>Sale Bill</h4>
-      {/* <AddAccount
-        modal={isModal}
-        editItem={editItem}
-        {...{
-          ...controllers,
-          isLoading,
-        }}
-      /> */}
+    <div className="table-headers mr-auto">
+      <h4>{t("table.transaction-customer.subHeaders.saleBill.text")}</h4>
+      <div className="" style={{ display: "flex", gap: "30px" }}>
+        <Form form={form}>
+          <Form.Item name="selected_date">
+            <DatePicker
+              onChange={(_, dateString) => setDate(dateString)}
+              format="YYYY-MM-DD"
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+        </Form>
+        <Button
+          type="primary"
+          onClick={() => {
+            controllers.generateBill(date);
+          }}
+        >
+          Generate Bill
+        </Button>
+        <AddSaleRecord
+          units={units}
+          modal={isModal}
+          editItem={editItem}
+          isLoading={saleRecordIsLoading}
+          vegetable={vegetables}
+          businessEntity={businessEntity}
+          addSaleRecord={addSaleRecord}
+        />
+      </div>
     </div>
   );
 
   return (
     <Table
       columns={columns}
-      dataSource={saleBill}
+      dataSource={duplicateData}
       bordered
       scroll={{ x: 500 }}
       loading={isLoading}

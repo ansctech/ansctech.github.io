@@ -7,7 +7,7 @@ const initialState = {
   isModal: false,
   isLoading: false,
   tableLoader: true,
-  url: "saleBill",
+  url: "salebill",
   loaded: false,
 };
 

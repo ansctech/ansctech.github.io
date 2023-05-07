@@ -33,7 +33,6 @@ const useActions = (
   //   Gets all reducer data from server
   useEffect(() => {
     if (!loaded) {
-      console.log("Getting ", mainStorage);
       getAction();
     }
   }, [actionPerformed, loaded]);
@@ -59,8 +58,8 @@ const useActions = (
   };
 
   //   Updates data in server and reflects on frontend
-  const updateAction = ({ id, values }) => {
-    reqFn({
+  const updateAction = async ({ id, values }) => {
+    await reqFn({
       method: "PUT",
       url: `${reducerState.url}/${id}`,
       successFn: () => {
@@ -79,8 +78,8 @@ const useActions = (
   };
 
   //   Deletes data from server and reflects on frontend
-  const deleteAction = (id) => {
-    reqFn({
+  const deleteAction = async (id) => {
+    await reqFn({
       method: "DELETE",
       url: `${reducerState.url}/${id}`,
       successFn: () => {

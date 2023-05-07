@@ -29,7 +29,7 @@ const AddSaleRecord = ({
   updateSaleRecord,
 }) => {
   const [date, setDate] = useState("");
-  const [multepule, setMultepule] = useState(false);
+  const [multepule, setMultepule] = useState();
   const [tableData, setTableData] = useState([]);
   const [selectFramer, setSelectFramer] = useState("");
   const [selectUnit, setSelectUnit] = useState("");
@@ -41,17 +41,7 @@ const AddSaleRecord = ({
   const { controllers } = useContainerReturn();
 
   useEffect(() => {
-    if (modal) {
-      const date = new Date(Date.now());
-      form.setFieldsValue({ sale_date: moment(date.toISOString()) });
-      setDate(
-        new Date(
-          `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${(
-            "0" + date.getDate()
-          ).slice(-2)}`
-        )
-      );
-    } else {
+    if (!modal) {
       form.resetFields();
       setTableData([]);
     }
@@ -63,21 +53,18 @@ const AddSaleRecord = ({
 
   const onFinish = (values) => {
     values.sale_date = date;
-    values.multiply_kg_qty = multepule;
-    values.entity_id_trader = selectFramer;
-    values.unit_container_id = selectUnit.container_id;
 
-    let obj = {
+    values.multiply_kg_qty = multepule ? "YES" : "NO";
+
+    values.entity_id_trader = selectFramer;
+
+    values.unit_container_id = Number(selectUnit.container_id);
+
+    const obj = {
+      ...values,
       id: v4(),
-      item_rate: values?.item_rate,
-      kg_per_container: values?.kg_per_container,
-      unit_container_id: values?.unit_container_id,
-      sale_qty: values?.sale_qty,
-      entity_id_cust: values?.entity_id_cust,
-      entity_id_trader: values?.entity_id_trader,
-      multiply_kg_qty: values?.multiply_kg_qty,
-      sale_date: values?.sale_date,
-      item_id: values?.item_id,
+      item_rate: Number(values.item_rate),
+      kg_per_container: Number(values.kg_per_container),
       sale_amount:
         Number(values?.sale_qty) *
         (values?.multiply_kg_qty === "YES"
@@ -85,13 +72,52 @@ const AddSaleRecord = ({
           : 1) *
         Number(values?.item_rate),
     };
+
+    if (editItem) {
+      delete obj.id;
+
+      updateSaleRecord({ values: obj, id: editItem.entry_id });
+
+      return;
+    }
+
     setTableData((prevArr) => [...prevArr, obj]);
     form.setFieldsValue({
       sale_qty: "",
-      multiply_kg_qty: "NO",
+      multiply_kg_qty: false,
       entity_id_cust: "",
     });
   };
+
+  useEffect(() => {
+    let date;
+
+    if (editItem) {
+      form.setFieldsValue({
+        ...editItem,
+        sale_date: moment(editItem.sale_date),
+      });
+
+      date = new Date(editItem.sale_date);
+      setMultepule(editItem.multiply_kg_qty === "YES");
+      setSelectFramer(editItem.entity_id_trader);
+      setSelectUnit(
+        units.find((unit) => unit.container_id === editItem.unit_container_id)
+      );
+    } else {
+      date = new Date(Date.now());
+      form.resetFields();
+      form.setFieldsValue({ sale_date: moment(date.toISOString()) });
+    }
+
+    setDate(
+      new Date(
+        `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${(
+          "0" + date.getDate()
+        ).slice(-2)}`
+      )
+    );
+  }, [editItem]);
 
   const deleteItem = (id) => {
     setTableData(tableData.filter((e) => e.id !== id));
@@ -159,6 +185,7 @@ const AddSaleRecord = ({
 
     await addSaleRecord({ values: tableData });
 
+    // Add maintain inventory units to container return
     maintainInventoryUnits.forEach((record) => {
       controllers.addContainerReturn({
         values: {
@@ -187,9 +214,10 @@ const AddSaleRecord = ({
         centered
         open={modal}
         width={"75%"}
-        onOk={submit}
+        // onOk={submit}
+        onOk={() => (editItem ? form.submit() : submit())}
         okText="Submit"
-        title="Add New Sale Record"
+        title={`${editItem ? "Edit" : "Add New"} Sale Record`}
         confirmLoading={isLoading}
         onCancel={() => dispatch(saleRecordActions.update({ isModal: false }))}
       >
@@ -349,9 +377,7 @@ const AddSaleRecord = ({
                 <Item name="multiply_kg_qty">
                   <Checkbox
                     checked={multepule}
-                    onChange={(e) =>
-                      setMultepule(e.target.checked ? "YES" : "NO")
-                    }
+                    onChange={(e) => setMultepule(e.target.checked)}
                   />
                 </Item>
               </Item>
@@ -359,14 +385,16 @@ const AddSaleRecord = ({
             <Col span={4}>
               <Item label={<span style={{ color: "transparent" }}>.</span>}>
                 <Item>
-                  <Button
-                    onClick={() => form.submit()}
-                    className="bg-secondary text-light"
-                    block
-                  >
-                    {" "}
-                    Add{" "}
-                  </Button>
+                  {!editItem && (
+                    <Button
+                      onClick={() => form.submit()}
+                      className="bg-secondary text-light"
+                      block
+                    >
+                      {" "}
+                      Add{" "}
+                    </Button>
+                  )}
                 </Item>
               </Item>
             </Col>
