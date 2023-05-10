@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import {
   Button,
   Modal,
@@ -36,6 +36,8 @@ const AddSaleRecord = ({
   const [form] = Form.useForm();
   const { Item } = Form;
   const { Option } = Select;
+  const { confirm } = Modal;
+
   const dispatch = useDispatch();
 
   const { controllers } = useContainerReturn();
@@ -43,6 +45,8 @@ const AddSaleRecord = ({
   useEffect(() => {
     if (!modal) {
       form.resetFields();
+      setSelectUnit(null);
+      setSelectFramer(null);
       setTableData([]);
     }
   }, [modal]);
@@ -107,6 +111,7 @@ const AddSaleRecord = ({
     } else {
       date = new Date(Date.now());
       form.resetFields();
+
       form.setFieldsValue({ sale_date: moment(date.toISOString()) });
     }
 
@@ -150,7 +155,16 @@ const AddSaleRecord = ({
       ),
     },
     { title: "Qty", align: "right", dataIndex: "sale_qty" },
-    { title: "Unit", dataIndex: "unit_container_id" },
+    {
+      title: "Unit",
+      render: (e) => (
+        <>
+          {units.find((unit) => {
+            return Number(unit.container_id) === Number(e?.unit_container_id);
+          })?.container_name_eng || e.unit_container_id}
+        </>
+      ),
+    },
     { title: "Rate", align: "right", dataIndex: "item_rate" },
     { title: "Kg/Unit", align: "right", dataIndex: "kg_per_container" },
     {
@@ -170,32 +184,42 @@ const AddSaleRecord = ({
     },
   ];
 
-  const submit = async () => {
+  const submit = () => {
     if (!tableData.length) return;
 
-    const maintainInventoryUnits = [];
+    confirm({
+      title: "Are you sure you want to save these items?",
+      icon: <ExclamationCircleFilled />,
+      content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: async () => {
+        const maintainInventoryUnits = [];
 
-    tableData.forEach((data) => {
-      units.find((unit) => unit.container_id == data.unit_container_id)
-        ?.maintain_inventory === "YES" && maintainInventoryUnits.push(data);
+        tableData.forEach((data) => {
+          units.find((unit) => unit.container_id == data.unit_container_id)
+            ?.maintain_inventory === "YES" && maintainInventoryUnits.push(data);
 
-      // Remove temporary id
-      delete data.id;
-    });
+          // Remove temporary id
+          delete data.id;
+        });
 
-    await addSaleRecord({ values: tableData });
+        await addSaleRecord({ values: tableData });
 
-    // Add maintain inventory units to container return
-    maintainInventoryUnits.forEach((record) => {
-      controllers.addContainerReturn({
-        values: {
-          cont_txn_date: record.sale_date,
-          qty_received: 0,
-          qty_issued: Number(record.sale_qty),
-          entity_id: record.entity_id_cust,
-          container_id: record.unit_container_id,
-        },
-      });
+        // Add maintain inventory units to container return
+        maintainInventoryUnits.forEach((record) => {
+          controllers.addContainerReturn({
+            values: {
+              cont_txn_date: record.sale_date,
+              qty_received: 0,
+              qty_issued: Number(record.sale_qty),
+              entity_id: record.entity_id_cust,
+              container_id: record.unit_container_id,
+            },
+          });
+        });
+      },
     });
   };
 
@@ -204,7 +228,6 @@ const AddSaleRecord = ({
       <Button
         type="primary"
         onClick={() => {
-          // Check for subscription_last_date
           dispatch(saleRecordActions.update({ isModal: true }));
         }}
       >
@@ -214,7 +237,6 @@ const AddSaleRecord = ({
         centered
         open={modal}
         width={"75%"}
-        // onOk={submit}
         onOk={() => (editItem ? form.submit() : submit())}
         okText="Submit"
         title={`${editItem ? "Edit" : "Add New"} Sale Record`}
@@ -300,13 +322,13 @@ const AddSaleRecord = ({
               <Item
                 label={
                   <>
-                    First Unit {"("}{" "}
+                    First Unit {" ["}{" "}
                     {
                       units.find(
                         (e) => e.container_id === selectUnit?.container_id
                       )?.container_charge
                     }{" "}
-                    {")"}
+                    {"]"}
                   </>
                 }
               >

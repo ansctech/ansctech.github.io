@@ -47,19 +47,14 @@ const SaleRecord = () => {
   } = useSaleRecord();
 
   const {
-    controllers: { updateBill },
+    controllers: { generateBill },
   } = useSaleBill();
 
   useEffect(() => {
     !isModal && setEditItem("");
   }, [isModal]);
 
-  const editAccountItem = (item) => {
-    setEditItem(item);
-    dispatch(saleRecordActions.update({ isModal: true }));
-  };
-
-  const deleteAccountItem = (id) => {
+  const deleteSaleRecordItem = async (e) => {
     confirm({
       title: "Do you Want to delete these items?",
       icon: <ExclamationCircleFilled />,
@@ -67,8 +62,9 @@ const SaleRecord = () => {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
-      onOk() {
-        controllers.deleteSaleRecord(id);
+      onOk: async () => {
+        await controllers.deleteSaleRecord(e?.entry_id);
+        generateBill(date);
       },
     });
   };
@@ -123,30 +119,7 @@ const SaleRecord = () => {
       align: "center",
       render: (e) => (
         <DeleteOutlined
-          onClick={() => {
-            confirm({
-              title: "Do you Want to delete these items?",
-              icon: <ExclamationCircleFilled />,
-              content: "Some descriptions",
-              okText: "Yes",
-              okType: "danger",
-              cancelText: "No",
-              onOk: async () => {
-                await controllers.deleteSaleRecord(e?.entry_id);
-                updateBill({
-                  billId,
-                  date,
-                  newRecords: saleRecord.filter(
-                    (record) =>
-                      record.entity_id_cust === customer &&
-                      convertDateToNormalFormat(record.sale_date) === date &&
-                      record.entry_id !== e?.entry_id
-                  ),
-                  customer: e.entity_id_cust,
-                });
-              },
-            });
-          }}
+          onClick={() => deleteSaleRecordItem(e)}
           className="table-btn"
         />
       ),

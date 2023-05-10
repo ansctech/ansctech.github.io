@@ -39,7 +39,7 @@ const useActions = (
 
   //   Adds data to server and reflects on frontend
   const addAction = async ({ values }) => {
-    reqFn({
+    await reqFn({
       method: "POST",
       url: reducerState.url,
       successFn: () => {

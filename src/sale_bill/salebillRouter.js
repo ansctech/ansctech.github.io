@@ -12,10 +12,15 @@ const tableName = "sale_bill";
 const clauseKey = "bill_id";
 
 saleBillRouter.get("/", async (req, res) => {
-  pool.query(generateRetrieveQuery(tableName), (err, results) => {
-    if (err) console.log(err);
-    res.status(200).json(results.rows);
-  });
+  const client_id = req.user.client_id;
+
+  pool.query(
+    generateRetrieveQuery(tableName, "client_id", client_id),
+    (err, results) => {
+      if (err) console.log(err);
+      res.status(200).json(results.rows);
+    }
+  );
 });
 
 saleBillRouter.get("/:id", (req, res) => {
@@ -36,6 +41,18 @@ saleBillRouter.get("/:id", (req, res) => {
 saleBillRouter.post("/", async (req, res) => {
   let { bill_date } = req.body;
   const client_id = req.user.client_id;
+
+  let existingRecord = await pool.query(
+    `SELECT * FROM comm_schm.sale_bill WHERE bill_date = '${bill_date}' AND client_id = '${client_id}'`
+  );
+
+  const acc = {};
+
+  existingRecord.rows.forEach((curr) => {
+    acc[curr.entity_id_cust] = curr;
+  });
+
+  existingRecord = acc;
 
   // Delete the records from sale bill on the existing date
   await pool.query(
@@ -69,94 +86,6 @@ saleBillRouter.post("/", async (req, res) => {
     and sale_date= '${bill_date}' AND sr.client_id='${client_id}'
     group by sr.sale_date, sr.entity_id_cust, sr.entity_id_trader, sr.client_id, sr.unit_container_id`;
 
-  // try {
-  //       // Retrieve data from the database
-  //   const results = await pool.query(sale_bill_query);
-  //   const len = results.rows.length;
-  //   let rows;
-
-  //   if (len === 0) {
-  //     await send("No Records exist for the Date");
-  //     return;
-  //   } else {
-  //     rows = results.rows;
-  //   }
-
-  //   // Process the retrieved data
-  //   for (let i = 0; i < len; i++) {
-  //     const row = rows[i];
-
-  //     if (!obj[row.entity_id_cust]) {
-  //       obj[row.entity_id_cust] = {
-  //         "bill_date": new Date(bill_date).toISOString(),
-  //         "entity_id_cust": row.entity_id_cust,
-  //         "bill_amount":row.bill_amount,
-  //         "total_container_amount": row.container_charge,
-  //         "client_id": row.client_id,
-  //         "created_by": "adodla",
-  //         "created_date": new Date().toISOString(),
-  //         "last_modified_by": "akhi",
-  //         "last_modified_date": new Date().toISOString()
-  //       };
-  //     }
-  //   }
-  //   let rec=[]
-
-  //   // Insert data into the database
-  //   for (const ele of Object.keys(obj)) {
-  //     if(ele){
-  //       const result = await pool.query(generateInsertQuery(obj[ele], tableName));
-  //       rec.push(...result.rows);
-  //     }
-  //   }
-
-  //   const results1 = await pool.query(container_issue_register_query);
-  //   const leng = results.rows.length;
-  //   let rows1;
-
-  //   if (leng === 0) {
-  //     await send("No Records exist for the Date");
-  //     return;
-  //   } else {
-  //     rows1 = results1.rows;
-  //   }
-
-  //   // Process the retrieved data
-  //   for (let i = 0; i < len; i++) {
-  //     const row = rows1[i];
-
-  //     if (!conObj[row.entity_id_cust]) {
-  //       conObj[row.entity_id_cust] = {
-  //         "issue_date": new Date(bill_date).toISOString(),
-  //         "entity_id_cust": row.entity_id_cust,
-  //         "entity_id_trader":row.entity_id_trader,
-  //         "container_id":row.unit_container_id,
-  //         "issue_qty":row.issue_qty,
-  //         "client_id": row.client_id,
-  //         "created_by": "adodla",
-  //         "created_date": new Date().toISOString(),
-  //         "last_modified_by": "akhi",
-  //         "last_modified_date": new Date().toISOString()
-  //       };
-  //     }
-  //   }
-  //   let con=[]
-
-  //   // Insert data into the database
-  //   for (const ele of Object.keys(conObj)) {
-  //     if(ele){
-  //       const result = await pool.query(generateInsertQuery(conObj[ele], "container_issue_register"));
-  //       con.push(...result.rows);
-  //     }
-  //   }
-
-  //   // Send response
-  //   await res.send({message:"Successfully Retrieved data","sale_bill_rows":rec,"caontainer_issue_register_rows":con});
-  // } catch (err) {
-  //   console.log(err);
-  //   res.status(500).send("Unable to Retrieve Info");
-  // }
-
   try {
     const obj = {};
     const conObj = {};
@@ -169,6 +98,33 @@ saleBillRouter.post("/", async (req, res) => {
 
     const rec = await insertData(obj, tableName, req);
     const con = await insertData(conObj, "container_issue_register", req);
+
+    // Update customers balance
+    await Object.keys(obj).forEach(async (ob) => {
+      const entity = await pool.query(
+        generateRetrieveQuery("entity_master", "entity_id", ob)
+      );
+
+      await pool.query(
+        generateUpdateQuery(
+          {
+            curr_bal:
+              Number(entity.rows[0].curr_bal) +
+              Number(obj[ob].bill_amount) -
+              (Number(existingRecord[ob]?.bill_amount) || 0),
+          },
+          "entity_master",
+          "entity_id",
+          ob,
+          req.user
+        )
+      );
+
+      // Update container balance
+      // cont = await pool.query(
+      //   `SELECT * FROM comm_schm.entity_container_balance WHERE entity_id = '${entity.rows[0].entity_id}' AND container_id = '${client_id}'`
+      // );
+    });
 
     //Send response
     res.status(201).json({
@@ -249,11 +205,34 @@ function processRetrievedData(results, obj, tableName) {
   return obj;
 }
 
-saleBillRouter.delete("/:id", (req, res) => {
+saleBillRouter.delete("/:id", async (req, res) => {
   const itemId = parseInt(req.params.id);
+
+  const {
+    rows: [bill],
+  } = await pool.query(generateRetrieveQuery(tableName, clauseKey, itemId));
+
+  const {
+    rows: [entity],
+  } = await pool.query(
+    generateRetrieveQuery("entity_master", "entity_id", bill.entity_id_cust)
+  );
+
+  await pool.query(
+    generateUpdateQuery(
+      {
+        curr_bal: Number(entity.curr_bal) - Number(bill.bill_amount),
+      },
+      "entity_master",
+      "entity_id",
+      bill.entity_id_cust,
+      req.user
+    )
+  );
+
   pool.query(
     generateDeleteQuery(tableName, clauseKey, itemId),
-    (err, results) => {
+    async (err, results) => {
       if (err) console.log(err);
 
       let noItemFound = !results.rowCount;

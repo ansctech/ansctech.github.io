@@ -19,6 +19,7 @@ import moment from "moment";
 import useSaleRecord from "../../../hooks/TransactionCustomers/useSaleRecord";
 import { useNavigate } from "react-router-dom";
 import useDate from "../../../hooks/global/useDate";
+import { businessEntityActions } from "../../../store/Masters/businessEntity";
 
 const SaleBill = () => {
   const [editItem, setEditItem] = useState("");
@@ -97,7 +98,7 @@ const SaleBill = () => {
     );
   };
 
-  const deleteSaleBill = (accountId) => {
+  const deleteSaleBill = (billId) => {
     confirm({
       title: "Do you Want to delete these items?",
       icon: <ExclamationCircleFilled />,
@@ -105,8 +106,9 @@ const SaleBill = () => {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
-      onOk() {
-        controllers.deleteSaleBill(accountId);
+      onOk: async () => {
+        await controllers.deleteSaleBill(billId);
+        dispatch(businessEntityActions.update({ loaded: false }));
       },
     });
   };
