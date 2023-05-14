@@ -2,17 +2,16 @@ import { createSlice } from "@reduxjs/toolkit";
 
 // Initial state of slice
 const initialState = {
-  containerReturn: [],
   containerBalance: [],
   isModal: false,
   isLoading: false,
   tableLoader: true,
-  url: "container-return",
+  url: "container-balance",
   loaded: false,
 };
 
-const containerReturnSlice = createSlice({
-  name: "containerReturn",
+const containerBalanceSlice = createSlice({
+  name: "containerBalance",
   initialState,
   reducers: {
     update: (state, { payload }) => ({ ...state, ...payload }),
@@ -20,6 +19,6 @@ const containerReturnSlice = createSlice({
   },
 });
 
-export const containerReturnActions = containerReturnSlice.actions;
+export const containerBalanceActions = containerBalanceSlice.actions;
 
-export default containerReturnSlice.reducer;
+export default containerBalanceSlice.reducer;

@@ -15,6 +15,8 @@ import { useEffect } from "react";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import { containerReturnActions } from "../../../store/TransactionCustomers/containerReturn";
+import dayjs from "dayjs";
+import containerBalance from "../../../store/TransactionCustomers/containerBalance";
 
 const ContainerReturn = () => {
   const { confirm } = Modal;
@@ -40,16 +42,18 @@ const ContainerReturn = () => {
     units: { units },
   } = useUnits();
 
-  const deleteItem = (id) => {
+  const deleteItem = (record) => {
     confirm({
-      title: "Do you Want to delete these items?",
+      title: "Do you Want to delete this item?",
+      autoFocusButton: "cancel",
       icon: <ExclamationCircleFilled />,
       content: "Some descriptions",
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
-      onOk() {
-        controllers.deleteContainerReturn(id);
+      onOk: async () => {
+        await controllers.deleteContainerReturn(record?.cont_txn_id, record);
+        dispatch(containerBalance.update({ loaded: false }));
       },
     });
   };
@@ -61,7 +65,7 @@ const ContainerReturn = () => {
   useEffect(() => {
     // Set date to today
     const today = new Date(Date.now());
-    form.setFieldsValue({ selected_date: moment(today.toISOString()) });
+    form.setFieldsValue({ selected_date: dayjs(today.toISOString()) });
     setDate(
       `${today.getFullYear()}-${("0" + (today.getMonth() + 1)).slice(-2)}-${(
         "0" + today.getDate()
@@ -129,15 +133,10 @@ const ContainerReturn = () => {
       sorter: (a, b) => a.container_id.localeCompare(b.container_id),
       ...TableSearch("container_id"),
     },
-    // {
-    //   title: "Qty Issued",
-    //   dataIndex: "qty_issued",
-    //   sorter: (a, b) => a.qyt_received - b.qyt_received,
-    //   ...TableSearch("qyt_received"),
-    // },
     {
       title: "Quantity",
       dataIndex: "qty_received",
+      align: "right",
       sorter: (a, b) => a.qty_received - b.qty_received,
       ...TableSearch("qty_received"),
     },
@@ -148,7 +147,7 @@ const ContainerReturn = () => {
       render: (record) => (
         <div className={"table-action"}>
           <EditOutlined onClick={() => editContainerReturnItem(record)} />
-          <DeleteOutlined onClick={() => deleteItem(record?.cont_txn_id)} />
+          <DeleteOutlined onClick={() => deleteItem(record)} />
         </div>
       ),
     },

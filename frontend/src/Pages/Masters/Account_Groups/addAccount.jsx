@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Modal, Form, Input } from "antd";
 import { accountGroupsActions } from "../../../store/Masters/accountGroups";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 const AddAccount = ({
   editItem,
@@ -12,16 +13,25 @@ const AddAccount = ({
 }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const { confirm } = Modal;
 
   const onFinish = (values) => {
-    if (editItem) {
-      updateAccountGroup({
-        id: editItem.acc_group_id,
-        values,
-      });
-    } else {
-      addAccountGroup({ values });
-    }
+    confirm({
+      title: "Are you sure you want to save this Account Group?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Yes",
+      cancelText: "No",
+      onOk: () => {
+        if (editItem) {
+          updateAccountGroup({
+            id: editItem.acc_group_id,
+            values,
+          });
+        } else {
+          addAccountGroup({ values });
+        }
+      },
+    });
   };
 
   useEffect(() => {
@@ -51,10 +61,20 @@ const AddAccount = ({
             : "Add New Account Group Master"
         }
         open={modal}
+        okText="Save"
         onOk={() => form.submit()}
         confirmLoading={isLoading}
         onCancel={() =>
-          dispatch(accountGroupsActions.update({ isModal: false }))
+          confirm({
+            title: "Do you want to close this entry without saving?",
+            icon: <ExclamationCircleFilled />,
+            okText: "Yes",
+            cancelText: "No",
+            onOk: () => {
+              dispatch(accountGroupsActions.update({ isModal: false }));
+              Modal.destroyAll();
+            },
+          })
         }
       >
         <Form

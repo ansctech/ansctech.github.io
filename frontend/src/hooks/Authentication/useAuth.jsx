@@ -8,6 +8,7 @@ import { businessEntityActions } from "../../store/Masters/businessEntity";
 import { customerGroupsActions } from "../../store/Masters/customerGroups";
 import { unitsActions } from "../../store/Masters/units";
 import { vegetablesActions } from "../../store/Masters/vegetables";
+import containerBalance from "../../store/TransactionCustomers/containerBalance";
 import { containerReturnActions } from "../../store/TransactionCustomers/containerReturn";
 import { moneyReceiptActions } from "../../store/TransactionCustomers/moneyReceipt";
 import { saleRecordActions } from "../../store/TransactionCustomers/saleRecord";
@@ -70,6 +71,7 @@ const useAuth = () => {
         dispatch(moneyReceiptActions.clear());
         dispatch(saleRecordActions.clear());
         dispatch(saleBillActions.clear());
+        dispatch(containerBalance.clear());
 
         // Clear data from localstorage
         localStorage.clear("agroCurrentUser");

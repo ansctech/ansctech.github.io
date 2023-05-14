@@ -18,6 +18,7 @@ import moment from "moment";
 import useDate from "../../../hooks/global/useDate";
 import { saleRecordActions } from "../../../store/TransactionCustomers/saleRecord";
 import useSaleBill from "../../../hooks/TransactionFarmers/useSaleBill";
+import { containerBalanceActions } from "../../../store/TransactionCustomers/containerBalance";
 
 const SaleRecord = () => {
   const [editItem, setEditItem] = useState("");
@@ -30,6 +31,8 @@ const SaleRecord = () => {
   const { date, customer, billId } = useParams();
 
   const { convertDateToNormalFormat } = useDate();
+
+  const navigate = useNavigate();
 
   const {
     units: { units },
@@ -56,15 +59,17 @@ const SaleRecord = () => {
 
   const deleteSaleRecordItem = async (e) => {
     confirm({
-      title: "Do you Want to delete these items?",
+      title: "Do you Want to delete this item?",
+      autoFocusButton: "cancel",
       icon: <ExclamationCircleFilled />,
       content: "Some descriptions",
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
       onOk: async () => {
-        await controllers.deleteSaleRecord(e?.entry_id);
+        await controllers.deleteSaleRecord(e?.entry_id, e);
         generateBill(date);
+        dispatch(containerBalanceActions.update({ loaded: false }));
       },
     });
   };
@@ -112,7 +117,7 @@ const SaleRecord = () => {
     {
       title: "Amount",
       align: "right",
-      dataIndex: "sale_amount",
+      render: (e) => Number(e.sale_amount).toFixed(2),
     },
     {
       title: "Delete",
@@ -128,9 +133,19 @@ const SaleRecord = () => {
 
   const tableHeader = (
     <div className="table-headers mr-auto">
-      <h4>
-        Bill Date: <span style={{ fontWeight: 400 }}>{date}</span>
-      </h4>
+      <div className="" style={{ display: "flex", alignItems: "center" }}>
+        <Button
+          type="primary"
+          onClick={() => {
+            navigate("/customers/sale-bill");
+          }}
+        >
+          Back To Sale Bill
+        </Button>
+        <h4 style={{ marginLeft: 40 }}>
+          Bill Date: <span style={{ fontWeight: 400 }}>{date}</span>
+        </h4>
+      </div>
       <h4>
         Customer:{" "}
         <span style={{ fontWeight: 400 }}>

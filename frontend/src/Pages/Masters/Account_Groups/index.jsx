@@ -37,14 +37,17 @@ const AccountGroups = () => {
 
   const deleteAccountItem = (accountId) => {
     confirm({
-      title: "Do you Want to delete these items?",
+      title: "Do you Want to delete this item?",
+      autoFocusButton: "cancel",
       icon: <ExclamationCircleFilled />,
-      content: "Some descriptions",
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
       onOk() {
         deleteAccountGroup(accountId);
+      },
+      onCancel() {
+        Modal.destroyAll();
       },
     });
   };

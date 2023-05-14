@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Modal, Form, Input, Select, Upload, Image } from "antd";
 import { vegetablesActions } from "../../../store/Masters/vegetables";
-import { UploadOutlined } from "@ant-design/icons";
+import { ExclamationCircleFilled, UploadOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
 const AddVegetables = ({
@@ -17,15 +17,25 @@ const AddVegetables = ({
   const [uploadBase64Format, setUploadBase64Format] = useState(null);
   const dispatch = useDispatch();
 
+  const { confirm } = Modal;
+
   const onFinish = (values) => {
-    if (uploadBase64Format) {
-      values.photo = uploadBase64Format;
-    }
-    if (editItem) {
-      update({ values, id: editItem?.item_id });
-    } else {
-      addVegetables({ values });
-    }
+    confirm({
+      title: "Are you sure you want to save this Vegetable?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Yes",
+      cancelText: "No",
+      onOk: () => {
+        if (uploadBase64Format) {
+          values.photo = uploadBase64Format;
+        }
+        if (editItem) {
+          update({ values, id: editItem?.item_id });
+        } else {
+          addVegetables({ values });
+        }
+      },
+    });
   };
 
   // Make sure image is no more than 10kb
@@ -82,8 +92,20 @@ const AddVegetables = ({
         title={`${editItem ? "Edit" : "Add New"} Vegetables`}
         open={modal}
         onOk={() => form.submit()}
+        okText="Save"
         confirmLoading={isLoading}
-        onCancel={() => dispatch(vegetablesActions.update({ isModal: false }))}
+        onCancel={() => {
+          confirm({
+            title: "Do you want to close this entry without saving?",
+            icon: <ExclamationCircleFilled />,
+            okText: "Yes",
+            cancelText: "No",
+            onOk: () => {
+              dispatch(vegetablesActions.update({ isModal: false }));
+              Modal.destroyAll();
+            },
+          });
+        }}
       >
         <Form
           form={form}

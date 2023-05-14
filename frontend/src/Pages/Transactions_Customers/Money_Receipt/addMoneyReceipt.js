@@ -11,6 +11,9 @@ import {
   DatePicker,
 } from "antd";
 import { moneyReceiptActions } from "../../../store/TransactionCustomers/moneyReceipt";
+import { businessEntityActions } from "../../../store/Masters/businessEntity";
+import { ExclamationCircleFilled } from "@ant-design/icons";
+import dayjs from "dayjs";
 
 const AddMoneyReceipt = ({
   editItem,
@@ -23,9 +26,14 @@ const AddMoneyReceipt = ({
   const [date, setDate] = useState("");
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const [entity, setEntity] = useState();
+  const { confirm } = Modal;
 
   useEffect(() => {
-    !modal && form.resetFields();
+    if (!modal) {
+      form.resetFields();
+      setEntity();
+    }
   }, [modal]);
 
   const selectDate = (date, dateString) => {
@@ -34,29 +42,48 @@ const AddMoneyReceipt = ({
 
   const onFinish = (values) => {
     values.receipt_date = new Date(date).toISOString();
+    values.entity_id = entity.entity_id;
     values.remarks = values.remarks || "";
 
-    if (editItem) {
-      updateMoneyReceipt({ values, id: editItem.receipt_id });
-    } else {
-      addMoneyReceipt({ values });
-    }
+    confirm({
+      title: "Are you sure you want to save these items?",
+      icon: <ExclamationCircleFilled />,
+      content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: async () => {
+        if (editItem) {
+          await updateMoneyReceipt({ values, id: editItem.receipt_id });
+        } else {
+          await addMoneyReceipt({ values });
+        }
+
+        dispatch(businessEntityActions.update({ loaded: false }));
+      },
+    });
   };
 
   useEffect(() => {
     let date;
 
     if (editItem) {
+      const entity = businessEntity.find(
+        (entity) => entity.entity_id == editItem.entity_id
+      );
+
       form.setFieldsValue({
         ...editItem,
-        receipt_date: moment(editItem.receipt_date),
+        receipt_date: dayjs(editItem.receipt_date),
+        entity_id: entity.entityname_eng,
       });
 
       date = new Date(editItem.receipt_date);
+      setEntity({ entity_id: entity.entity_id, curr_bal: entity.curr_bal });
     } else {
       date = new Date(Date.now());
       form.resetFields();
-      form.setFieldsValue({ receipt_date: moment(date.toISOString()) });
+      form.setFieldsValue({ receipt_date: dayjs(date.toISOString()) });
     }
 
     setDate(
@@ -79,11 +106,21 @@ const AddMoneyReceipt = ({
       <Modal
         title={`${editItem ? "Edit" : "Add New"} Money Receipt`}
         open={modal}
+        okText="Save"
         onOk={() => form.submit()}
         confirmLoading={isLoading}
-        onCancel={() =>
-          dispatch(moneyReceiptActions.update({ isModal: false }))
-        }
+        onCancel={() => {
+          confirm({
+            title: "Do you want to close this entry without saving?",
+            icon: <ExclamationCircleFilled />,
+            okText: "Yes",
+            cancelText: "No",
+            onOk: () => {
+              dispatch(moneyReceiptActions.update({ isModal: false }));
+              Modal.destroyAll();
+            },
+          });
+        }}
       >
         <Form
           form={form}
@@ -107,12 +144,18 @@ const AddMoneyReceipt = ({
                 { required: true, message: "Name of Customer is required" },
               ]}
             >
-              <Select placeholder={"Select Customer"}>
+              <Select
+                placeholder={"Select Customer"}
+                onChange={(e) => setEntity(JSON.parse(e))}
+              >
                 {businessEntity?.map(
-                  ({ entityname_eng, entity_id, entity_type_id }) => {
+                  ({ entityname_eng, entity_id, entity_type_id, curr_bal }) => {
                     return (
                       entity_type_id === 1 && (
-                        <Select.Option key={entity_id} value={entity_id}>
+                        <Select.Option
+                          key={entity_id}
+                          value={JSON.stringify({ entity_id, curr_bal })}
+                        >
                           {entityname_eng}
                         </Select.Option>
                       )
@@ -122,10 +165,40 @@ const AddMoneyReceipt = ({
               </Select>
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Amount">
+          <Form.Item
+            label={
+              <>
+                Amount{" "}
+                {entity && (
+                  <span style={{ color: "maroon", marginLeft: 15 }}>
+                    {" ( Current balance: "}
+                    {entity.curr_bal}
+                    {" )"}
+                  </span>
+                )}
+              </>
+            }
+          >
             <Form.Item
               name="amount"
-              rules={[{ required: true, message: "Amount is required" }]}
+              dependencies={[entity]}
+              rules={[
+                { required: true, message: "Amount is required" },
+                {
+                  type: "number",
+                  min: 1,
+                  message: "Number must be greater than 0",
+                },
+                () => ({
+                  validator: (_, value) => {
+                    if (value > entity.curr_bal) {
+                      return Promise.reject(new Error("Amount limit exceeded"));
+                    }
+
+                    return Promise.resolve();
+                  },
+                }),
+              ]}
             >
               <InputNumber style={{ width: "100%" }} />
             </Form.Item>

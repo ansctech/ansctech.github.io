@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Button, DatePicker, Form, Modal, Table } from "antd";
-// import AddAccount from "./addAccount";
 import { useDispatch } from "react-redux";
 import {
   DeleteOutlined,
@@ -16,6 +15,7 @@ import AddSaleRecord from "./addSaleRecord";
 import useVegetables from "../../../hooks/Masters/useVegetables";
 import useUnits from "../../../hooks/Masters/useUnits";
 import moment from "moment";
+import dayjs from "dayjs";
 import useSaleRecord from "../../../hooks/TransactionCustomers/useSaleRecord";
 import { useNavigate } from "react-router-dom";
 import useDate from "../../../hooks/global/useDate";
@@ -62,12 +62,12 @@ const SaleBill = () => {
   useEffect(() => {
     // Set date to today
     const today = new Date(Date.now());
-    form.setFieldsValue({ selected_date: moment(today.toISOString()) });
     setDate(
       `${today.getFullYear()}-${("0" + (today.getMonth() + 1)).slice(-2)}-${(
         "0" + today.getDate()
       ).slice(-2)}`
     );
+    form.setFieldsValue({ selected_date: dayjs(today.toISOString()) });
   }, []);
 
   useEffect(() => {
@@ -100,7 +100,8 @@ const SaleBill = () => {
 
   const deleteSaleBill = (billId) => {
     confirm({
-      title: "Do you Want to delete these items?",
+      title: "Do you Want to delete this item?",
+      autoFocusButton: "cancel",
       icon: <ExclamationCircleFilled />,
       content: "Some descriptions",
       okText: "Yes",
@@ -143,7 +144,8 @@ const SaleBill = () => {
     },
     {
       title: "Amount",
-      dataIndex: "bill_amount",
+      align: "right",
+      render: (e) => Number(e.bill_amount).toFixed(2),
       sorter: (a, b) => a.bill_amount - b.bill_amount,
       ...TableSearch("bill_amount"),
     },
@@ -167,7 +169,9 @@ const SaleBill = () => {
         <Form form={form}>
           <Form.Item name="selected_date">
             <DatePicker
-              onChange={(_, dateString) => setDate(dateString)}
+              onChange={(date, dateString) => {
+                setDate(dateString);
+              }}
               format="YYYY-MM-DD"
               style={{ width: "100%" }}
             />

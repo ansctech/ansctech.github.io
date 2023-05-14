@@ -78,10 +78,11 @@ const useActions = (
   };
 
   //   Deletes data from server and reflects on frontend
-  const deleteAction = async (id) => {
+  const deleteAction = async (id, values) => {
     await reqFn({
       method: "DELETE",
       url: `${reducerState.url}/${id}`,
+      values,
       successFn: () => {
         const data = {};
 

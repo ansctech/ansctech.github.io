@@ -12,7 +12,7 @@ const useContainerReturn = () => {
     isLoading,
   } = useActions(containerReturn, containerReturnActions, {
     mainStorage: "containerReturn",
-    idField: "cont_txt_id",
+    idField: "cont_txn_id",
   });
 
   return {

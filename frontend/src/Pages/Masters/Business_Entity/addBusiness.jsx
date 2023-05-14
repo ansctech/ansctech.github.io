@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { useDispatch } from "react-redux";
 import { businessEntityActions } from "../../../store/Masters/businessEntity";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 const AddBusiness = ({
   editItem,
@@ -25,14 +26,22 @@ const AddBusiness = ({
   const [windowSize, setWindowSize] = useState(window.innerWidth);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const { confirm } = Modal;
 
   const onFinish = (values) => {
-    if (editItem) {
-      updateBusinessEntity({ values, id: editItem?.entity_id });
-    } else {
-      // Client_id is a temporary value till user authentiction takes place
-      addBusinessEntity({ values: { ...values, client_id: 2 } });
-    }
+    confirm({
+      title: "Are you sure you want to save this Entity?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Yes",
+      cancelText: "No",
+      onOk: () => {
+        if (editItem) {
+          updateBusinessEntity({ values, id: editItem?.entity_id });
+        } else {
+          addBusinessEntity({ values: { ...values } });
+        }
+      },
+    });
   };
 
   useEffect(() => {
@@ -72,11 +81,21 @@ const AddBusiness = ({
         open={modal}
         width={windowSize > 762 ? "50%" : "100%"}
         centered
+        okText="Save"
         onOk={() => form.submit()}
         confirmLoading={isLoading}
-        onCancel={() =>
-          dispatch(businessEntityActions.update({ isModal: false }))
-        }
+        onCancel={() => {
+          confirm({
+            title: "Do you want to close this entry without saving?",
+            icon: <ExclamationCircleFilled />,
+            okText: "Yes",
+            cancelText: "No",
+            onOk: () => {
+              dispatch(businessEntityActions.update({ isModal: false }));
+              Modal.destroyAll();
+            },
+          });
+        }}
       >
         <Form form={form} name="basic" layout="vertical" onFinish={onFinish}>
           <Row gutter={[40, 0]}>

@@ -36,7 +36,8 @@ const Units = () => {
 
   const removeUnit = (unitId) => {
     confirm({
-      title: "Do you Want to delete these items?",
+      title: "Do you Want to delete this item?",
+      autoFocusButton: "cancel",
       icon: <ExclamationCircleFilled />,
       content: "Some descriptions",
       okText: "Yes",
@@ -58,7 +59,7 @@ const Units = () => {
     },
     {
       title: t("table.masters.subHeaders.units.labels.containerCharge.text"),
-      dataIndex: "container_charge",
+      render: (e) => Number(e.container_charge).toFixed(2),
       sorter: (a, b) => a.container_charge - b.container_charge,
       ...TableSearch("container_charge"),
       align: "right",

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Modal, Form, Input } from "antd";
 import { customerGroupsActions } from "../../../store/Masters/customerGroups";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 const AddCustomer = ({
   editItem,
@@ -12,16 +13,25 @@ const AddCustomer = ({
 }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const { confirm } = Modal;
 
   const onFinish = (values) => {
-    if (editItem) {
-      updateCustomerGroup({
-        id: editItem.cust_group_id,
-        values,
-      });
-    } else {
-      addCustomerGroup({ values });
-    }
+    confirm({
+      title: "Are you sure you want to save this Customer Group?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Yes",
+      cancelText: "No",
+      onOk: () => {
+        if (editItem) {
+          updateCustomerGroup({
+            id: editItem.cust_group_id,
+            values,
+          });
+        } else {
+          addCustomerGroup({ values });
+        }
+      },
+    });
   };
 
   useEffect(() => {
@@ -51,9 +61,19 @@ const AddCustomer = ({
         open={modal}
         onOk={() => form.submit()}
         confirmLoading={isLoading}
-        onCancel={() =>
-          dispatch(customerGroupsActions.update({ isModal: false }))
-        }
+        okText="Save"
+        onCancel={() => {
+          confirm({
+            title: "Do you want to close this entry without saving?",
+            icon: <ExclamationCircleFilled />,
+            okText: "Yes",
+            cancelText: "No",
+            onOk: () => {
+              dispatch(customerGroupsActions.update({ isModal: false }));
+              Modal.destroyAll();
+            },
+          });
+        }}
       >
         <Form
           form={form}

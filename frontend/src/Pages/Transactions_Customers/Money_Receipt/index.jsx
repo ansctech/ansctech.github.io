@@ -14,6 +14,8 @@ import useBusinessEntity from "../../../hooks/Masters/useBusinessEntity";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import moment from "moment";
+import dayjs from "dayjs";
+import { businessEntityActions } from "../../../store/Masters/businessEntity";
 
 const MoneyReceipt = () => {
   const [editItem, setEditItem] = useState("");
@@ -43,7 +45,7 @@ const MoneyReceipt = () => {
   useEffect(() => {
     // Set date to today
     const today = new Date(Date.now());
-    form.setFieldsValue({ selected_date: moment(today.toISOString()) });
+    form.setFieldsValue({ selected_date: dayjs(today.toISOString()) });
     setDate(
       `${today.getFullYear()}-${("0" + (today.getMonth() + 1)).slice(-2)}-${(
         "0" + today.getDate()
@@ -69,14 +71,16 @@ const MoneyReceipt = () => {
 
   const deleteItem = (id) => {
     confirm({
-      title: "Do you Want to delete these items?",
+      title: "Do you Want to delete this item?",
+      autoFocusButton: "cancel",
       icon: <ExclamationCircleFilled />,
       content: "Some descriptions",
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
-      onOk() {
-        controllers.deleteMoneyReceipt(id);
+      onOk: async () => {
+        await controllers.deleteMoneyReceipt(id);
+        dispatch(businessEntityActions.update({ loaded: false }));
       },
     });
   };

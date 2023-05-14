@@ -42,7 +42,8 @@ const BusinessEntity = () => {
 
   const deleteBusiness = (entityId) => {
     confirm({
-      title: "Do you Want to delete these items?",
+      title: "Do you Want to delete this item?",
+      autoFocusButton: "cancel",
       icon: <ExclamationCircleFilled />,
       content: "Some descriptions",
       okText: "Yes",
@@ -87,12 +88,13 @@ const BusinessEntity = () => {
       title: t(
         "table.masters.subHeaders.businessEntity.labels.currentBalance.text"
       ),
-      dataIndex: "curr_bal",
       sorter: (a, b) => a.curr_bal - b.curr_bal,
       ...TableSearch("curr_bal"),
       key: "curr_bal",
       align: "right",
-      render: (record) => <b className="notranslate">{record}</b>,
+      render: (record) => (
+        <b className="notranslate">{Number(record.curr_bal).toFixed(2)}</b>
+      ),
     },
     {
       title: t("table.masters.subHeaders.businessEntity.labels.phone.text"),

@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Form, InputNumber, Select, DatePicker } from "antd";
 import { containerReturnActions } from "../../../store/TransactionCustomers/containerReturn";
 import moment from "moment";
+import { ExclamationCircleFilled } from "@ant-design/icons";
+import dayjs from "dayjs";
+import useContainerBalance from "../../../hooks/TransactionCustomers/useContainerBalance";
+import { containerBalanceActions } from "../../../store/TransactionCustomers/containerBalance";
 
 const AddContainerReturn = ({
   editItem,
@@ -16,20 +20,30 @@ const AddContainerReturn = ({
   const [date, setDate] = useState("");
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const { confirm } = Modal;
+
+  const {
+    containerBalance: { containerBalance },
+  } = useContainerBalance();
+
+  const [contBal, setContBal] = useState({});
+  const [currBal, setCurrBal] = useState();
 
   useEffect(() => {
-    if (modal) {
-      const date = new Date(Date.now());
-      form.setFieldsValue({ cont_txn_date: moment(date.toISOString()) });
-      setDate(
-        new Date(
-          `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${(
-            "0" + date.getDate()
-          ).slice(-2)}`
-        )
-      );
-    } else {
+    const curr_bal = containerBalance.find(
+      (item) =>
+        item.entity_id == contBal.entity_id &&
+        item.container_id == contBal.container_id
+    )?.curr_bal;
+
+    setCurrBal(curr_bal);
+  }, [JSON.stringify(contBal)]);
+
+  useEffect(() => {
+    if (!modal) {
       form.resetFields();
+      setCurrBal();
+      setContBal({});
     }
   }, [modal]);
 
@@ -40,31 +54,57 @@ const AddContainerReturn = ({
   const onFinish = (values) => {
     values.cont_txn_date = date;
 
-    if (editItem) {
-      updateContainerReturn({
-        id: editItem.cont_txn_id,
-        values,
-      });
-    } else {
-      values.qty_issued = 0;
-      addContainerReturn({ values });
-    }
+    confirm({
+      title: "Are you sure you want to save these items?",
+      icon: <ExclamationCircleFilled />,
+      content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: async () => {
+        if (editItem) {
+          await updateContainerReturn({
+            id: editItem.cont_txn_id,
+            values,
+          });
+        } else {
+          values.qty_issued = 0;
+          await addContainerReturn({ values });
+        }
+
+        dispatch(containerBalanceActions.update({ loaded: false }));
+      },
+    });
   };
 
   useEffect(() => {
     let date;
 
     if (editItem) {
+      const contBal = {
+        entity_id: editItem.entity_id,
+        container_id: editItem.container_id,
+      };
+
+      const curr_bal = containerBalance.find(
+        (item) =>
+          item.entity_id == contBal.entity_id &&
+          item.container_id == contBal.container_id
+      )?.curr_bal;
+
       form.setFieldsValue({
         ...editItem,
-        cont_txn_date: moment(editItem.cont_txn_date),
+        cont_txn_date: dayjs(editItem.cont_txn_date),
       });
 
       date = new Date(editItem.cont_txn_date);
+
+      setContBal(contBal);
+      setCurrBal(curr_bal);
     } else {
       date = new Date(Date.now());
       form.resetFields();
-      form.setFieldsValue({ cont_txn_date: moment(date.toISOString()) });
+      form.setFieldsValue({ cont_txn_date: dayjs(date.toISOString()) });
     }
 
     setDate(
@@ -91,9 +131,19 @@ const AddContainerReturn = ({
         open={modal}
         onOk={() => form.submit()}
         confirmLoading={isLoading}
-        onCancel={() =>
-          dispatch(containerReturnActions.update({ isModal: false }))
-        }
+        okText="Save"
+        onCancel={() => {
+          confirm({
+            title: "Do you want to close this entry without saving?",
+            icon: <ExclamationCircleFilled />,
+            okText: "Yes",
+            cancelText: "No",
+            onOk: () => {
+              dispatch(containerReturnActions.update({ isModal: false }));
+              Modal.destroyAll();
+            },
+          });
+        }}
       >
         <Form
           form={form}
@@ -117,7 +167,12 @@ const AddContainerReturn = ({
                 { required: true, message: "Name of Customer is required" },
               ]}
             >
-              <Select placeholder={"Select Customer"}>
+              <Select
+                placeholder={"Select Customer"}
+                onChange={(e) =>
+                  setContBal((prev) => ({ ...prev, entity_id: e }))
+                }
+              >
                 {businessEntity?.map(
                   ({ entityname_eng, entity_id, entity_type_id }) => {
                     return (
@@ -139,19 +194,59 @@ const AddContainerReturn = ({
                 { required: true, message: "Container Type is required" },
               ]}
             >
-              <Select placeholder={"Select Container Type"}>
-                {units?.map(({ container_name_eng, container_id }) => (
-                  <Select.Option key={container_id} value={container_id}>
-                    {container_name_eng}
-                  </Select.Option>
-                ))}
+              <Select
+                placeholder={"Select Container Type"}
+                onChange={(e) =>
+                  setContBal((prev) => ({ ...prev, container_id: e }))
+                }
+              >
+                {units?.map(
+                  ({ container_name_eng, container_id, maintain_inventory }) =>
+                    maintain_inventory === "YES" && (
+                      <Select.Option key={container_id} value={container_id}>
+                        {container_name_eng}
+                      </Select.Option>
+                    )
+                )}
               </Select>
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Qty">
+          <Form.Item
+            label={
+              <>
+                Qty{" "}
+                {currBal && (
+                  <span style={{ color: "maroon", marginLeft: 15 }}>
+                    {" ( Current balance: "}
+                    {currBal}
+                    {" )"}
+                  </span>
+                )}
+              </>
+            }
+          >
             <Form.Item
               name="qty_received"
-              rules={[{ required: true, message: "Qty is required" }]}
+              dependencies={[currBal]}
+              rules={[
+                { required: true, message: "Qty is required" },
+                {
+                  type: "number",
+                  min: 1,
+                  message: "Quantity must be greater than 0",
+                },
+                () => ({
+                  validator: (_, value) => {
+                    if (value > currBal) {
+                      return Promise.reject(
+                        new Error("Container limit exceeded")
+                      );
+                    }
+
+                    return Promise.resolve();
+                  },
+                }),
+              ]}
             >
               <InputNumber style={{ width: "100%" }} />
             </Form.Item>

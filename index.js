@@ -18,6 +18,7 @@ const {
   signup,
   logout,
 } = require("./src/authentication/authRoutes");
+const contBalRouter = require("./src/container_balance/container_balance");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -48,6 +49,8 @@ app.use("/api/v1/salerecord", saleRecordRouter);
 app.use("/api/v1/money-receipt", moneyReceiptRouter);
 
 app.use("/api/v1/container-return", containerReturnRouter);
+
+app.use("/api/v1/container-balance", contBalRouter);
 
 // Serve frontend folder
 app.use(express.static(path.join(__dirname, "frontend", "build")));

@@ -17,6 +17,8 @@ import {
 import { saleRecordActions } from "../../../store/TransactionCustomers/saleRecord";
 import useContainerReturn from "../../../hooks/TransactionCustomers/useContainerReturn";
 import moment from "moment";
+import dayjs from "dayjs";
+import { containerBalanceActions } from "../../../store/TransactionCustomers/containerBalance";
 
 const AddSaleRecord = ({
   modal,
@@ -29,7 +31,7 @@ const AddSaleRecord = ({
   updateSaleRecord,
 }) => {
   const [date, setDate] = useState("");
-  const [multepule, setMultepule] = useState();
+  const [multepule, setMultepule] = useState(true);
   const [tableData, setTableData] = useState([]);
   const [selectFramer, setSelectFramer] = useState("");
   const [selectUnit, setSelectUnit] = useState("");
@@ -55,7 +57,7 @@ const AddSaleRecord = ({
     setDate(dateString);
   };
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     values.sale_date = date;
 
     values.multiply_kg_qty = multepule ? "YES" : "NO";
@@ -80,7 +82,9 @@ const AddSaleRecord = ({
     if (editItem) {
       delete obj.id;
 
-      updateSaleRecord({ values: obj, id: editItem.entry_id });
+      await updateSaleRecord({ values: obj, id: editItem.entry_id });
+
+      dispatch(containerBalanceActions.update({ loaded: true }));
 
       return;
     }
@@ -90,6 +94,7 @@ const AddSaleRecord = ({
       sale_qty: "",
       multiply_kg_qty: false,
       entity_id_cust: "",
+      kg_per_container: "",
     });
   };
 
@@ -99,7 +104,7 @@ const AddSaleRecord = ({
     if (editItem) {
       form.setFieldsValue({
         ...editItem,
-        sale_date: moment(editItem.sale_date),
+        sale_date: dayjs(editItem.sale_date),
       });
 
       date = new Date(editItem.sale_date);
@@ -112,7 +117,7 @@ const AddSaleRecord = ({
       date = new Date(Date.now());
       form.resetFields();
 
-      form.setFieldsValue({ sale_date: moment(date.toISOString()) });
+      form.setFieldsValue({ sale_date: dayjs(date.toISOString()) });
     }
 
     setDate(
@@ -198,14 +203,23 @@ const AddSaleRecord = ({
         const maintainInventoryUnits = [];
 
         tableData.forEach((data) => {
-          units.find((unit) => unit.container_id == data.unit_container_id)
-            ?.maintain_inventory === "YES" && maintainInventoryUnits.push(data);
-
+          if (
+            units.some(
+              (unit) =>
+                unit.container_id == data.unit_container_id &&
+                unit.maintain_inventory === "YES"
+            )
+          ) {
+            maintainInventoryUnits.push(data);
+            data.maintain_inventory = true;
+          }
           // Remove temporary id
           delete data.id;
         });
 
         await addSaleRecord({ values: tableData });
+
+        dispatch(containerBalanceActions.update({ loaded: true }));
 
         // Add maintain inventory units to container return
         maintainInventoryUnits.forEach((record) => {
@@ -236,12 +250,23 @@ const AddSaleRecord = ({
       <Modal
         centered
         open={modal}
-        width={"75%"}
+        width={"90%"}
         onOk={() => (editItem ? form.submit() : submit())}
         okText="Submit"
         title={`${editItem ? "Edit" : "Add New"} Sale Record`}
         confirmLoading={isLoading}
-        onCancel={() => dispatch(saleRecordActions.update({ isModal: false }))}
+        onCancel={() => {
+          confirm({
+            title: "Do you want to close this entry without saving?",
+            icon: <ExclamationCircleFilled />,
+            okText: "Yes",
+            cancelText: "No",
+            onOk: () => {
+              dispatch(saleRecordActions.update({ isModal: false }));
+              Modal.destroyAll();
+            },
+          });
+        }}
       >
         <Form
           form={form}
@@ -266,7 +291,7 @@ const AddSaleRecord = ({
               </Item>
             </Col>
             <Col span={4}>
-              <Item label="Name of Framer/Trader">
+              <Item label="Name of Farmer/Trader">
                 <Item
                   name="entity_id_trader"
                   rules={[
@@ -280,9 +305,17 @@ const AddSaleRecord = ({
                     onChange={(e) => setSelectFramer(e)}
                     style={{ width: "100%" }}
                   >
-                    <Option value="1"> Framer 1 </Option>
-                    <Option value="2"> Framer 2 </Option>
-                    <Option value="3"> Framer 3 </Option>
+                    {businessEntity?.map(
+                      ({ entityname_eng, entity_id, entity_type_id }) => {
+                        return (
+                          entity_type_id === 2 && (
+                            <Select.Option key={entity_id} value={entity_id}>
+                              {entityname_eng}
+                            </Select.Option>
+                          )
+                        );
+                      }
+                    )}
                   </Select>
                 </Item>
               </Item>
@@ -335,7 +368,7 @@ const AddSaleRecord = ({
                 <Item
                   name="unit_container_id"
                   rules={[
-                    { required: true, message: "Frist Unit is required" },
+                    { required: true, message: "First Unit is required" },
                   ]}
                 >
                   <Select onChange={(e) => setSelectUnit(JSON.parse(e))}>
@@ -378,7 +411,14 @@ const AddSaleRecord = ({
               <Item label="Kg/Unit">
                 <Item
                   name="kg_per_container"
-                  rules={[{ required: true, message: "Kg/Unit is required" }]}
+                  rules={[
+                    { required: true, message: "Kg/Unit is required" },
+                    {
+                      type: "number",
+                      min: 1,
+                      message: "Number must be greater than 0",
+                    },
+                  ]}
                 >
                   <InputNumber style={{ width: "100%" }} />
                 </Item>
@@ -388,14 +428,21 @@ const AddSaleRecord = ({
               <Item label="Qty">
                 <Item
                   name="sale_qty"
-                  rules={[{ required: true, message: "Qty is required" }]}
+                  rules={[
+                    { required: true, message: "Qty is required" },
+                    {
+                      type: "number",
+                      min: 1,
+                      message: "Number must be greater than 0",
+                    },
+                  ]}
                 >
                   <InputNumber style={{ width: "100%" }} />
                 </Item>
               </Item>
             </Col>
             <Col span={4}>
-              <Item label="Multepule">
+              <Item label="Multiply">
                 <Item name="multiply_kg_qty">
                   <Checkbox
                     checked={multepule}

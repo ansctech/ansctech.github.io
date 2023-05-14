@@ -2,23 +2,33 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Modal, Form, Input, Checkbox } from "antd";
 import { unitsActions } from "../../../store/Masters/units";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
   const [inventory, setInventory] = useState(false);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const { confirm } = Modal;
 
   const onFinish = (values) => {
-    if (editItem) {
-      update({
-        values: { ...values, maintain_inventory: inventory ? "YES" : "NO" },
-        id: editItem.container_id,
-      });
-    } else {
-      addUnits({
-        values: { ...values, maintain_inventory: inventory ? "YES" : "NO" },
-      });
-    }
+    confirm({
+      title: "Are you sure you want to save this Unit?",
+      icon: <ExclamationCircleFilled />,
+      okText: "Yes",
+      cancelText: "No",
+      onOk: () => {
+        if (editItem) {
+          update({
+            values: { ...values, maintain_inventory: inventory ? "YES" : "NO" },
+            id: editItem.container_id,
+          });
+        } else {
+          addUnits({
+            values: { ...values, maintain_inventory: inventory ? "YES" : "NO" },
+          });
+        }
+      },
+    });
   };
 
   useEffect(() => {
@@ -51,8 +61,20 @@ const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
         title={`${editItem ? "Edit" : "Add New"} Unit Master`}
         open={modal}
         onOk={() => form.submit()}
+        okText="Save"
         confirmLoading={isLoading}
-        onCancel={() => dispatch(unitsActions.update({ isModal: false }))}
+        onCancel={() => {
+          confirm({
+            title: "Do you want to close this entry without saving?",
+            icon: <ExclamationCircleFilled />,
+            okText: "Yes",
+            cancelText: "No",
+            onOk: () => {
+              dispatch(unitsActions.update({ isModal: false }));
+              Modal.destroyAll();
+            },
+          });
+        }}
       >
         <Form
           form={form}
