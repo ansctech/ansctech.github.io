@@ -17,9 +17,12 @@ import { useDispatch } from "react-redux";
 import { containerReturnActions } from "../../../store/TransactionCustomers/containerReturn";
 import dayjs from "dayjs";
 import containerBalance from "../../../store/TransactionCustomers/containerBalance";
+import { useTranslation } from "react-i18next";
 
 const ContainerReturn = () => {
   const { confirm } = Modal;
+
+  const { t } = useTranslation();
 
   const {
     containerReturn: { containerReturn, isModal },
@@ -96,7 +99,9 @@ const ContainerReturn = () => {
 
   const columns = [
     {
-      title: "Date of Receipt",
+      title: t(
+        "table.transaction-customer.subHeaders.containerReturn.labels.dateOfReceipt.text"
+      ),
       render: (e) => (
         <>
           {new Date(e.cont_txn_date).toLocaleDateString(undefined, {
@@ -110,7 +115,9 @@ const ContainerReturn = () => {
       ...TableSearch("cont_txn_date"),
     },
     {
-      title: "Customer Name",
+      title: t(
+        "table.transaction-customer.subHeaders.containerReturn.labels.customerName.text"
+      ),
       render: (e) => (
         <>
           {businessEntity.find((entity) => {
@@ -122,7 +129,9 @@ const ContainerReturn = () => {
       ...TableSearch("customer"),
     },
     {
-      title: "Container Type",
+      title: t(
+        "table.transaction-customer.subHeaders.containerReturn.labels.containerType.text"
+      ),
       render: (e) => (
         <>
           {units.find((unit) => {
@@ -134,14 +143,18 @@ const ContainerReturn = () => {
       ...TableSearch("container_id"),
     },
     {
-      title: "Quantity",
+      title: t(
+        "table.transaction-customer.subHeaders.containerReturn.labels.qty.text"
+      ),
       dataIndex: "qty_received",
       align: "right",
       sorter: (a, b) => a.qty_received - b.qty_received,
       ...TableSearch("qty_received"),
     },
     {
-      title: "Action",
+      title: t(
+        "table.transaction-customer.subHeaders.containerReturn.labels.action.text"
+      ),
       width: 100,
       fixed: "right",
       render: (record) => (

@@ -28,7 +28,7 @@ Vegetable add/edit screen - add 2 more fields default unit and vegetable image D
 
 Unit master table - Maintain inventory is coming selected even if the value is false in database DONE, AND TESTED
 
-==================MILESTONE 4========================
+==================MILESTONE 4======================== COMPLETED
 Transactions
 
 Add date range (from and to date) above the table with show button - this will show the transactional data for that date range only. The default would be current date in both the date control. =======DONE AND TESTED======

@@ -27,7 +27,7 @@ const AddContainerReturn = ({
   } = useContainerBalance();
 
   const [contBal, setContBal] = useState({});
-  const [currBal, setCurrBal] = useState();
+  const [currBal, setCurrBal] = useState(0);
 
   useEffect(() => {
     const curr_bal = containerBalance.find(
@@ -237,6 +237,11 @@ const AddContainerReturn = ({
                 },
                 () => ({
                   validator: (_, value) => {
+                    if (!currBal) {
+                      return Promise.reject(
+                        new Error("Container does not exist")
+                      );
+                    }
                     if (value > currBal) {
                       return Promise.reject(
                         new Error("Container limit exceeded")

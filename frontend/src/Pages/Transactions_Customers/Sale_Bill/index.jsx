@@ -117,7 +117,9 @@ const SaleBill = () => {
   // Schema
   const columns = [
     {
-      title: "Date",
+      title: t(
+        "table.transaction-customer.subHeaders.saleBill.labels.dateOfSale.text"
+      ),
       render: (e) => (
         <>
           {new Date(e.bill_date).toLocaleDateString(undefined, {
@@ -131,7 +133,9 @@ const SaleBill = () => {
       ...TableSearch("bill_date"),
     },
     {
-      title: "Customer Name",
+      title: t(
+        "table.transaction-customer.subHeaders.saleBill.labels.customerName.text"
+      ),
       render: (e) => (
         <>
           {businessEntity.find((entity) => {
@@ -143,14 +147,18 @@ const SaleBill = () => {
       ...TableSearch("entity_id_cust"),
     },
     {
-      title: "Amount",
+      title: t(
+        "table.transaction-customer.subHeaders.saleBill.labels.amount.text"
+      ),
       align: "right",
       render: (e) => Number(e.bill_amount).toFixed(2),
       sorter: (a, b) => a.bill_amount - b.bill_amount,
       ...TableSearch("bill_amount"),
     },
     {
-      title: "Action",
+      title: t(
+        "table.transaction-customer.subHeaders.saleBill.labels.action.text"
+      ),
       width: 100,
       fixed: "right",
       render: (record) => (

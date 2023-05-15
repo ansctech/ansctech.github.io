@@ -54,11 +54,14 @@
         "saleRecord": {
           "text": "Sale Record",
           "labels": {
-            "dateOfSale": { "text": "Date Of Sale" },
-            "customerName": { "text": "Customer Name" },
+            "SI": { "text": "SI#" },
+            "vegetables": { "text": "Vegetable" },
+            "qty": { "text": "Qty" },
+            "unit": { "text": "Unit" },
+            "kgUnit": { "text": "Kg/Unit" },
             "amount": { "text": "Amount" },
-            "totalItems": { "text": "Total Items" },
-            "action": { "text": "Action" }
+            "delete": { "text": "Delete" },
+            "rate": { "text": "Rate" }
           }
         },
         "moneyReceipt": {
@@ -77,6 +80,16 @@
             "dateOfSale": { "text": "Date" },
             "customerName": { "text": "Customer Name" },
             "amount": { "text": "Amount" },
+            "action": { "text": "Action" }
+          }
+        },
+        "containerReturn": {
+          "text": "Container Return",
+          "labels": {
+            "dateOfReceipt": { "text": "Date" },
+            "customerName": { "text": "Customer Name" },
+            "containerType": { "text": "Container Type" },
+            "qty": { "text": "Quantity" },
             "action": { "text": "Action" }
           }
         }

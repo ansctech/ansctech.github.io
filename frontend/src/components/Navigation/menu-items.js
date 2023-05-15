@@ -26,8 +26,14 @@ const useItems = () => {
         t("table.transaction-customer.subHeaders.saleBill.text"),
         "/sale-bill"
       ),
-      getItem("Money Receipt", "/money-receipt"),
-      getItem("Container Return", "/container-return"),
+      getItem(
+        t("table.transaction-customer.subHeaders.moneyReceipt.text"),
+        "/money-receipt"
+      ),
+      getItem(
+        t("table.transaction-customer.subHeaders.containerReturn.text"),
+        "/container-return"
+      ),
     ]),
     getItem("Transactions (Farmers)", "/farmers", "", [
       getItem("Payment", "10"),

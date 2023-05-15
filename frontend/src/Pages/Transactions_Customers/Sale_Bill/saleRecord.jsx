@@ -76,11 +76,15 @@ const SaleRecord = () => {
 
   const columns = [
     {
-      title: "SI#",
+      title: t(
+        "table.transaction-customer.subHeaders.saleRecord.labels.SI.text"
+      ),
       render: (a, b, num) => <>{num + 1}</>,
     },
     {
-      title: "Vegetable",
+      title: t(
+        "table.transaction-customer.subHeaders.saleRecord.labels.vegetables.text"
+      ),
       render: (e) => (
         <>
           {vegetables.find((veg) => {
@@ -90,12 +94,16 @@ const SaleRecord = () => {
       ),
     },
     {
-      title: "Qty",
+      title: t(
+        "table.transaction-customer.subHeaders.saleRecord.labels.qty.text"
+      ),
       dataIndex: "sale_qty",
       align: "right",
     },
     {
-      title: "Unit",
+      title: t(
+        "table.transaction-customer.subHeaders.saleRecord.labels.unit.text"
+      ),
       render: (e) => (
         <>
           {units.find((unit) => {
@@ -105,22 +113,30 @@ const SaleRecord = () => {
       ),
     },
     {
-      title: "Rate",
+      title: t(
+        "table.transaction-customer.subHeaders.saleRecord.labels.rate.text"
+      ),
       dataIndex: "item_rate",
       align: "right",
     },
     {
-      title: "Kg/Unit",
+      title: t(
+        "table.transaction-customer.subHeaders.saleRecord.labels.kgUnit.text"
+      ),
       dataIndex: "kg_per_container",
       align: "right",
     },
     {
-      title: "Amount",
+      title: t(
+        "table.transaction-customer.subHeaders.saleRecord.labels.amount.text"
+      ),
       align: "right",
       render: (e) => Number(e.sale_amount).toFixed(2),
     },
     {
-      title: "Delete",
+      title: t(
+        "table.transaction-customer.subHeaders.saleRecord.labels.delete.text"
+      ),
       align: "center",
       render: (e) => (
         <DeleteOutlined
