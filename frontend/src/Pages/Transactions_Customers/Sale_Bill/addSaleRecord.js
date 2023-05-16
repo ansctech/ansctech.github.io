@@ -345,7 +345,14 @@ const AddSaleRecord = ({
               <Item label="Rate">
                 <Item
                   name="item_rate"
-                  rules={[{ required: true, message: "Rate is required" }]}
+                  rules={[
+                    { required: true, message: "Rate is required" },
+                    {
+                      type: "number",
+                      min: 1,
+                      message: "Number must be greater than 0",
+                    },
+                  ]}
                 >
                   <InputNumber style={{ width: "100%" }} />
                 </Item>

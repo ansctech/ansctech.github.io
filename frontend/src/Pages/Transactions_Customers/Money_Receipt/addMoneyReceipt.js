@@ -79,7 +79,10 @@ const AddMoneyReceipt = ({
       });
 
       date = new Date(editItem.receipt_date);
-      setEntity({ entity_id: entity.entity_id, curr_bal: entity.curr_bal });
+      setEntity({
+        entity_id: entity.entity_id,
+        curr_bal: Number(entity.curr_bal) + Number(editItem.amount),
+      });
     } else {
       date = new Date(Date.now());
       form.resetFields();

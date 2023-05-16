@@ -27,7 +27,7 @@ const AddContainerReturn = ({
   } = useContainerBalance();
 
   const [contBal, setContBal] = useState({});
-  const [currBal, setCurrBal] = useState(0);
+  const [currBal, setCurrBal] = useState();
 
   useEffect(() => {
     const curr_bal = containerBalance.find(
@@ -36,7 +36,13 @@ const AddContainerReturn = ({
         item.container_id == contBal.container_id
     )?.curr_bal;
 
-    setCurrBal(curr_bal);
+    if (contBal.entity_id && contBal.container_id) {
+      if (editItem) {
+        setCurrBal(Number(curr_bal) + Number(editItem.qty_received));
+      } else {
+        setCurrBal(curr_bal || 0);
+      }
+    }
   }, [JSON.stringify(contBal)]);
 
   useEffect(() => {
@@ -100,7 +106,6 @@ const AddContainerReturn = ({
       date = new Date(editItem.cont_txn_date);
 
       setContBal(contBal);
-      setCurrBal(curr_bal);
     } else {
       date = new Date(Date.now());
       form.resetFields();
@@ -215,7 +220,7 @@ const AddContainerReturn = ({
             label={
               <>
                 Qty{" "}
-                {currBal && (
+                {currBal !== undefined && (
                   <span style={{ color: "maroon", marginLeft: 15 }}>
                     {" ( Current balance: "}
                     {currBal}
@@ -239,7 +244,7 @@ const AddContainerReturn = ({
                   validator: (_, value) => {
                     if (!currBal) {
                       return Promise.reject(
-                        new Error("Container does not exist")
+                        new Error("Container not available")
                       );
                     }
                     if (value > currBal) {
