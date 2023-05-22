@@ -7,7 +7,7 @@
           "text": "ग्राहक / किसान",
           "labels": {
             "name": { "text": "नाम" },
-            "entityType": { "text": "Entity Type" },
+            "entityType": { "text": "ग्राहक/किसान" },
             "currentBalance": { "text": "वर्तमान बकाया" },
             "phone": { "text": "फोन" },
             "action": { "text": "Action" }
