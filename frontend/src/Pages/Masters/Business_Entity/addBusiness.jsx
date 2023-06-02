@@ -12,6 +12,7 @@ import {
 import { useDispatch } from "react-redux";
 import { businessEntityActions } from "../../../store/Masters/businessEntity";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 const AddBusiness = ({
   editItem,
@@ -27,6 +28,8 @@ const AddBusiness = ({
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { confirm } = Modal;
+
+  const { t } = useTranslation();
 
   const onFinish = (values) => {
     confirm({
@@ -100,7 +103,11 @@ const AddBusiness = ({
         <Form form={form} name="basic" layout="vertical" onFinish={onFinish}>
           <Row gutter={[40, 0]}>
             <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-              <Form.Item label="Full Name (English)">
+              <Form.Item
+                label={t(
+                  "table.masters.subHeaders.businessEntity.labels.fullNameEng.text"
+                )}
+              >
                 <Form.Item
                   name="entityname_eng"
                   rules={[

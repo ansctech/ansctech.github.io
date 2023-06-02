@@ -11,6 +11,9 @@ import MoneyReceipt from "../../Pages/Transactions_Customers/Money_Receipt";
 import ContainerReturn from "../../Pages/Transactions_Customers/Container_Return";
 import Login from "../../Pages/Auth/Login";
 import SaleRecord from "../../Pages/Transactions_Customers/Sale_Bill/saleRecord";
+import BalanceReport from "../../Pages/Reports/BalanceReport";
+import ContainerBalanceReport from "../../Pages/Reports/ContainerBalanceReport";
+import BillPrint from "../../Pages/Reports/BillPrint";
 
 const Content = () => {
   return (
@@ -39,6 +42,14 @@ const Content = () => {
 
       {/* Farmers */}
       {/* <Route path={"/farmers/container-return"} element={<ContainerReturn />} /> */}
+
+      {/* Reports */}
+      <Route path="/reports/balance-report" element={<BalanceReport />} />
+      <Route
+        path="/reports/container-balance-report"
+        element={<ContainerBalanceReport />}
+      />
+      <Route path="/reports/bill-print" element={<BillPrint />} />
     </Routes>
   );
 };

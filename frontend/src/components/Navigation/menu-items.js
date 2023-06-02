@@ -40,10 +40,10 @@ const useItems = () => {
       getItem("Container Return", "/container-receipt"),
     ]),
     getItem("Reports", "/reports", "", [
-      getItem("Bill Print", "11"),
+      getItem("Bill Print", "/bill-print"),
       getItem("Receipts", "12"),
-      getItem("Balance Report", "13"),
-      getItem("Container Balance Report", "14"),
+      getItem("Balance Report", "/balance-report"),
+      getItem("Container Balance Report", "/container-balance-report"),
       getItem("Accounting Report", "15"),
     ]),
   ];

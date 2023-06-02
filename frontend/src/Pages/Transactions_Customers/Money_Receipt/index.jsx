@@ -13,7 +13,6 @@ import { moneyReceiptActions } from "../../../store/TransactionCustomers/moneyRe
 import useBusinessEntity from "../../../hooks/Masters/useBusinessEntity";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
-import moment from "moment";
 import dayjs from "dayjs";
 import { businessEntityActions } from "../../../store/Masters/businessEntity";
 

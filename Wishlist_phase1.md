@@ -44,13 +44,13 @@ Container Return - activate table and add/edit screen (it is already there) ====
 ==================MILESTONE 5========================
 Reports
 
-Bill print - show bills on screen in printable format for a date
+Bill print - show bills on screen in printable format for a date =======DONE AND TESTED======
+
+Balance report - show list of customers with balances =======DONE AND TESTED======
+
+Container balance report - show list of customers with container balances =======DONE AND TESTED======
 
 Receipts report - show list of receipts for a given date range
-
-Balance report - show list of customers with balances
-
-Container balance report - show list of customers with container balances
 
 Accounting report - customer wise, date wise sale and receipt report
 

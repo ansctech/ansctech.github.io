@@ -7,13 +7,14 @@ const useContainerBalance = () => {
     (state) => state.containerBalanceReducer
   );
 
-  useActions(containerBalance, containerBalanceActions, {
+  const { isLoading } = useActions(containerBalance, containerBalanceActions, {
     mainStorage: "containerBalance",
     idField: "cont_rec_id",
   });
 
   return {
     containerBalance,
+    volatileState: { isLoading },
   };
 };
 

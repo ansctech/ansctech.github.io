@@ -6,9 +6,7 @@ import { MenuOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../assets/img/logo.jpg";
 import useItems from "./menu-items";
-import { useDispatch, useSelector } from "react-redux";
-import useFetch from "../../hooks/global/useFetch";
-import { userActions } from "../../store/Authentication/user";
+import { useSelector } from "react-redux";
 import useAuth from "../../hooks/Authentication/useAuth";
 
 export function getItem(label, key, icon, children) {

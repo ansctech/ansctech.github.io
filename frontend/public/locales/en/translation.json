@@ -7,9 +7,13 @@
           "text": "Business Entity",
           "labels": {
             "name": { "text": "Name" },
+            "fullNameEng": { "text": "Full Name (English)" },
+            "fullNameLocalLang": { "text": "Full Name (Local Language)" },
             "entityType": { "text": "Entity Type" },
             "currentBalance": { "text": "Current Balance" },
             "phone": { "text": "Phone" },
+            "email": { "text": "Email" },
+            "address": { "text": "Address" },
             "action": { "text": "Action" }
           }
         },
@@ -43,6 +47,8 @@
           "labels": {
             "name": { "text": "Name (English)" },
             "nameLocalLang": { "text": "Name (Local)" },
+            "acctGroupNameEng": { "text": "Account Group Name (English)" },
+            "acctGroupNameLocalLang": { "text": "Account Group Name (Local)" },
             "action": { "text": "Action" }
           }
         }

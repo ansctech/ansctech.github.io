@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { Button, Modal, Form, Input } from "antd";
 import { accountGroupsActions } from "../../../store/Masters/accountGroups";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 const AddAccount = ({
   editItem,
@@ -14,6 +15,8 @@ const AddAccount = ({
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { confirm } = Modal;
+
+  const { t } = useTranslation();
 
   const onFinish = (values) => {
     confirm({
@@ -84,7 +87,11 @@ const AddAccount = ({
           onFinish={onFinish}
           className={"mt-4"}
         >
-          <Form.Item label="Account Group Name (English)">
+          <Form.Item
+            label={t(
+              "table.masters.subHeaders.accountGroups.labels.acctGroupNameEng.text"
+            )}
+          >
             <Form.Item
               name="acc_group_name_eng"
               rules={[
@@ -98,7 +105,11 @@ const AddAccount = ({
             </Form.Item>
           </Form.Item>
           {/* Previous value: Account Group Name (Russian) */}
-          <Form.Item label="Account Group Local Language">
+          <Form.Item
+            label={t(
+              "table.masters.subHeaders.accountGroups.labels.acctGroupNameLocalLang.text"
+            )}
+          >
             <Form.Item
               name="acc_group_name_local_lang"
               rules={[

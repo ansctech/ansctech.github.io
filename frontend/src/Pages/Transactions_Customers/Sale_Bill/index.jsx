@@ -20,6 +20,7 @@ import useSaleRecord from "../../../hooks/TransactionCustomers/useSaleRecord";
 import { useNavigate } from "react-router-dom";
 import useDate from "../../../hooks/global/useDate";
 import { businessEntityActions } from "../../../store/Masters/businessEntity";
+import { containerBalanceActions } from "../../../store/TransactionCustomers/containerBalance";
 
 const SaleBill = () => {
   const [editItem, setEditItem] = useState("");
@@ -110,6 +111,7 @@ const SaleBill = () => {
       onOk: async () => {
         await controllers.deleteSaleBill(billId);
         dispatch(businessEntityActions.update({ loaded: false }));
+        dispatch(containerBalanceActions.update({ loaded: false }));
       },
     });
   };
