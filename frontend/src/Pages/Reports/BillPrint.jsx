@@ -92,25 +92,31 @@ function BillPrint() {
       );
 
       // populate results with necessary details
-      result = result.map((res) => ({
-        ...res,
-        vegDetails: vegetables.find((veg) => veg.item_id == res.item_id),
-        contDetails: {
-          // Get container name
-          name: units.find((cont) => cont.container_id == res.unit_container_id)
-            ?.container_name_eng,
+      result = result.map((res) => {
+        const container = units.find(
+          (cont) => cont.container_id == res.unit_container_id
+        );
 
-          // Get container balance
-          balance: containerBalance.find(
-            (cont) =>
-              cont.container_id == res.unit_container_id &&
-              cont.entry_id == res.entry_id_cust
-          )?.curr_bal,
-        },
-        entityDetails: businessEntity.find(
-          (ent) => ent.entity_id == res.entity_id_cust
-        ),
-      }));
+        return {
+          ...res,
+          vegDetails: vegetables.find((veg) => veg.item_id == res.item_id),
+          contDetails: {
+            // Get container name
+            name: container?.container_name_eng,
+            charge: container?.container_charge,
+
+            // Get container balance
+            balance: containerBalance.find(
+              (cont) =>
+                cont.container_id == res.unit_container_id &&
+                cont.entity_id == res.entity_id_cust
+            )?.curr_bal,
+          },
+          entityDetails: businessEntity.find(
+            (ent) => ent.entity_id == res.entity_id_cust
+          ),
+        };
+      });
 
       // Check for customer groups
       result = result.filter(
@@ -138,6 +144,7 @@ function BillPrint() {
           amount: res.sale_amount,
           container: res.contDetails.name,
           containerBal: res.contDetails.balance,
+          charge: res.contDetails.charge,
           weight: res.kg_per_container,
           prevBal: res.entityDetails.curr_bal,
         };
@@ -169,7 +176,7 @@ function BillPrint() {
     },
     section: {
       marginVertical: 5,
-      paddingHorizontal: 20,
+      paddingHorizontal: 100,
       fontSize: 14,
 
       flexGrow: 1,
@@ -339,6 +346,11 @@ function BillPrint() {
 
                 const prevBal = Number(bill[0].prevBal);
 
+                const additionalCharge = bill.reduce(
+                  (acc, curr) => acc + curr.quantity * curr.charge,
+                  0
+                );
+
                 return (
                   <View key={bill.entry_id} style={styles.section}>
                     {/* Title */}
@@ -395,11 +407,11 @@ function BillPrint() {
                           paddingVertical: "5px",
                           display: "flex",
                           flexDirection: "row",
-                          gap: 40,
+                          gap: 20,
                           marginTop: 10,
                         }}
                       >
-                        <Text style={{ flexBasis: 300 }}>Item Name</Text>
+                        <Text style={{ flexBasis: 200 }}>Item Name</Text>
                         <Text style={{ flexBasis: 80, textAlign: "right" }}>
                           Weight
                         </Text>
@@ -427,11 +439,11 @@ function BillPrint() {
                             style={{
                               display: "flex",
                               flexDirection: "row",
-                              gap: 40,
+                              gap: 20,
                               marginTop: 5,
                             }}
                           >
-                            <Text style={{ flexBasis: 300 }}>
+                            <Text style={{ flexBasis: 200 }}>
                               {entry.itemName} {entry.quantity}{" "}
                               {entry.container}
                             </Text>
@@ -457,23 +469,23 @@ function BillPrint() {
                       >
                         <View
                           style={{
-                            paddingLeft: 300,
+                            paddingLeft: 200,
                             display: "flex",
                             flexDirection: "row",
                             justifyContent: "space-between",
-                            gap: 40,
+                            gap: 20,
                           }}
                         >
                           <Text>Additional Charge</Text>
-                          <Text>00.00</Text>
+                          <Text>{additionalCharge.toFixed(2)}</Text>
                         </View>
                         <View
                           style={{
-                            paddingLeft: 300,
+                            paddingLeft: 200,
                             display: "flex",
                             flexDirection: "row",
                             justifyContent: "space-between",
-                            gap: 40,
+                            gap: 20,
                           }}
                         >
                           <Text>Total Amount</Text>
@@ -481,30 +493,34 @@ function BillPrint() {
                         </View>
                         <View
                           style={{
-                            paddingLeft: 300,
+                            paddingLeft: 200,
                             display: "flex",
                             flexDirection: "row",
                             justifyContent: "space-between",
-                            gap: 40,
+                            gap: 20,
                           }}
                         >
                           <Text>Previous Balance</Text>
-                          <Text>{prevBal.toFixed(2)}</Text>
+                          <Text>
+                            {Number(
+                              prevBal - totalAmount - additionalCharge
+                            ).toFixed(2)}
+                          </Text>
                         </View>
                       </View>
                       {/* Net */}
                       <View
                         style={{
                           borderBottom: "1px solid black",
-                          paddingLeft: 300,
+                          paddingLeft: 200,
                           display: "flex",
                           flexDirection: "row",
                           justifyContent: "space-between",
-                          gap: 40,
+                          gap: 20,
                         }}
                       >
                         <Text>Net Balance</Text>
-                        <Text>{Number(prevBal + totalAmount).toFixed(2)}</Text>
+                        <Text>{Number(prevBal).toFixed(2)}</Text>
                       </View>
                       {/* Container balance*/}
                       <View
@@ -514,15 +530,28 @@ function BillPrint() {
                           marginTop: 5,
                           padding: 5,
                           paddingBottom: 10,
-                          paddingRight: 300,
+                          paddingRight: 200,
                         }}
                       >
-                        <Text style={{ marginBottom: 10 }}>
-                          Container Balance:
-                        </Text>
+                        <View
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            marginBottom: 10,
+                          }}
+                        >
+                          <Text style={{ fontWeight: "bold" }}>
+                            Container Type
+                          </Text>
+                          <Text>Balance</Text>
+                        </View>
                         {bill.map(
-                          (entry) =>
-                            entry.containerBal && (
+                          (entry, index) =>
+                            entry.containerBal &&
+                            bill.findIndex(
+                              (ent) => ent.container === entry.container
+                            ) === index && (
                               <View
                                 style={{
                                   display: "flex",
@@ -531,7 +560,7 @@ function BillPrint() {
                                 }}
                               >
                                 <Text style={{ fontWeight: "bold" }}>
-                                  {entry.container}:
+                                  {entry.container}
                                 </Text>
                                 <Text>{entry.containerBal}</Text>
                               </View>

@@ -10,7 +10,6 @@ const useSaleBill = () => {
 
   const {
     addAction: addSaleBill,
-    updateAction: updateSaleBill,
     deleteAction: deleteSaleBill,
     isLoading,
   } = useActions(saleBill, saleBillActions, {

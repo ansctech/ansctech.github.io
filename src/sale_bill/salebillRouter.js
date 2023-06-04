@@ -110,8 +110,10 @@ saleBillRouter.post("/", async (req, res) => {
           {
             curr_bal:
               Number(entity.rows[0].curr_bal) +
-              Number(obj[ob].bill_amount) -
-              (Number(existingRecord[ob]?.bill_amount) || 0),
+              Number(obj[ob].bill_amount) +
+              Number(obj[ob].total_container_amount) -
+              (Number(existingRecord[ob]?.bill_amount) +
+                Number(existingRecord[ob]?.total_container_amount) || 0),
           },
           "entity_master",
           "entity_id",
@@ -119,11 +121,6 @@ saleBillRouter.post("/", async (req, res) => {
           req.user
         )
       );
-
-      // Update container balance
-      // cont = await pool.query(
-      //   `SELECT * FROM comm_schm.entity_container_balance WHERE entity_id = '${entity.rows[0].entity_id}' AND container_id = '${client_id}'`
-      // );
     });
 
     //Send response
@@ -153,7 +150,7 @@ async function insertData(obj, tableName, req) {
   return rec;
 }
 
-function processRetrievedData(results, obj, tableName) {
+function processRetrievedData(results, obj, tableName, req) {
   const len = results.rows.length;
   let rows;
 
@@ -174,7 +171,7 @@ function processRetrievedData(results, obj, tableName) {
           bill_amount: row.bill_amount,
           total_container_amount: row.container_charge,
           client_id: row.client_id,
-          created_by: "adodla",
+          created_by: row.user_name,
           created_date: new Date().toISOString(),
           last_modified_by: "akhi",
           last_modified_date: new Date().toISOString(),
@@ -193,9 +190,9 @@ function processRetrievedData(results, obj, tableName) {
           container_id: row.unit_container_id,
           issue_qty: row.issue_qty,
           client_id: row.client_id,
-          created_by: "adodla",
+          created_by: row.user_name,
           created_date: new Date().toISOString(),
-          last_modified_by: "akhi",
+          last_modified_by: row.user_name,
           last_modified_date: new Date().toISOString(),
         };
       }
@@ -221,7 +218,10 @@ saleBillRouter.delete("/:id", async (req, res) => {
   await pool.query(
     generateUpdateQuery(
       {
-        curr_bal: Number(entity.curr_bal) - Number(bill.bill_amount),
+        curr_bal:
+          Number(entity.curr_bal) -
+          Number(bill.bill_amount) -
+          Number(bill.total_container_amount),
       },
       "entity_master",
       "entity_id",

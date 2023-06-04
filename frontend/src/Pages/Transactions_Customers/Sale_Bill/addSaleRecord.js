@@ -16,7 +16,6 @@ import {
 } from "antd";
 import { saleRecordActions } from "../../../store/TransactionCustomers/saleRecord";
 import useContainerReturn from "../../../hooks/TransactionCustomers/useContainerReturn";
-import moment from "moment";
 import dayjs from "dayjs";
 import { containerBalanceActions } from "../../../store/TransactionCustomers/containerBalance";
 
