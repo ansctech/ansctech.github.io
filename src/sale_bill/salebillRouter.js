@@ -96,11 +96,8 @@ saleBillRouter.post("/", async (req, res) => {
     const results1 = await pool.query(container_issue_register_query);
     processRetrievedData(results1, conObj, "container_issue_register");
 
-    const rec = await insertData(obj, tableName, req);
-    const con = await insertData(conObj, "container_issue_register", req);
-
     // Update customers balance
-    await Object.keys(obj).forEach(async (ob) => {
+    for (let ob in obj) {
       const entity = await pool.query(
         generateRetrieveQuery("entity_master", "entity_id", ob)
       );
@@ -121,13 +118,23 @@ saleBillRouter.post("/", async (req, res) => {
           req.user
         )
       );
-    });
+
+      // Store previous balance
+      obj[ob].prev_balance =
+        Number(entity.rows[0].curr_bal) -
+        (Number(existingRecord[ob]?.bill_amount) +
+          Number(existingRecord[ob]?.total_container_amount) || 0);
+    }
+
+    // Insert data
+    const rec = await insertData(obj, tableName, req);
+    const con = await insertData(conObj, "container_issue_register", req);
 
     //Send response
     res.status(201).json({
       message: "Successfully Retrieved data",
       sale_bill_rows: rec,
-      caontainer_issue_register_rows: con,
+      container_issue_register_rows: con,
     });
   } catch (err) {
     console.log(err);
@@ -137,6 +144,8 @@ saleBillRouter.post("/", async (req, res) => {
 
 async function insertData(obj, tableName, req) {
   const rec = [];
+
+  // console.log(obj);
 
   for (const ele of Object.keys(obj)) {
     if (ele) {
@@ -150,7 +159,7 @@ async function insertData(obj, tableName, req) {
   return rec;
 }
 
-function processRetrievedData(results, obj, tableName, req) {
+function processRetrievedData(results, obj, tableName) {
   const len = results.rows.length;
   let rows;
 
@@ -159,6 +168,7 @@ function processRetrievedData(results, obj, tableName, req) {
   } else {
     rows = results.rows;
   }
+
   if (tableName == "sale_bill") {
     for (let i = 0; i < len; i++) {
       const row = rows[i];

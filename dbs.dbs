@@ -177,6 +177,7 @@
 			<column name="bill_date" type="date" length="13" decimal="0" jt="91" mandatory="y" />
 			<column name="entity_id_cust" type="bigint" length="19" decimal="0" jt="-5" mandatory="y" />
 			<column name="bill_amount" type="numeric" jt="2" mandatory="y" />
+			<column name="prev_balance" type="numeric" jt="2" mandatory="y" />
 			<column name="total_container_amount" type="varchar" decimal="0" jt="12" />
 			<column name="client_id" type="integer" length="10" decimal="0" jt="4" />
 			<column name="created_by" type="varchar" decimal="0" jt="12" />

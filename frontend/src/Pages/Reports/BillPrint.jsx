@@ -20,6 +20,7 @@ import { useSelector } from "react-redux";
 import useVegetables from "../../hooks/Masters/useVegetables";
 import useUnits from "../../hooks/Masters/useUnits";
 import useContainerBalance from "../../hooks/TransactionCustomers/useContainerBalance";
+import useSaleBill from "../../hooks/TransactionFarmers/useSaleBill";
 
 function BillPrint() {
   const [form] = Form.useForm();
@@ -52,6 +53,11 @@ function BillPrint() {
   } = useSaleRecord();
 
   const {
+    saleBill: { saleBill },
+    volatileState: { isLoading: isLoadingSaleBill },
+  } = useSaleBill();
+
+  const {
     units: { units },
     volatileState: { isLoading: isLoadingUnits },
   } = useUnits();
@@ -82,7 +88,8 @@ function BillPrint() {
       !isLoadingRecords &&
       !isLoadingVegetables &&
       !isLoadingUnits &&
-      !isLoadingContainerBalance
+      !isLoadingContainerBalance &&
+      !isLoadingSaleBill
     ) {
       let result = [];
 
@@ -144,9 +151,8 @@ function BillPrint() {
           amount: res.sale_amount,
           container: res.contDetails.name,
           containerBal: res.contDetails.balance,
-          charge: res.contDetails.charge,
           weight: res.kg_per_container,
-          prevBal: res.entityDetails.curr_bal,
+          entityId: res.entity_id_cust,
         };
 
         if (address) {
@@ -339,17 +345,12 @@ function BillPrint() {
               {Object.keys(billContent).map((key) => {
                 const bill = billContent[key];
 
-                const totalAmount = bill.reduce(
-                  (acc, curr) => acc + Number(curr.amount),
-                  0
-                );
-
-                const prevBal = Number(bill[0].prevBal);
-
-                const additionalCharge = bill.reduce(
-                  (acc, curr) => acc + curr.quantity * curr.charge,
-                  0
-                );
+                const billDetail = saleBill.find((rec) => {
+                  return (
+                    rec.entity_id_cust == bill[0].entityId &&
+                    convertDateToNormalFormat(rec.bill_date) == date
+                  );
+                });
 
                 return (
                   <View key={bill.entry_id} style={styles.section}>
@@ -477,7 +478,11 @@ function BillPrint() {
                           }}
                         >
                           <Text>Additional Charge</Text>
-                          <Text>{additionalCharge.toFixed(2)}</Text>
+                          <Text>
+                            {Number(billDetail?.total_container_amount).toFixed(
+                              2
+                            )}
+                          </Text>
                         </View>
                         <View
                           style={{
@@ -489,7 +494,9 @@ function BillPrint() {
                           }}
                         >
                           <Text>Total Amount</Text>
-                          <Text>{totalAmount.toFixed(2)}</Text>
+                          <Text>
+                            {Number(billDetail?.bill_amount).toFixed(2)}
+                          </Text>
                         </View>
                         <View
                           style={{
@@ -502,9 +509,7 @@ function BillPrint() {
                         >
                           <Text>Previous Balance</Text>
                           <Text>
-                            {Number(
-                              prevBal - totalAmount - additionalCharge
-                            ).toFixed(2)}
+                            {Number(billDetail?.prev_balance).toFixed(2)}
                           </Text>
                         </View>
                       </View>
@@ -520,7 +525,13 @@ function BillPrint() {
                         }}
                       >
                         <Text>Net Balance</Text>
-                        <Text>{Number(prevBal).toFixed(2)}</Text>
+                        <Text>
+                          {(
+                            Number(billDetail?.total_container_amount) +
+                            Number(billDetail?.bill_amount) +
+                            Number(billDetail?.prev_balance)
+                          ).toFixed(2)}
+                        </Text>
                       </View>
                       {/* Container balance*/}
                       <View
