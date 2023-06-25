@@ -88,10 +88,10 @@ body {
 .goog-te-gadget {
   color: transparent !important;
 }
-.goog-te-gadget img,
+/* .goog-te-gadget img,
 a {
   display: none !important;
-}
+} */
 
 /* google translate banner-frame */
 .goog-te-banner-frame {

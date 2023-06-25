@@ -4,10 +4,13 @@ import dayjs from "dayjs";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { Table, Checkbox } from "antd";
+
 import useBusinessEntity from "../../hooks/Masters/useBusinessEntity";
 import useCustomerGroups from "../../hooks/Masters/useCustomerGroups";
 import {
   Document,
+  pdf,
   Page,
   Text,
   View,
@@ -22,6 +25,9 @@ import useUnits from "../../hooks/Masters/useUnits";
 import useContainerBalance from "../../hooks/TransactionCustomers/useContainerBalance";
 import useSaleBill from "../../hooks/TransactionFarmers/useSaleBill";
 
+import useFetch from "../../hooks/global/useFetch";
+import { useTranslation } from "react-i18next";
+
 function BillPrint() {
   const [form] = Form.useForm();
 
@@ -29,8 +35,30 @@ function BillPrint() {
   const [date, setDate] = useState();
   const [currentCustomerGroup, setCurrentCustomerGroup] = useState();
   const [currentCustomer, setCurrentCustomer] = useState();
-  const [billContent, setBillContent] = useState([]);
+  const [billContent, setBillContent] = useState({});
+  const [showWhatsappBillSelection, setShowWhatsappBillSelection] =
+    useState(false);
+  const [whatsappCustomers, setWhatsappCustomers] = useState();
   const client = useSelector((state) => state.clientReducer);
+
+  const [selectedCustomers, setSelectedCustomers] = useState([]);
+  const onSelectChange = (selectedCustomer) => {
+    if (
+      selectedCustomers.some(
+        (cust) => cust.entity_id === selectedCustomer.entity_id
+      )
+    ) {
+      setSelectedCustomers((prevState) =>
+        prevState.filter((e) => e.entity_id !== selectedCustomer.entity_id)
+      );
+    } else {
+      setSelectedCustomers((prevState) => [...prevState, selectedCustomer]);
+    }
+  };
+
+  const { reqFn } = useFetch();
+
+  const { t } = useTranslation();
 
   const {
     customerGroups: { customerGroups },
@@ -153,6 +181,7 @@ function BillPrint() {
           containerBal: res.contDetails.balance,
           weight: res.kg_per_container,
           entityId: res.entity_id_cust,
+          entityDetails: res.entityDetails,
         };
 
         if (address) {
@@ -163,6 +192,13 @@ function BillPrint() {
       });
 
       setBillContent(accumulation);
+
+      // Set whatsapp details
+      const whatsappDetails = Object.keys(accumulation).map(
+        (acc) => accumulation[acc][0].entityDetails
+      );
+
+      setWhatsappCustomers(whatsappDetails);
     }
   }, [
     date,
@@ -182,25 +218,294 @@ function BillPrint() {
     },
     section: {
       marginVertical: 5,
-      paddingHorizontal: 100,
-      fontSize: 14,
-
-      flexGrow: 1,
+      paddingHorizontal: 170,
+      fontSize: 12,
+      marginBottom: 50,
     },
     title: {
-      fontSize: 20,
+      fontSize: 15,
       textAlign: "center",
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: 13,
       textAlign: "center",
     },
   });
 
+  // Whatsapp bill selection
+  const columns = [
+    {
+      title: t("table.reports.subHeaders.billPrint.labels.sendBill.text"),
+      render: (_, record) => (
+        <Checkbox
+          checked={selectedCustomers.some(
+            (cust) => cust.entity_id === record.entity_id
+          )}
+          onChange={() => onSelectChange(record)}
+        />
+      ),
+    },
+    {
+      title: t("table.reports.subHeaders.billPrint.labels.customerName.text"),
+      dataIndex: "entityname_eng",
+    },
+    {
+      title: t("table.reports.subHeaders.billPrint.labels.whatsappNumber.text"),
+      dataIndex: "phone",
+    },
+  ];
+
+  // Send bill to each customer
+  const shareBills = async () => {
+    // Send whatsapp message to each customer
+    reqFn({
+      method: "POST",
+      url: "messageBird",
+      values: { customer: "+2348181130539" },
+    });
+
+    for (let customer of whatsappCustomers) {
+      // Get customer own bill
+      // const bill = billContent[customer.entityname_eng];
+      // const billDetail = saleBill.find((rec) => {
+      //   return (
+      //     rec.entity_id_cust == bill[0].entityId &&
+      //     convertDateToNormalFormat(rec.bill_date) == date
+      //   );
+      // });
+      // Create bill pdf
+      // const IndividualBillPdf = () => (
+      //   <Document>
+      //     <View key={bill.entry_id} style={styles.section}>
+      //       {/* Title */}
+      //       <Text style={styles.title}>{client.client_name_eng}</Text>
+      //       {/* Tagline */}
+      //       <Text style={styles.subtitle}>{client.tagline}</Text>
+      //       {/* Customer details */}
+      //       <View
+      //         style={{
+      //           marginTop: 20,
+      //           display: "flex",
+      //           alignItems: "center",
+      //           flexDirection: "row",
+      //           justifyContent: "space-between",
+      //         }}
+      //       >
+      //         {/* Customer name */}
+      //         <View
+      //           style={{
+      //             display: "flex",
+      //             alignItems: "center",
+      //             flexDirection: "row",
+      //           }}
+      //         >
+      //           <Text style={{ fontWeight: 600, marginRight: 5 }}>
+      //             :
+      //           </Text>
+      //           <Text>{customer.entityname_eng}</Text>
+      //         </View>
+      //         {/* Date */}
+      //         <View
+      //           style={{
+      //             display: "flex",
+      //             alignItems: "center",
+      //             flexDirection: "row",
+      //           }}
+      //         >
+      //           <Text style={{ fontWeight: 600, marginRight: 5 }}>Date:</Text>
+      //           <Text>{date}</Text>
+      //         </View>
+      //       </View>
+      //       {/* Table */}
+      //       <View>
+      //         {/* Header */}
+      //         <View
+      //           style={{
+      //             borderBottom: "1px solid black",
+      //             borderTop: "1px solid black",
+      //             paddingVertical: "5px",
+      //             display: "flex",
+      //             flexDirection: "row",
+      //             gap: 10,
+      //             marginTop: 10,
+      //           }}
+      //         >
+      //           <Text style={{ flexBasis: 110 }}>Item Name</Text>
+      //           <Text style={{ flexBasis: 40, textAlign: "right" }}>
+      //             Weight
+      //           </Text>
+      //           <Text style={{ flexBasis: 40, textAlign: "right" }}>Rate</Text>
+      //           <Text style={{ flexBasis: 40, textAlign: "right" }}>
+      //             Amount
+      //           </Text>
+      //         </View>
+      //         {/* Content */}
+      //         <View
+      //           style={{
+      //             borderBottom: "1px solid black",
+      //             borderTop: "1px solid black",
+      //             paddingVertical: "5px",
+      //             display: "flex",
+      //             gap: 5,
+      //             marginTop: 5,
+      //             paddingBottom: 20,
+      //           }}
+      //         >
+      //           {bill.map((entry) => (
+      //             <View
+      //               style={{
+      //                 display: "flex",
+      //                 flexDirection: "row",
+      //                 gap: 10,
+      //                 marginTop: 5,
+      //               }}
+      //             >
+      //               <Text style={{ flexBasis: 110 }}>
+      //                 {entry.itemName} {entry.quantity} {entry.container}
+      //               </Text>
+      //               <Text style={{ flexBasis: 40, textAlign: "right" }}>
+      //                 {entry.weight}
+      //               </Text>
+      //               <Text style={{ flexBasis: 40, textAlign: "right" }}>
+      //                 {entry.rate}
+      //               </Text>
+      //               <Text style={{ flexBasis: 40, textAlign: "right" }}>
+      //                 {Number(entry.amount).toFixed(2)}
+      //               </Text>
+      //             </View>
+      //           ))}
+      //         </View>
+      //         {/* Summary */}
+      //         <View
+      //           style={{
+      //             borderBottom: "1px solid black",
+      //             display: "flex",
+      //             gap: 5,
+      //           }}
+      //         >
+      //           <View
+      //             style={{
+      //               paddingLeft: 100,
+      //               display: "flex",
+      //               flexDirection: "row",
+      //               justifyContent: "space-between",
+      //               gap: 20,
+      //             }}
+      //           >
+      //             <Text>Additional Charge</Text>
+      //             <Text>
+      //               {Number(billDetail?.total_container_amount).toFixed(2)}
+      //             </Text>
+      //           </View>
+      //           <View
+      //             style={{
+      //               paddingLeft: 100,
+      //               display: "flex",
+      //               flexDirection: "row",
+      //               justifyContent: "space-between",
+      //               gap: 20,
+      //             }}
+      //           >
+      //             <Text>Total Amount</Text>
+      //             <Text>{Number(billDetail?.bill_amount).toFixed(2)}</Text>
+      //           </View>
+      //           <View
+      //             style={{
+      //               paddingLeft: 100,
+      //               display: "flex",
+      //               flexDirection: "row",
+      //               justifyContent: "space-between",
+      //               gap: 20,
+      //             }}
+      //           >
+      //             <Text>Previous Balance</Text>
+      //             <Text>{Number(billDetail?.prev_balance).toFixed(2)}</Text>
+      //           </View>
+      //         </View>
+      //         {/* Net */}
+      //         <View
+      //           style={{
+      //             borderBottom: "1px solid black",
+      //             paddingLeft: 100,
+      //             display: "flex",
+      //             flexDirection: "row",
+      //             justifyContent: "space-between",
+      //             gap: 20,
+      //           }}
+      //         >
+      //           <Text>Net Balance</Text>
+      //           <Text>
+      //             {(
+      //               Number(billDetail?.total_container_amount) +
+      //               Number(billDetail?.bill_amount) +
+      //               Number(billDetail?.prev_balance)
+      //             ).toFixed(2)}
+      //           </Text>
+      //         </View>
+      //         {/* Container balance*/}
+      //         <View
+      //           style={{
+      //             borderBottom: "1px solid black",
+      //             borderTop: "1px solid black",
+      //             marginTop: 5,
+      //             padding: 5,
+      //             paddingBottom: 10,
+      //             paddingRight: 100,
+      //           }}
+      //         >
+      //           <View
+      //             style={{
+      //               display: "flex",
+      //               flexDirection: "row",
+      //               justifyContent: "space-between",
+      //               marginBottom: 10,
+      //             }}
+      //           >
+      //             <Text style={{ fontWeight: "bold" }}>Container Type</Text>
+      //             <Text>Balance</Text>
+      //           </View>
+      //           {bill.map(
+      //             (entry, index) =>
+      //               entry.containerBal &&
+      //               bill.findIndex(
+      //                 (ent) => ent.container === entry.container
+      //               ) === index && (
+      //                 <View
+      //                   style={{
+      //                     display: "flex",
+      //                     flexDirection: "row",
+      //                     justifyContent: "space-between",
+      //                   }}
+      //                 >
+      //                   <Text style={{ fontWeight: "bold" }}>
+      //                     {entry.container}
+      //                   </Text>
+      //                   <Text>{entry.containerBal}</Text>
+      //                 </View>
+      //               )
+      //           )}
+      //         </View>
+      //       </View>
+      //     </View>
+      //   </Document>
+      // );
+      // Convert bill to base64
+      // const blob = pdf(IndividualBillPdf).toBlob();
+      // console.log(blob);
+      // const reader = new FileReader();
+      // reader.onloadend = () => {
+      //   const base64data = reader.result;
+      //   console.log("Base64 representation:", base64data);
+      // };
+      // const res = reader.readAsDataURL(blob);
+      // console.log(res);
+    }
+  };
+
   return (
     <div>
       {/* Header */}
-      <h2 className="">Bill Print</h2>
+      <h2 className="">{t("table.reports.subHeaders.billPrint.text")}</h2>
       <div
         style={{
           marginBottom: 50,
@@ -238,6 +543,10 @@ function BillPrint() {
           <div>
             <span style={{ marginRight: 10 }}>Customer Group: </span>
             <Select
+              showSearch={true}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
               defaultValue="All Groups"
               onChange={(value) => {
                 setCurrentCustomerGroup(value);
@@ -259,6 +568,10 @@ function BillPrint() {
           <div>
             <span style={{ marginRight: 10 }}>Customer Name: </span>
             <Select
+              showSearch={true}
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
               defaultValue="All Customers"
               onChange={(value) => {
                 setCurrentCustomer(value);
@@ -294,13 +607,17 @@ function BillPrint() {
               isLoadingRecords &&
               isLoadingVegetables &&
               isLoadingUnits &&
-              isLoadingContainerBalance
+              isLoadingContainerBalance &&
+              isLoadingSaleBill
             }
           >
             Show Bill
           </Button>
           <Button
             type="primary"
+            onClick={() => {
+              setShowWhatsappBillSelection(true);
+            }}
             style={{
               display: "flex",
               alignItems: "center",
@@ -337,6 +654,30 @@ function BillPrint() {
           </Button>
         </div>
       </div>
+
+      {/* Whatsapp bill selection */}
+      {showWhatsappBillSelection && (
+        <>
+          <Table dataSource={whatsappCustomers} columns={columns} />
+          <div
+            style={{
+              marginTop: 20,
+              marginBottom: 20,
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button
+              type="primary"
+              disabled={!whatsappCustomers.length}
+              style={{ backgroundColor: "#1BD741" }}
+              onClick={() => shareBills()}
+            >
+              Send Bill Through Whatsapp
+            </Button>
+          </div>
+        </>
+      )}
 
       {showPDF && (
         <PDFViewer width={"100%"} height={600}>
@@ -378,7 +719,10 @@ function BillPrint() {
                         }}
                       >
                         <Text style={{ fontWeight: 600, marginRight: 5 }}>
-                          Customer:
+                          {t(
+                            "table.reports.subHeaders.billPrint.labels.customer.text"
+                          )}
+                          :
                         </Text>
                         <Text>{key}</Text>
                       </View>
@@ -392,7 +736,10 @@ function BillPrint() {
                         }}
                       >
                         <Text style={{ fontWeight: 600, marginRight: 5 }}>
-                          Date:
+                          {t(
+                            "table.reports.subHeaders.billPrint.labels.date.text"
+                          )}
+                          :
                         </Text>
                         <Text>{date}</Text>
                       </View>
@@ -408,19 +755,29 @@ function BillPrint() {
                           paddingVertical: "5px",
                           display: "flex",
                           flexDirection: "row",
-                          gap: 20,
+                          gap: 10,
                           marginTop: 10,
                         }}
                       >
-                        <Text style={{ flexBasis: 200 }}>Item Name</Text>
-                        <Text style={{ flexBasis: 80, textAlign: "right" }}>
-                          Weight
+                        <Text style={{ flexBasis: 110 }}>
+                          {t(
+                            "table.reports.subHeaders.billPrint.labels.itemName.text"
+                          )}
                         </Text>
-                        <Text style={{ flexBasis: 80, textAlign: "right" }}>
-                          Rate
+                        <Text style={{ flexBasis: 40, textAlign: "right" }}>
+                          {t(
+                            "table.reports.subHeaders.billPrint.labels.weight.text"
+                          )}
                         </Text>
-                        <Text style={{ flexBasis: 80, textAlign: "right" }}>
-                          Amount
+                        <Text style={{ flexBasis: 40, textAlign: "right" }}>
+                          {t(
+                            "table.reports.subHeaders.billPrint.labels.rate.text"
+                          )}
+                        </Text>
+                        <Text style={{ flexBasis: 40, textAlign: "right" }}>
+                          {t(
+                            "table.reports.subHeaders.billPrint.labels.amount.text"
+                          )}
                         </Text>
                       </View>
                       {/* Content */}
@@ -440,21 +797,21 @@ function BillPrint() {
                             style={{
                               display: "flex",
                               flexDirection: "row",
-                              gap: 20,
+                              gap: 10,
                               marginTop: 5,
                             }}
                           >
-                            <Text style={{ flexBasis: 200 }}>
+                            <Text style={{ flexBasis: 110 }}>
                               {entry.itemName} {entry.quantity}{" "}
                               {entry.container}
                             </Text>
-                            <Text style={{ flexBasis: 80, textAlign: "right" }}>
+                            <Text style={{ flexBasis: 40, textAlign: "right" }}>
                               {entry.weight}
                             </Text>
-                            <Text style={{ flexBasis: 80, textAlign: "right" }}>
+                            <Text style={{ flexBasis: 40, textAlign: "right" }}>
                               {entry.rate}
                             </Text>
-                            <Text style={{ flexBasis: 80, textAlign: "right" }}>
+                            <Text style={{ flexBasis: 40, textAlign: "right" }}>
                               {Number(entry.amount).toFixed(2)}
                             </Text>
                           </View>
@@ -470,14 +827,18 @@ function BillPrint() {
                       >
                         <View
                           style={{
-                            paddingLeft: 200,
+                            paddingLeft: 100,
                             display: "flex",
                             flexDirection: "row",
                             justifyContent: "space-between",
                             gap: 20,
                           }}
                         >
-                          <Text>Additional Charge</Text>
+                          <Text>
+                            {t(
+                              "table.reports.subHeaders.billPrint.labels.additionalCharge.text"
+                            )}
+                          </Text>
                           <Text>
                             {Number(billDetail?.total_container_amount).toFixed(
                               2
@@ -486,28 +847,36 @@ function BillPrint() {
                         </View>
                         <View
                           style={{
-                            paddingLeft: 200,
+                            paddingLeft: 100,
                             display: "flex",
                             flexDirection: "row",
                             justifyContent: "space-between",
                             gap: 20,
                           }}
                         >
-                          <Text>Total Amount</Text>
+                          <Text>
+                            {t(
+                              "table.reports.subHeaders.billPrint.labels.totalAmount.text"
+                            )}
+                          </Text>
                           <Text>
                             {Number(billDetail?.bill_amount).toFixed(2)}
                           </Text>
                         </View>
                         <View
                           style={{
-                            paddingLeft: 200,
+                            paddingLeft: 100,
                             display: "flex",
                             flexDirection: "row",
                             justifyContent: "space-between",
                             gap: 20,
                           }}
                         >
-                          <Text>Previous Balance</Text>
+                          <Text>
+                            {t(
+                              "table.reports.subHeaders.billPrint.labels.previousBalance.text"
+                            )}
+                          </Text>
                           <Text>
                             {Number(billDetail?.prev_balance).toFixed(2)}
                           </Text>
@@ -517,14 +886,18 @@ function BillPrint() {
                       <View
                         style={{
                           borderBottom: "1px solid black",
-                          paddingLeft: 200,
+                          paddingLeft: 100,
                           display: "flex",
                           flexDirection: "row",
                           justifyContent: "space-between",
                           gap: 20,
                         }}
                       >
-                        <Text>Net Balance</Text>
+                        <Text>
+                          {t(
+                            "table.reports.subHeaders.billPrint.labels.netBalance.text"
+                          )}
+                        </Text>
                         <Text>
                           {(
                             Number(billDetail?.total_container_amount) +
@@ -541,7 +914,7 @@ function BillPrint() {
                           marginTop: 5,
                           padding: 5,
                           paddingBottom: 10,
-                          paddingRight: 200,
+                          paddingRight: 100,
                         }}
                       >
                         <View
@@ -553,9 +926,15 @@ function BillPrint() {
                           }}
                         >
                           <Text style={{ fontWeight: "bold" }}>
-                            Container Type
+                            {t(
+                              "table.reports.subHeaders.billPrint.labels.containerType.text"
+                            )}
                           </Text>
-                          <Text>Balance</Text>
+                          <Text>
+                            {t(
+                              "table.reports.subHeaders.billPrint.labels.balance.text"
+                            )}
+                          </Text>
                         </View>
                         {bill.map(
                           (entry, index) =>

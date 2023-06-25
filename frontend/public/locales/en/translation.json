@@ -11,9 +11,12 @@
             "fullNameLocalLang": { "text": "Full Name (Local Language)" },
             "entityType": { "text": "Entity Type" },
             "currentBalance": { "text": "Current Balance" },
+            "openingBalance": { "text": "Opening Balance" },
             "phone": { "text": "Phone" },
             "email": { "text": "Email" },
             "address": { "text": "Address" },
+            "accountGroup": { "text": "Account Group" },
+            "customerGroup": { "text": "Customer Group" },
             "action": { "text": "Action" }
           }
         },
@@ -21,6 +24,10 @@
           "text": "Vegetables",
           "labels": {
             "name": { "text": "Name (English)" },
+            "vegetableName": { "text": "Vegetable Name (English)" },
+            "vegetableNameLocal": { "text": "Vegetable Name (Local)" },
+            "unit": { "text": "Unit" },
+            "uploadPhoto": { "text": "Upload Photo" },
             "nameLocalLang": { "text": "Name (Local)" },
             "action": { "text": "Action" }
           }
@@ -29,6 +36,8 @@
           "text": "Units",
           "labels": {
             "name": { "text": "Name" },
+            "unitNameEng": { "text": "Unit Name (English)" },
+            "unitNameLocal": { "text": "Unit Name (Local Language)" },
             "containerCharge": { "text": "Container Charge" },
             "maintainInventory": { "text": "Maintain Inventory" },
             "action": { "text": "Action" }
@@ -39,6 +48,10 @@
           "labels": {
             "name": { "text": "Name (English)" },
             "nameLocalLang": { "text": "Name (Local)" },
+            "customerGroupNameEng": { "text": "Customer Group Name (English)" },
+            "customerGroupNameLocalLang": {
+              "text": "Customer Group Name (Local)"
+            },
             "action": { "text": "Action" }
           }
         },
@@ -63,11 +76,27 @@
             "SI": { "text": "SI#" },
             "vegetables": { "text": "Vegetable" },
             "qty": { "text": "Qty" },
+            "firstUnit": { "text": "First Unit" },
+            "nanmeOfVegetable": { "text": "Name of Vegetable" },
+            "nameOfFarmer": { "text": "Name of Farmer" },
+            "nameOfCustomer": { "text": "Name of Customer" },
+            "customerName": { "text": "Customer Name" },
+            "date": { "text": "Date" },
             "unit": { "text": "Unit" },
             "kgUnit": { "text": "Kg/Unit" },
             "amount": { "text": "Amount" },
+            "multiply": { "text": "Multiply" },
             "delete": { "text": "Delete" },
             "rate": { "text": "Rate" }
+          }
+        },
+        "saleBill": {
+          "text": "Sale Bill",
+          "labels": {
+            "dateOfSale": { "text": "Date" },
+            "customerName": { "text": "Customer Name" },
+            "amount": { "text": "Amount" },
+            "action": { "text": "Action" }
           }
         },
         "moneyReceipt": {
@@ -80,23 +109,57 @@
             "action": { "text": "Action" }
           }
         },
-        "saleBill": {
-          "text": "Sale Bill",
-          "labels": {
-            "dateOfSale": { "text": "Date" },
-            "customerName": { "text": "Customer Name" },
-            "amount": { "text": "Amount" },
-            "action": { "text": "Action" }
-          }
-        },
         "containerReturn": {
           "text": "Container Return",
           "labels": {
-            "dateOfReceipt": { "text": "Date" },
+            "dateOfReceipt": { "text": "Date Of Receipt" },
             "customerName": { "text": "Customer Name" },
             "containerType": { "text": "Container Type" },
             "qty": { "text": "Quantity" },
             "action": { "text": "Action" }
+          }
+        }
+      }
+    },
+    "reports": {
+      "text": "Report",
+      "subHeaders": {
+        "billPrint": {
+          "text": "Bill Print",
+          "labels": {
+            "sendBill": { "text": "Send Bill" },
+            "customerName": { "text": "Customer Name" },
+            "whatsappNumber": { "text": "Whatsapp Number" },
+            "customer": { "text": "Customer" },
+            "date": { "text": "Date" },
+            "itemName": { "text": "Item Name" },
+            "weight": { "text": "Weight" },
+            "rate": { "text": "Rate" },
+            "amount": { "text": "Amount" },
+            "additionalCharge": { "text": "Additional Charge" },
+            "totalAmount": { "text": "Total Amount" },
+            "previousBalance": { "text": "Previous Balance" },
+            "netBalance": { "text": "Net Balance" },
+            "containerType": { "text": "Container Type" },
+            "balance": { "text": "Balance" }
+          }
+        },
+        "balanceReport": {
+          "text": "Balance Report",
+          "labels": {
+            "SI": { "text": "SI#" },
+            "customerName": { "text": "Customer Name" },
+            "amount": { "text": "Amount" },
+            "totalAmount": { "text": "Total Amount" }
+          }
+        },
+        "containerBalanceReport": {
+          "text": "Container Balance Report",
+          "labels": {
+            "SI": { "text": "SI#" },
+            "customerName": { "text": "Customer Name" },
+            "quantity": { "text": "Quantity" },
+            "totalAmount": { "text": "Total Amount" }
           }
         }
       }

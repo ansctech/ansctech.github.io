@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Button, Modal, Form, InputNumber, Select, DatePicker } from "antd";
 import { containerReturnActions } from "../../../store/TransactionCustomers/containerReturn";
-import moment from "moment";
+import { useTranslation } from "react-i18next";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import dayjs from "dayjs";
 import useContainerBalance from "../../../hooks/TransactionCustomers/useContainerBalance";
@@ -21,6 +21,8 @@ const AddContainerReturn = ({
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { confirm } = Modal;
+
+  const { t } = useTranslation();
 
   const {
     containerBalance: { containerBalance },
@@ -157,7 +159,11 @@ const AddContainerReturn = ({
           onFinish={onFinish}
           className={"mt-4"}
         >
-          <Form.Item label="Date">
+          <Form.Item
+            label={t(
+              "table.transaction-customer.subHeaders.containerReturn.labels.dateOfReceipt.text"
+            )}
+          >
             <Form.Item
               name="cont_txn_date"
               rules={[{ required: true, message: "Date is required" }]}
@@ -165,7 +171,11 @@ const AddContainerReturn = ({
               <DatePicker onChange={selectDate} />
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Name of Customer">
+          <Form.Item
+            label={t(
+              "table.transaction-customer.subHeaders.containerReturn.labels.customerName.text"
+            )}
+          >
             <Form.Item
               name="entity_id"
               rules={[
@@ -173,6 +183,11 @@ const AddContainerReturn = ({
               ]}
             >
               <Select
+                showSearch={true}
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
                 placeholder={"Select Customer"}
                 onChange={(e) =>
                   setContBal((prev) => ({ ...prev, entity_id: e }))
@@ -192,7 +207,11 @@ const AddContainerReturn = ({
               </Select>
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Container Type">
+          <Form.Item
+            label={t(
+              "table.transaction-customer.subHeaders.containerReturn.labels.containerType.text"
+            )}
+          >
             <Form.Item
               name="container_id"
               rules={[
@@ -200,6 +219,11 @@ const AddContainerReturn = ({
               ]}
             >
               <Select
+                showSearch={true}
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
                 placeholder={"Select Container Type"}
                 onChange={(e) =>
                   setContBal((prev) => ({ ...prev, container_id: e }))
@@ -219,7 +243,9 @@ const AddContainerReturn = ({
           <Form.Item
             label={
               <>
-                Qty{" "}
+                {t(
+                  "table.transaction-customer.subHeaders.containerReturn.labels.qty.text"
+                )}{" "}
                 {currBal !== undefined && (
                   <span style={{ color: "maroon", marginLeft: 15 }}>
                     {" ( Current balance: "}

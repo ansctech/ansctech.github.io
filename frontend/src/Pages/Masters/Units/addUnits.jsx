@@ -3,12 +3,15 @@ import { useDispatch } from "react-redux";
 import { Button, Modal, Form, Input, Checkbox } from "antd";
 import { unitsActions } from "../../../store/Masters/units";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
   const [inventory, setInventory] = useState(false);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { confirm } = Modal;
+
+  const { t } = useTranslation();
 
   const onFinish = (values) => {
     confirm({
@@ -83,7 +86,9 @@ const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
           onFinish={onFinish}
           className={"mt-4"}
         >
-          <Form.Item label="Unit Name (English)">
+          <Form.Item
+            label={t("table.masters.subHeaders.units.labels.unitNameEng.text")}
+          >
             <Form.Item
               name="container_name_eng"
               rules={[
@@ -93,7 +98,11 @@ const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
               <Input />
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Unit Name (Local Language)">
+          <Form.Item
+            label={t(
+              "table.masters.subHeaders.units.labels.unitNameLocal.text"
+            )}
+          >
             <Form.Item
               name="container_name_local_lang"
               rules={[
@@ -103,7 +112,11 @@ const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
               <Input />
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Container Charge">
+          <Form.Item
+            label={t(
+              "table.masters.subHeaders.units.labels.containerCharge.text"
+            )}
+          >
             <Form.Item
               name="container_charge"
               rules={[
@@ -120,7 +133,7 @@ const AddUnits = ({ editItem, modal, isLoading, addUnits, update }) => {
               setInventory(e.target.checked);
             }}
           >
-            Maintain Inventory
+            {t("table.masters.subHeaders.units.labels.maintainInventory.text")}
           </Checkbox>
         </Form>
       </Modal>

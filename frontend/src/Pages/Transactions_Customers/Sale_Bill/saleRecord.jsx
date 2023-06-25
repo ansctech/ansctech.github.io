@@ -14,7 +14,7 @@ import useUnits from "../../../hooks/Masters/useUnits";
 import useVegetables from "../../../hooks/Masters/useVegetables";
 import { useTranslation } from "react-i18next";
 import useBusinessEntity from "../../../hooks/Masters/useBusinessEntity";
-import moment from "moment";
+
 import useDate from "../../../hooks/global/useDate";
 import { saleRecordActions } from "../../../store/TransactionCustomers/saleRecord";
 import useSaleBill from "../../../hooks/TransactionFarmers/useSaleBill";

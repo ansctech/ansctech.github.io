@@ -14,7 +14,7 @@ import useBusinessEntity from "../../../hooks/Masters/useBusinessEntity";
 import AddSaleRecord from "./addSaleRecord";
 import useVegetables from "../../../hooks/Masters/useVegetables";
 import useUnits from "../../../hooks/Masters/useUnits";
-import moment from "moment";
+
 import dayjs from "dayjs";
 import useSaleRecord from "../../../hooks/TransactionCustomers/useSaleRecord";
 import { useNavigate } from "react-router-dom";

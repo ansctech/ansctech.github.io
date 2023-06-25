@@ -82,7 +82,14 @@ const AddContainerReturn = ({ modal, isLoading, units, customerGroups }) => {
                 { required: true, message: "Name of Customer is required" },
               ]}
             >
-              <Select placeholder={"Select Customer"}>
+              <Select
+                showSearch={true}
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
+                placeholder={"Select Customer"}
+              >
                 {customerGroups?.map(({ nameEn, id }) => (
                   <Select.Option key={id} value={nameEn}>
                     {nameEn}
@@ -98,7 +105,14 @@ const AddContainerReturn = ({ modal, isLoading, units, customerGroups }) => {
                 { required: true, message: "Container Type is required" },
               ]}
             >
-              <Select placeholder={"Select Container Type"}>
+              <Select
+                showSearch={true}
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
+                placeholder={"Select Container Type"}
+              >
                 {units?.map(({ entityEn, id }) => (
                   <Select.Option key={id} value={entityEn}>
                     {entityEn}

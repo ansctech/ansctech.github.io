@@ -1,13 +1,26 @@
 import React, { useState } from "react";
-import { Select, Table } from "antd";
+import { Button, Select, Table } from "antd";
 import useCustomerGroups from "../../hooks/Masters/useCustomerGroups";
 import useBusinessEntity from "../../hooks/Masters/useBusinessEntity";
 import TableSearch from "../../components/Table/tableSearch";
 import useUnits from "../../hooks/Masters/useUnits";
 import useContainerBalance from "../../hooks/TransactionCustomers/useContainerBalance";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  PDFDownloadLink,
+} from "@react-pdf/renderer";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 function ContainerBalanceReport() {
+  const { t } = useTranslation();
+
   const [currentContainer, setCurrentContainer] = useState();
+  const client = useSelector((state) => state.clientReducer);
   const [currentCustomerGroup, setCurrentCustomerGroup] = useState();
   const {
     customerGroups: { customerGroups },
@@ -33,12 +46,16 @@ function ContainerBalanceReport() {
   // Schema
   const columns = [
     {
-      title: "SI#",
+      title: t(
+        "table.reports.subHeaders.containerBalanceReport.labels.SI.text"
+      ),
       align: "left",
       render: (a, b, index) => <b>{index + 1}</b>,
     },
     {
-      title: "Customer Name",
+      title: t(
+        "table.reports.subHeaders.containerBalanceReport.labels.customerName.text"
+      ),
       render: (e) => (
         <>
           {businessEntity.find((entity) => {
@@ -50,7 +67,9 @@ function ContainerBalanceReport() {
       ...TableSearch("entityname_eng"),
     },
     {
-      title: "Quantity",
+      title: t(
+        "table.reports.subHeaders.containerBalanceReport.labels.quantity.text"
+      ),
       sorter: (a, b) => a.curr_bal - b.curr_bal,
       ...TableSearch("curr_bal"),
       key: "curr_bal",
@@ -61,12 +80,114 @@ function ContainerBalanceReport() {
     },
   ];
 
+  const PDFFile = () => {
+    const filteredBalance = containerBalance.filter(
+      (container) =>
+        // Check container type of container balance
+        (container.container_id == currentContainer || !currentContainer) &&
+        //   Get customer details and check if they belong to the same customer group as needed
+        (businessEntity.find(
+          ({ entity_id }) => entity_id == container.entity_id
+        )?.cust_grp_id == currentCustomerGroup ||
+          !currentCustomerGroup)
+    );
+
+    return (
+      <Document>
+        <Page size="A4" style={styles.page}>
+          {/* Title */}
+          <Text style={styles.title}>{client.client_name_eng}</Text>
+          {/* Tagline */}
+          <Text style={styles.subtitle}>{client.tagline}</Text>
+          <View
+            style={{
+              width: "45%",
+              marginHorizontal: "auto",
+              marginTop: 20,
+              ...styles.section,
+            }}
+          >
+            {/* Table Header */}
+            <View style={{ display: "flex", flexDirection: "row" }}>
+              {/* SI */}
+              <Text style={{ width: 30 }}>SI</Text>
+              {/* Customer Name */}
+              <Text style={{ marginRight: "auto" }}>
+                {t(
+                  "table.reports.subHeaders.containerBalanceReport.labels.customerName.text"
+                )}
+              </Text>
+              {/* Quantity */}
+              <Text style={{}}>
+                {t(
+                  "table.reports.subHeaders.containerBalanceReport.labels.quantity.text"
+                )}
+              </Text>
+            </View>
+            {/* Divider */}
+            <View
+              style={{
+                width: "100%",
+                backgroundColor: "black",
+                height: 2,
+                marginVertical: 5,
+              }}
+            ></View>
+            {/* Content */}
+            {filteredBalance.map((ent, index) => (
+              <View style={{ display: "flex", flexDirection: "row" }}>
+                {/* SI */}
+                <Text style={{ width: 30 }}>{index + 1}</Text>;
+                {/* Customer Name */}
+                <Text style={{ marginRight: "auto" }}>
+                  {businessEntity.find((entity) => {
+                    return Number(entity.entity_id) === Number(ent?.entity_id);
+                  })?.entityname_eng || ent.entity_id}
+                </Text>
+                ;{/* Amount */}
+                <Text style={{}}>{Number(ent.curr_bal).toFixed(2)}</Text>
+              </View>
+            ))}
+            {/* Divider */}
+            <View
+              style={{
+                width: "100%",
+                backgroundColor: "black",
+                height: 2,
+                marginVertical: 5,
+              }}
+            ></View>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                gap: 40,
+              }}
+            >
+              <Text>Total amount</Text>
+              <Text>
+                {filteredBalance
+                  .reduce((acc, curr) => acc + Number(curr.curr_bal), 0)
+                  .toFixed(2)}
+              </Text>
+            </View>
+          </View>
+        </Page>
+      </Document>
+    );
+  };
+
   const tableHeader = (
     <div className="table-headers">
-      <h4>Balance report</h4>
+      <h4>{t("table.reports.subHeaders.containerBalanceReport.text")}</h4>
       <div>
         <span style={{ marginRight: 10 }}>Customer Group: </span>
         <Select
+          showSearch={true}
+          filterOption={(input, option) =>
+            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }
           defaultValue="All Groups"
           onChange={(value) => {
             setCurrentCustomerGroup(value);
@@ -87,10 +208,15 @@ function ContainerBalanceReport() {
           Contianer Type:{" "}
         </span>
         <Select
+          showSearch={true}
+          filterOption={(input, option) =>
+            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }
           defaultValue="All Types"
           onChange={(value) => {
             setCurrentContainer(value);
           }}
+          style={{ marginRight: 20 }}
         >
           <Select.Option value="">All Types</Select.Option>
           {units.map(
@@ -105,9 +231,37 @@ function ContainerBalanceReport() {
               )
           )}
         </Select>
+
+        <PDFDownloadLink document={<PDFFile />} fileName="containerbalance.pdf">
+          {({ blob, url, loading, error }) => (
+            <Button type="primary" disabled={loading}>
+              Download PDF
+            </Button>
+          )}
+        </PDFDownloadLink>
       </div>
     </div>
   );
+
+  const styles = StyleSheet.create({
+    page: {
+      fontFamily: "Helvetica",
+    },
+    section: {
+      marginVertical: 20,
+      fontSize: 12,
+      marginBottom: 50,
+    },
+    title: {
+      fontSize: 15,
+      textAlign: "center",
+      marginTop: 10,
+    },
+    subtitle: {
+      fontSize: 13,
+      textAlign: "center",
+    },
+  });
 
   return (
     <Table

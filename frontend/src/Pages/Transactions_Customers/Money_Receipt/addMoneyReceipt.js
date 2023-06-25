@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import moment from "moment";
+import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import {
   Button,
@@ -28,6 +28,8 @@ const AddMoneyReceipt = ({
   const dispatch = useDispatch();
   const [entity, setEntity] = useState();
   const { confirm } = Modal;
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!modal) {
@@ -132,7 +134,11 @@ const AddMoneyReceipt = ({
           onFinish={onFinish}
           className={"mt-4"}
         >
-          <Form.Item label="Date">
+          <Form.Item
+            label={t(
+              "table.transaction-customer.subHeaders.moneyReceipt.labels.dateOfReceipt.text"
+            )}
+          >
             <Form.Item
               name="receipt_date"
               rules={[{ required: true, message: "Date is required" }]}
@@ -140,7 +146,11 @@ const AddMoneyReceipt = ({
               <DatePicker onChange={selectDate} format="YYYY-MM-DD" />
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Name of Customer">
+          <Form.Item
+            label={t(
+              "table.transaction-customer.subHeaders.moneyReceipt.labels.customerName.text"
+            )}
+          >
             <Form.Item
               name="entity_id"
               rules={[
@@ -148,6 +158,11 @@ const AddMoneyReceipt = ({
               ]}
             >
               <Select
+                showSearch={true}
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
                 placeholder={"Select Customer"}
                 onChange={(e) => setEntity(JSON.parse(e))}
               >
@@ -171,7 +186,9 @@ const AddMoneyReceipt = ({
           <Form.Item
             label={
               <>
-                Amount{" "}
+                {t(
+                  "table.transaction-customer.subHeaders.moneyReceipt.labels.amount.text"
+                )}{" "}
                 {entity && (
                   <span style={{ color: "maroon", marginLeft: 15 }}>
                     {" ( Current balance: "}
@@ -206,7 +223,11 @@ const AddMoneyReceipt = ({
               <InputNumber style={{ width: "100%" }} />
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Remarks">
+          <Form.Item
+            label={t(
+              "table.transaction-customer.subHeaders.moneyReceipt.labels.remarks.text"
+            )}
+          >
             <Form.Item name="remarks">
               <Input />
             </Form.Item>

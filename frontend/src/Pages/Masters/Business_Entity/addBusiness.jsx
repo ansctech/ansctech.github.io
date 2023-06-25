@@ -122,7 +122,11 @@ const AddBusiness = ({
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-              <Form.Item label="Full Name (Local Language)">
+              <Form.Item
+                label={t(
+                  "table.masters.subHeaders.businessEntity.labels.fullNameLocalLang.text"
+                )}
+              >
                 <Form.Item
                   name="entityname_local_lang"
                   rules={[
@@ -139,14 +143,22 @@ const AddBusiness = ({
           </Row>
           <Row gutter={[40, 0]}>
             <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-              <Form.Item label="Email">
+              <Form.Item
+                label={t(
+                  "table.masters.subHeaders.businessEntity.labels.email.text"
+                )}
+              >
                 <Form.Item name="email">
                   <Input allowClear />
                 </Form.Item>
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-              <Form.Item label="Address">
+              <Form.Item
+                label={t(
+                  "table.masters.subHeaders.businessEntity.labels.address.text"
+                )}
+              >
                 <Form.Item
                   name="address"
                   rules={[{ required: true, message: "Address is required" }]}
@@ -158,7 +170,11 @@ const AddBusiness = ({
           </Row>
           <Row gutter={[40, 0]}>
             <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-              <Form.Item label="Phone Number">
+              <Form.Item
+                label={t(
+                  "table.masters.subHeaders.businessEntity.labels.phone.text"
+                )}
+              >
                 <Form.Item
                   name="phone"
                   rules={[
@@ -170,14 +186,26 @@ const AddBusiness = ({
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-              <Form.Item label="Entity Type">
+              <Form.Item
+                label={t(
+                  "table.masters.subHeaders.businessEntity.labels.entityType.text"
+                )}
+              >
                 <Form.Item
                   name="entity_type_id"
                   rules={[
                     { required: true, message: "Entity Type is required" },
                   ]}
                 >
-                  <Select placeholder={"Select Entity Type"}>
+                  <Select
+                    showSearch={true}
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                    placeholder={"Select Entity Type"}
+                  >
                     {entityTypes?.map(({ entity_type_eng, entity_type_id }) => (
                       <Select.Option
                         key={entity_type_id}
@@ -193,14 +221,26 @@ const AddBusiness = ({
           </Row>
           <Row gutter={[40, 0]}>
             <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-              <Form.Item label="Account Group">
+              <Form.Item
+                label={t(
+                  "table.masters.subHeaders.businessEntity.labels.accountGroup.text"
+                )}
+              >
                 <Form.Item
                   name="account_grp_id"
                   rules={[
                     { required: true, message: "Account Group is required" },
                   ]}
                 >
-                  <Select placeholder={"Select Account Group"}>
+                  <Select
+                    showSearch={true}
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                    placeholder={"Select Account Group"}
+                  >
                     {accountGroups?.map(
                       ({ acc_group_name_eng, acc_group_id }) => (
                         <Select.Option key={acc_group_id} value={acc_group_id}>
@@ -213,14 +253,26 @@ const AddBusiness = ({
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-              <Form.Item label="Customer Group">
+              <Form.Item
+                label={t(
+                  "table.masters.subHeaders.businessEntity.labels.customerGroup.text"
+                )}
+              >
                 <Form.Item
                   name="cust_grp_id"
                   rules={[
                     { required: true, message: "Customer Group is required" },
                   ]}
                 >
-                  <Select placeholder={"Select Customer Group"}>
+                  <Select
+                    showSearch={true}
+                    filterOption={(input, option) =>
+                      option.children
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                    placeholder={"Select Customer Group"}
+                  >
                     {customerGroups?.map(
                       ({ cust_group_name_eng, cust_group_id }) => (
                         <Select.Option
@@ -238,7 +290,11 @@ const AddBusiness = ({
           </Row>
           <Row gutter={[40, 0]}>
             <Col span={12}>
-              <Form.Item label="Opening Balance">
+              <Form.Item
+                label={t(
+                  "table.masters.subHeaders.businessEntity.labels.openingBalance.text"
+                )}
+              >
                 <Form.Item
                   name="open_bal"
                   rules={[
@@ -250,7 +306,11 @@ const AddBusiness = ({
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Current Balance">
+              <Form.Item
+                label={t(
+                  "table.masters.subHeaders.businessEntity.labels.currentBalance.text"
+                )}
+              >
                 <Form.Item
                   name="curr_bal"
                   rules={[

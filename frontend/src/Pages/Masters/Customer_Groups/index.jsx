@@ -71,9 +71,7 @@ const CustomerGroups = () => {
       ...TableSearch("cust_group_name_local_lang"),
     },
     {
-      title: t(
-        "table.masters.subHeaders.customerGroups.labels.nameLocalLang.text"
-      ),
+      title: t("table.masters.subHeaders.customerGroups.labels.action.text"),
       width: 100,
       fixed: "right",
       render: (record) => (

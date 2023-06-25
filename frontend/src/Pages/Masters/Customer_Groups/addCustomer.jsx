@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { Button, Modal, Form, Input } from "antd";
 import { customerGroupsActions } from "../../../store/Masters/customerGroups";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 const AddCustomer = ({
   editItem,
@@ -14,6 +15,8 @@ const AddCustomer = ({
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { confirm } = Modal;
+
+  const { t } = useTranslation();
 
   const onFinish = (values) => {
     confirm({
@@ -82,7 +85,11 @@ const AddCustomer = ({
           onFinish={onFinish}
           className={"mt-4"}
         >
-          <Form.Item label="Customer Group Name (English)">
+          <Form.Item
+            label={t(
+              "table.masters.subHeaders.customerGroups.labels.customerGroupNameEng.text"
+            )}
+          >
             <Form.Item
               name="cust_group_name_eng"
               rules={[
@@ -95,7 +102,11 @@ const AddCustomer = ({
               <Input />
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Customer Group Local Language">
+          <Form.Item
+            label={t(
+              "table.masters.subHeaders.customerGroups.labels.customerGroupNameLocalLang.text"
+            )}
+          >
             <Form.Item
               name="cust_group_name_local_lang"
               rules={[

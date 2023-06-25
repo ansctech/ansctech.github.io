@@ -4,6 +4,7 @@ import { Button, Modal, Form, Input, Select, Upload, Image } from "antd";
 import { vegetablesActions } from "../../../store/Masters/vegetables";
 import { ExclamationCircleFilled, UploadOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const AddVegetables = ({
   editItem,
@@ -14,6 +15,9 @@ const AddVegetables = ({
   units,
 }) => {
   const [form] = Form.useForm();
+
+  const { t } = useTranslation();
+
   const [uploadBase64Format, setUploadBase64Format] = useState(null);
   const dispatch = useDispatch();
 
@@ -114,7 +118,11 @@ const AddVegetables = ({
           onFinish={onFinish}
           className={"mt-4"}
         >
-          <Form.Item label="Vegetable Name (English)">
+          <Form.Item
+            label={t(
+              "table.masters.subHeaders.vegetables.labels.vegetableName.text"
+            )}
+          >
             <Form.Item
               name="item_name_eng"
               rules={[
@@ -127,7 +135,11 @@ const AddVegetables = ({
               <Input />
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Vegetable Name (Russian)">
+          <Form.Item
+            label={t(
+              "table.masters.subHeaders.vegetables.labels.vegetableNameLocal.text"
+            )}
+          >
             <Form.Item
               name="item_name_local_lang"
               rules={[
@@ -140,7 +152,9 @@ const AddVegetables = ({
               <Input />
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Unit">
+          <Form.Item
+            label={t("table.masters.subHeaders.vegetables.labels.unit.text")}
+          >
             <Form.Item
               name="primary_container_id"
               rules={[
@@ -150,7 +164,13 @@ const AddVegetables = ({
                 },
               ]}
             >
-              <Select>
+              <Select
+                showSearch={true}
+                filterOption={(input, option) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
+              >
                 {units?.map((container, index) => (
                   <Select.Option value={container?.container_id} key={index}>
                     {container?.container_name_eng}
@@ -159,7 +179,11 @@ const AddVegetables = ({
               </Select>
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Upload Photo">
+          <Form.Item
+            label={t(
+              "table.masters.subHeaders.vegetables.labels.uploadPhoto.text"
+            )}
+          >
             <Upload
               name="photo"
               beforeUpload={validateImageSize}

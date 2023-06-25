@@ -39,11 +39,17 @@ const useItems = () => {
       getItem("Payment", "10"),
       getItem("Container Return", "/container-receipt"),
     ]),
-    getItem("Reports", "/reports", "", [
-      getItem("Bill Print", "/bill-print"),
+    getItem(t("table.reports.text"), "/reports", "", [
+      getItem(t("table.reports.subHeaders.billPrint.text"), "/bill-print"),
       getItem("Receipts", "12"),
-      getItem("Balance Report", "/balance-report"),
-      getItem("Container Balance Report", "/container-balance-report"),
+      getItem(
+        t("table.reports.subHeaders.balanceReport.text"),
+        "/balance-report"
+      ),
+      getItem(
+        t("table.reports.subHeaders.containerBalanceReport.text"),
+        "/container-balance-report"
+      ),
       getItem("Accounting Report", "15"),
     ]),
   ];
