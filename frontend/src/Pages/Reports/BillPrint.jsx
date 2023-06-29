@@ -295,7 +295,10 @@ function BillPrint() {
                   }}
                 >
                   <Text style={{ fontWeight: 600, marginRight: 5 }}>
-                    Customer:
+                    {t(
+                      "table.reports.subHeaders.billPrint.labels.customer.text"
+                    )}
+                    :
                   </Text>
                   <Text>{customer.entityname_eng}</Text>
                 </View>
@@ -307,7 +310,9 @@ function BillPrint() {
                     flexDirection: "row",
                   }}
                 >
-                  <Text style={{ fontWeight: 600, marginRight: 5 }}>Date:</Text>
+                  <Text style={{ fontWeight: 600, marginRight: 5 }}>
+                    {t("table.reports.subHeaders.billPrint.labels.date.text")}:
+                  </Text>
                   <Text>{date}</Text>
                 </View>
               </View>
@@ -325,15 +330,19 @@ function BillPrint() {
                     marginTop: 10,
                   }}
                 >
-                  <Text style={{ flexBasis: 110 }}>Item Name</Text>
-                  <Text style={{ flexBasis: 40, textAlign: "right" }}>
-                    Weight
+                  <Text style={{ flexBasis: 110 }}>
+                    {t(
+                      "table.reports.subHeaders.billPrint.labels.itemName.text"
+                    )}
                   </Text>
                   <Text style={{ flexBasis: 40, textAlign: "right" }}>
-                    Rate
+                    {t("table.reports.subHeaders.billPrint.labels.weight.text")}
                   </Text>
                   <Text style={{ flexBasis: 40, textAlign: "right" }}>
-                    Amount
+                    {t("table.reports.subHeaders.billPrint.labels.rate.text")}
+                  </Text>
+                  <Text style={{ flexBasis: 40, textAlign: "right" }}>
+                    {t("table.reports.subHeaders.billPrint.labels.amount.text")}
                   </Text>
                 </View>
                 {/* Content */}
@@ -389,7 +398,11 @@ function BillPrint() {
                       gap: 20,
                     }}
                   >
-                    <Text>Additional Charge</Text>
+                    <Text>
+                      {t(
+                        "table.reports.subHeaders.billPrint.labels.additionalCharge.text"
+                      )}
+                    </Text>
                     <Text>
                       {Number(billDetail?.total_container_amount).toFixed(2)}
                     </Text>
@@ -403,7 +416,11 @@ function BillPrint() {
                       gap: 20,
                     }}
                   >
-                    <Text>Total Amount</Text>
+                    <Text>
+                      {t(
+                        "table.reports.subHeaders.billPrint.labels.totalAmount.text"
+                      )}
+                    </Text>
                     <Text>{Number(billDetail?.bill_amount).toFixed(2)}</Text>
                   </View>
                   <View
@@ -415,7 +432,11 @@ function BillPrint() {
                       gap: 20,
                     }}
                   >
-                    <Text>Previous Balance</Text>
+                    <Text>
+                      {t(
+                        "table.reports.subHeaders.billPrint.labels.previousBalance.text"
+                      )}
+                    </Text>
                     <Text>{Number(billDetail?.prev_balance).toFixed(2)}</Text>
                   </View>
                 </View>
@@ -430,7 +451,11 @@ function BillPrint() {
                     gap: 20,
                   }}
                 >
-                  <Text>Net Balance</Text>
+                  <Text>
+                    {t(
+                      "table.reports.subHeaders.billPrint.labels.netBalance.text"
+                    )}
+                  </Text>
                   <Text>
                     {(
                       Number(billDetail?.total_container_amount) +
@@ -458,8 +483,16 @@ function BillPrint() {
                       marginBottom: 10,
                     }}
                   >
-                    <Text style={{ fontWeight: "bold" }}>Container Type</Text>
-                    <Text>Balance</Text>
+                    <Text style={{ fontWeight: "bold" }}>
+                      {t(
+                        "table.reports.subHeaders.billPrint.labels.containerType.text"
+                      )}
+                    </Text>
+                    <Text>
+                      {t(
+                        "table.reports.subHeaders.billPrint.labels.balance.text"
+                      )}
+                    </Text>
                   </View>
                   {bill.map(
                     (entry, index) =>

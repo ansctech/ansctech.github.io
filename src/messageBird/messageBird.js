@@ -1,7 +1,10 @@
+require("dotenv").config({ path: "./.env" });
+
 const axios = require("axios");
 const { Router } = require("express");
+
 const messenger = require("messagebird").initClient(
-  "W3V0qdCUU6IAf0ewkDIATuXO3"
+  process.env.MESSAGE_BIRD_ACCESS_TOKEN
 );
 const messageBirdRouter = Router();
 
@@ -31,7 +34,7 @@ messageBirdRouter.post("/", async (req, res) => {
 
   // Set the request headers
   const headers = {
-    Authorization: "AccessKey W3V0qdCUU6IAf0ewkDIATuXO3",
+    Authorization: `AccessKey ${process.env.MESSAGE_BIRD_ACCESS_TOKEN}`,
     "Content-Disposition": `attachment; filename="bill-${name}-${date}"`,
     "Content-Type": "application/pdf",
   };
