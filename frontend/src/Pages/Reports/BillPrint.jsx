@@ -38,7 +38,7 @@ function BillPrint() {
   const [billContent, setBillContent] = useState({});
   const [showWhatsappBillSelection, setShowWhatsappBillSelection] =
     useState(false);
-  const [whatsappCustomers, setWhatsappCustomers] = useState();
+  const [whatsappCustomers, setWhatsappCustomers] = useState([]);
   const client = useSelector((state) => state.clientReducer);
 
   const [selectedCustomers, setSelectedCustomers] = useState([]);
@@ -257,248 +257,266 @@ function BillPrint() {
 
   // Send bill to each customer
   const shareBills = async () => {
-    // Send whatsapp message to each customer
-    reqFn({
-      method: "POST",
-      url: "messageBird",
-      values: { customer: "+2348181130539" },
-    });
-
-    for (let customer of whatsappCustomers) {
+    for (let customer of selectedCustomers) {
       // Get customer own bill
-      // const bill = billContent[customer.entityname_eng];
-      // const billDetail = saleBill.find((rec) => {
-      //   return (
-      //     rec.entity_id_cust == bill[0].entityId &&
-      //     convertDateToNormalFormat(rec.bill_date) == date
-      //   );
-      // });
+      const bill = billContent[customer.entityname_eng];
+      const billDetail = saleBill.find((rec) => {
+        return (
+          rec.entity_id_cust == bill[0].entityId &&
+          convertDateToNormalFormat(rec.bill_date) == date
+        );
+      });
+
       // Create bill pdf
-      // const IndividualBillPdf = () => (
-      //   <Document>
-      //     <View key={bill.entry_id} style={styles.section}>
-      //       {/* Title */}
-      //       <Text style={styles.title}>{client.client_name_eng}</Text>
-      //       {/* Tagline */}
-      //       <Text style={styles.subtitle}>{client.tagline}</Text>
-      //       {/* Customer details */}
-      //       <View
-      //         style={{
-      //           marginTop: 20,
-      //           display: "flex",
-      //           alignItems: "center",
-      //           flexDirection: "row",
-      //           justifyContent: "space-between",
-      //         }}
-      //       >
-      //         {/* Customer name */}
-      //         <View
-      //           style={{
-      //             display: "flex",
-      //             alignItems: "center",
-      //             flexDirection: "row",
-      //           }}
-      //         >
-      //           <Text style={{ fontWeight: 600, marginRight: 5 }}>
-      //             :
-      //           </Text>
-      //           <Text>{customer.entityname_eng}</Text>
-      //         </View>
-      //         {/* Date */}
-      //         <View
-      //           style={{
-      //             display: "flex",
-      //             alignItems: "center",
-      //             flexDirection: "row",
-      //           }}
-      //         >
-      //           <Text style={{ fontWeight: 600, marginRight: 5 }}>Date:</Text>
-      //           <Text>{date}</Text>
-      //         </View>
-      //       </View>
-      //       {/* Table */}
-      //       <View>
-      //         {/* Header */}
-      //         <View
-      //           style={{
-      //             borderBottom: "1px solid black",
-      //             borderTop: "1px solid black",
-      //             paddingVertical: "5px",
-      //             display: "flex",
-      //             flexDirection: "row",
-      //             gap: 10,
-      //             marginTop: 10,
-      //           }}
-      //         >
-      //           <Text style={{ flexBasis: 110 }}>Item Name</Text>
-      //           <Text style={{ flexBasis: 40, textAlign: "right" }}>
-      //             Weight
-      //           </Text>
-      //           <Text style={{ flexBasis: 40, textAlign: "right" }}>Rate</Text>
-      //           <Text style={{ flexBasis: 40, textAlign: "right" }}>
-      //             Amount
-      //           </Text>
-      //         </View>
-      //         {/* Content */}
-      //         <View
-      //           style={{
-      //             borderBottom: "1px solid black",
-      //             borderTop: "1px solid black",
-      //             paddingVertical: "5px",
-      //             display: "flex",
-      //             gap: 5,
-      //             marginTop: 5,
-      //             paddingBottom: 20,
-      //           }}
-      //         >
-      //           {bill.map((entry) => (
-      //             <View
-      //               style={{
-      //                 display: "flex",
-      //                 flexDirection: "row",
-      //                 gap: 10,
-      //                 marginTop: 5,
-      //               }}
-      //             >
-      //               <Text style={{ flexBasis: 110 }}>
-      //                 {entry.itemName} {entry.quantity} {entry.container}
-      //               </Text>
-      //               <Text style={{ flexBasis: 40, textAlign: "right" }}>
-      //                 {entry.weight}
-      //               </Text>
-      //               <Text style={{ flexBasis: 40, textAlign: "right" }}>
-      //                 {entry.rate}
-      //               </Text>
-      //               <Text style={{ flexBasis: 40, textAlign: "right" }}>
-      //                 {Number(entry.amount).toFixed(2)}
-      //               </Text>
-      //             </View>
-      //           ))}
-      //         </View>
-      //         {/* Summary */}
-      //         <View
-      //           style={{
-      //             borderBottom: "1px solid black",
-      //             display: "flex",
-      //             gap: 5,
-      //           }}
-      //         >
-      //           <View
-      //             style={{
-      //               paddingLeft: 100,
-      //               display: "flex",
-      //               flexDirection: "row",
-      //               justifyContent: "space-between",
-      //               gap: 20,
-      //             }}
-      //           >
-      //             <Text>Additional Charge</Text>
-      //             <Text>
-      //               {Number(billDetail?.total_container_amount).toFixed(2)}
-      //             </Text>
-      //           </View>
-      //           <View
-      //             style={{
-      //               paddingLeft: 100,
-      //               display: "flex",
-      //               flexDirection: "row",
-      //               justifyContent: "space-between",
-      //               gap: 20,
-      //             }}
-      //           >
-      //             <Text>Total Amount</Text>
-      //             <Text>{Number(billDetail?.bill_amount).toFixed(2)}</Text>
-      //           </View>
-      //           <View
-      //             style={{
-      //               paddingLeft: 100,
-      //               display: "flex",
-      //               flexDirection: "row",
-      //               justifyContent: "space-between",
-      //               gap: 20,
-      //             }}
-      //           >
-      //             <Text>Previous Balance</Text>
-      //             <Text>{Number(billDetail?.prev_balance).toFixed(2)}</Text>
-      //           </View>
-      //         </View>
-      //         {/* Net */}
-      //         <View
-      //           style={{
-      //             borderBottom: "1px solid black",
-      //             paddingLeft: 100,
-      //             display: "flex",
-      //             flexDirection: "row",
-      //             justifyContent: "space-between",
-      //             gap: 20,
-      //           }}
-      //         >
-      //           <Text>Net Balance</Text>
-      //           <Text>
-      //             {(
-      //               Number(billDetail?.total_container_amount) +
-      //               Number(billDetail?.bill_amount) +
-      //               Number(billDetail?.prev_balance)
-      //             ).toFixed(2)}
-      //           </Text>
-      //         </View>
-      //         {/* Container balance*/}
-      //         <View
-      //           style={{
-      //             borderBottom: "1px solid black",
-      //             borderTop: "1px solid black",
-      //             marginTop: 5,
-      //             padding: 5,
-      //             paddingBottom: 10,
-      //             paddingRight: 100,
-      //           }}
-      //         >
-      //           <View
-      //             style={{
-      //               display: "flex",
-      //               flexDirection: "row",
-      //               justifyContent: "space-between",
-      //               marginBottom: 10,
-      //             }}
-      //           >
-      //             <Text style={{ fontWeight: "bold" }}>Container Type</Text>
-      //             <Text>Balance</Text>
-      //           </View>
-      //           {bill.map(
-      //             (entry, index) =>
-      //               entry.containerBal &&
-      //               bill.findIndex(
-      //                 (ent) => ent.container === entry.container
-      //               ) === index && (
-      //                 <View
-      //                   style={{
-      //                     display: "flex",
-      //                     flexDirection: "row",
-      //                     justifyContent: "space-between",
-      //                   }}
-      //                 >
-      //                   <Text style={{ fontWeight: "bold" }}>
-      //                     {entry.container}
-      //                   </Text>
-      //                   <Text>{entry.containerBal}</Text>
-      //                 </View>
-      //               )
-      //           )}
-      //         </View>
-      //       </View>
-      //     </View>
-      //   </Document>
-      // );
-      // Convert bill to base64
-      // const blob = pdf(IndividualBillPdf).toBlob();
-      // console.log(blob);
-      // const reader = new FileReader();
-      // reader.onloadend = () => {
-      //   const base64data = reader.result;
-      //   console.log("Base64 representation:", base64data);
-      // };
-      // const res = reader.readAsDataURL(blob);
-      // console.log(res);
+      const IndividualBillPdf = () => (
+        <Document>
+          <Page>
+            <View key={bill.entry_id} style={styles.section}>
+              {/* Title */}
+              <Text style={styles.title}>{client.client_name_eng}</Text>
+              {/* Tagline */}
+              <Text style={styles.subtitle}>{client.tagline}</Text>
+              {/* Customer details */}
+              <View
+                style={{
+                  marginTop: 20,
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                {/* Customer name */}
+                <View
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Text style={{ fontWeight: 600, marginRight: 5 }}>
+                    Customer:
+                  </Text>
+                  <Text>{customer.entityname_eng}</Text>
+                </View>
+                {/* Date */}
+                <View
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Text style={{ fontWeight: 600, marginRight: 5 }}>Date:</Text>
+                  <Text>{date}</Text>
+                </View>
+              </View>
+              {/* Table */}
+              <View>
+                {/* Header */}
+                <View
+                  style={{
+                    borderBottom: "1px solid black",
+                    borderTop: "1px solid black",
+                    paddingVertical: "5px",
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: 10,
+                    marginTop: 10,
+                  }}
+                >
+                  <Text style={{ flexBasis: 110 }}>Item Name</Text>
+                  <Text style={{ flexBasis: 40, textAlign: "right" }}>
+                    Weight
+                  </Text>
+                  <Text style={{ flexBasis: 40, textAlign: "right" }}>
+                    Rate
+                  </Text>
+                  <Text style={{ flexBasis: 40, textAlign: "right" }}>
+                    Amount
+                  </Text>
+                </View>
+                {/* Content */}
+                <View
+                  style={{
+                    borderBottom: "1px solid black",
+                    borderTop: "1px solid black",
+                    paddingVertical: "5px",
+                    display: "flex",
+                    gap: 5,
+                    marginTop: 5,
+                    paddingBottom: 20,
+                  }}
+                >
+                  {bill.map((entry) => (
+                    <View
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: 10,
+                        marginTop: 5,
+                      }}
+                    >
+                      <Text style={{ flexBasis: 110 }}>
+                        {entry.itemName} {entry.quantity} {entry.container}
+                      </Text>
+                      <Text style={{ flexBasis: 40, textAlign: "right" }}>
+                        {entry.weight}
+                      </Text>
+                      <Text style={{ flexBasis: 40, textAlign: "right" }}>
+                        {entry.rate}
+                      </Text>
+                      <Text style={{ flexBasis: 40, textAlign: "right" }}>
+                        {Number(entry.amount).toFixed(2)}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+                {/* Summary */}
+                <View
+                  style={{
+                    borderBottom: "1px solid black",
+                    display: "flex",
+                    gap: 5,
+                  }}
+                >
+                  <View
+                    style={{
+                      paddingLeft: 100,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      gap: 20,
+                    }}
+                  >
+                    <Text>Additional Charge</Text>
+                    <Text>
+                      {Number(billDetail?.total_container_amount).toFixed(2)}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      paddingLeft: 100,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      gap: 20,
+                    }}
+                  >
+                    <Text>Total Amount</Text>
+                    <Text>{Number(billDetail?.bill_amount).toFixed(2)}</Text>
+                  </View>
+                  <View
+                    style={{
+                      paddingLeft: 100,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      gap: 20,
+                    }}
+                  >
+                    <Text>Previous Balance</Text>
+                    <Text>{Number(billDetail?.prev_balance).toFixed(2)}</Text>
+                  </View>
+                </View>
+                {/* Net */}
+                <View
+                  style={{
+                    borderBottom: "1px solid black",
+                    paddingLeft: 100,
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    gap: 20,
+                  }}
+                >
+                  <Text>Net Balance</Text>
+                  <Text>
+                    {(
+                      Number(billDetail?.total_container_amount) +
+                      Number(billDetail?.bill_amount) +
+                      Number(billDetail?.prev_balance)
+                    ).toFixed(2)}
+                  </Text>
+                </View>
+                {/* Container balance*/}
+                <View
+                  style={{
+                    borderBottom: "1px solid black",
+                    borderTop: "1px solid black",
+                    marginTop: 5,
+                    padding: 5,
+                    paddingBottom: 10,
+                    paddingRight: 100,
+                  }}
+                >
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginBottom: 10,
+                    }}
+                  >
+                    <Text style={{ fontWeight: "bold" }}>Container Type</Text>
+                    <Text>Balance</Text>
+                  </View>
+                  {bill.map(
+                    (entry, index) =>
+                      entry.containerBal &&
+                      bill.findIndex(
+                        (ent) => ent.container === entry.container
+                      ) === index && (
+                        <View
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Text style={{ fontWeight: "bold" }}>
+                            {entry.container}
+                          </Text>
+                          <Text>{entry.containerBal}</Text>
+                        </View>
+                      )
+                  )}
+                </View>
+              </View>
+            </View>
+          </Page>
+        </Document>
+      );
+
+      // Convert to Blob
+      const blob = await pdf(<IndividualBillPdf />).toBlob();
+
+      // Convert to binary
+      const reader = new FileReader();
+
+      reader.readAsBinaryString(blob);
+
+      reader.onload = (event) => {
+        const binaryFormat = event.target.result;
+
+        // Send message
+        reqFn({
+          method: "POST",
+          url: "message-bird",
+          values: {
+            pdfFile: binaryFormat,
+            phone: customer.phone,
+            name: customer.entityname_eng,
+            date,
+          },
+          successFn: () => {
+            alert(`Bill has been sent to ${customer.entityname_eng}`);
+          },
+          errorFn: () => {
+            alert(`Bill failed to be sent to ${customer.entityname_eng}`);
+          },
+        });
+      };
     }
   };
 

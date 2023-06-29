@@ -53,7 +53,7 @@ app.use("/api/v1/container-return", containerReturnRouter);
 
 app.use("/api/v1/container-balance", contBalRouter);
 
-app.use("/api/v1/messageBird", messageBirdRouter);
+app.use("/api/v1/message-bird", messageBirdRouter);
 
 // Serve frontend folder
 app.use(express.static(path.join(__dirname, "frontend", "build")));
