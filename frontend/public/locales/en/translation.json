@@ -80,7 +80,7 @@
             "nanmeOfVegetable": { "text": "Name of Vegetable" },
             "nameOfFarmer": { "text": "Name of Farmer" },
             "nameOfCustomer": { "text": "Name of Customer" },
-            "customerName": { "text": "Customer Name" },
+            "customerName": { "text": "Customer's Name" },
             "date": { "text": "Date" },
             "unit": { "text": "Unit" },
             "kgUnit": { "text": "Kg/Unit" },
