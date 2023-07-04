@@ -77,7 +77,7 @@
             "vegetables": { "text": "Vegetable" },
             "qty": { "text": "Qty" },
             "firstUnit": { "text": "First Unit" },
-            "nanmeOfVegetable": { "text": "Name of Vegetable" },
+            "nameOfVegetable": { "text": "Name of Vegetable" },
             "nameOfFarmer": { "text": "Name of Farmer" },
             "nameOfCustomer": { "text": "Name of Customer" },
             "customerName": { "text": "Customer Name" },

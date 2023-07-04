@@ -366,7 +366,7 @@ const AddSaleRecord = ({
             <Col span={4}>
               <Item
                 label={t(
-                  "table.transaction-customer.subHeaders.saleRecord.labels.nameOfCustomer.text"
+                  "table.transaction-customer.subHeaders.saleRecord.labels.nameOfVegetable.text"
                 )}
               >
                 <Item

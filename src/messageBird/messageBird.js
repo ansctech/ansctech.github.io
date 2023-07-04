@@ -19,7 +19,7 @@ const messageBirdRouter = Router();
 // Send Message Template
 
 messageBirdRouter.post("/", async (req, res) => {
-  const { name, date, phone, pdfFile } = req.body;
+  const { name, date, phone, pdfFile, client } = req.body;
 
   // Convert to a buffer
   const buffer = Buffer.from(pdfFile, "binary");
@@ -75,6 +75,10 @@ messageBirdRouter.post("/", async (req, res) => {
                 parameters: [
                   {
                     type: "text",
+                    text: client.client_name_eng,
+                  },
+                  {
+                    type: "text",
                     text: name,
                   },
                 ],
@@ -89,7 +93,7 @@ messageBirdRouter.post("/", async (req, res) => {
         if (err) {
           console.log(err);
 
-          res.status(500).json({
+          return res.status(500).json({
             data: "Error",
           });
         }

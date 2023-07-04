@@ -540,6 +540,7 @@ function BillPrint() {
             pdfFile: binaryFormat,
             phone: customer.phone,
             name: customer.entityname_eng,
+            client,
             date,
           },
           successFn: () => {
