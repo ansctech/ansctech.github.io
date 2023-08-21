@@ -12,7 +12,7 @@
             "entityType": { "text": "ग्राहक/किसान" },
             "currentBalance": { "text": "वर्तमान बकाया" },
             "openingBalance": { "text": "प्रारम्भिक बकाया" },
-            "phone": { "text": "फोन" },
+            "phone": { "text": "मोबाईल" },
             "email": { "text": "ई-मेल " },
             "address": { "text": "वर्तमान पता" },
             "accountGroup": { "text": "खाता समूह" },
