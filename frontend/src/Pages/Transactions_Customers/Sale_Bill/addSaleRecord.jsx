@@ -517,7 +517,9 @@ const AddSaleRecord = ({
               </Item>
             </Col>
             <Col span={4}>
-              <Item label="Qty">
+              <Item label={t(
+                  "table.transaction-customer.subHeaders.saleRecord.labels.qty.text"
+                )}>
                 <Item
                   name="sale_qty"
                   rules={[
@@ -557,7 +559,9 @@ const AddSaleRecord = ({
                       block
                     >
                       {" "}
-                      Add{" "}
+                      {t(
+                  "table.transaction-customer.subHeaders.saleRecord.labels.addButton.text"
+                )}{" "}
                     </Button>
                   )}
                 </Item>

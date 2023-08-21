@@ -4,12 +4,19 @@
       "text": "Masters",
       "subHeaders": {
         "businessEntity": {
-          "text": "ग्राहक / किसान",
+          "text": "Business Entity",
           "labels": {
-            "name": { "text": "नाम" },
-            "entityType": { "text": "ग्राहक/किसान" },
-            "currentBalance": { "text": "वर्तमान बकाया" },
-            "phone": { "text": "फोन" },
+            "name": { "text": "Name" },
+            "fullNameEng": { "text": "Full Name (English)" },
+            "fullNameLocalLang": { "text": "Full Name (Local Language)" },
+            "entityType": { "text": "Entity Type" },
+            "currentBalance": { "text": "Current Balance" },
+            "openingBalance": { "text": "Opening Balance" },
+            "phone": { "text": "Phone" },
+            "email": { "text": "Email" },
+            "address": { "text": "Address" },
+            "accountGroup": { "text": "Account Group" },
+            "customerGroup": { "text": "Customer Group" },
             "action": { "text": "Action" }
           }
         },
@@ -17,6 +24,10 @@
           "text": "Vegetables",
           "labels": {
             "name": { "text": "Name (English)" },
+            "vegetableName": { "text": "Vegetable Name (English)" },
+            "vegetableNameLocal": { "text": "Vegetable Name (Local)" },
+            "unit": { "text": "Unit" },
+            "uploadPhoto": { "text": "Upload Photo" },
             "nameLocalLang": { "text": "Name (Local)" },
             "action": { "text": "Action" }
           }
@@ -25,6 +36,8 @@
           "text": "Units",
           "labels": {
             "name": { "text": "Name" },
+            "unitNameEng": { "text": "Unit Name (English)" },
+            "unitNameLocal": { "text": "Unit Name (Local Language)" },
             "containerCharge": { "text": "Container Charge" },
             "maintainInventory": { "text": "Maintain Inventory" },
             "action": { "text": "Action" }
@@ -35,6 +48,10 @@
           "labels": {
             "name": { "text": "Name (English)" },
             "nameLocalLang": { "text": "Name (Local)" },
+            "customerGroupNameEng": { "text": "Customer Group Name (English)" },
+            "customerGroupNameLocalLang": {
+              "text": "Customer Group Name (Local)"
+            },
             "action": { "text": "Action" }
           }
         },
@@ -43,17 +60,107 @@
           "labels": {
             "name": { "text": "Name (English)" },
             "nameLocalLang": { "text": "Name (Local)" },
+            "acctGroupNameEng": { "text": "Account Group Name (English)" },
+            "acctGroupNameLocalLang": { "text": "Account Group Name (Local)" },
             "action": { "text": "Action" }
           }
-        },
+        }
+      }
+    },
+    "transaction-customer": {
+      "text": "Transactions(Customers)",
+      "subHeaders": {
         "saleRecord": {
           "text": "Sale Record",
           "labels": {
-            "dateOfSale": { "text": "Date Of Sale" },
+            "SI": { "text": "SI#" },
+            "vegetables": { "text": "सब्जी" },
+            "qty": { "text": "मात्रा" },
+            "firstUnit": { "text": "प्रथम मात्रक" },
+            "nameOfVegetable": { "text": "सब्जी का नाम " },
+            "nameOfFarmer": { "text": "किसान का नाम " },
+            "nameOfCustomer": { "text": "ग्राहक का नाम " },
+            "customerName": { "text": "ग्राहक का नाम" },
+            "date": { "text": "दिनाँक " },
+            "unit": { "text": "मात्रक " },
+            "kgUnit": { "text": "किग्रा /मात्रक " },
+            "amount": { "text": "रकम " },
+            "multiply": { "text": "गुणा  करें" },
+            "delete": { "text": "हटायें " },
+            "rate": { "text": "दर " },
+			"addButton": { "text": "जोड़ें " }
+          }
+        },
+        "saleBill": {
+          "text": "Sale Bill",
+          "labels": {
+            "dateOfSale": { "text": "Date" },
             "customerName": { "text": "Customer Name" },
             "amount": { "text": "Amount" },
-            "totalItems": { "text": "Total Items" },
             "action": { "text": "Action" }
+          }
+        },
+        "moneyReceipt": {
+          "text": "Money Receipt",
+          "labels": {
+            "dateOfReceipt": { "text": "Date Of Receipt" },
+            "customerName": { "text": "Customer Name" },
+            "amount": { "text": "Amount" },
+            "remarks": { "text": "Remarks" },
+            "action": { "text": "Action" }
+          }
+        },
+        "containerReturn": {
+          "text": "Container Return",
+          "labels": {
+            "dateOfReceipt": { "text": "Date Of Receipt" },
+            "customerName": { "text": "Customer Name" },
+            "containerType": { "text": "Container Type" },
+            "qty": { "text": "Quantity" },
+            "action": { "text": "Action" }
+          }
+        }
+      }
+    },
+    "reports": {
+      "text": "Report",
+      "subHeaders": {
+        "billPrint": {
+          "text": "Bill Print",
+          "labels": {
+            "sendBill": { "text": "Send Bill" },
+            "customerName": { "text": "Customer Name" },
+            "whatsappNumber": { "text": "Whatsapp Number" },
+            "customer": { "text": "Customer" },
+            "date": { "text": "Date" },
+            "itemName": { "text": "Item Name" },
+            "weight": { "text": "Weight" },
+            "rate": { "text": "Rate" },
+            "amount": { "text": "Amount" },
+            "additionalCharge": { "text": "Additional Charge" },
+            "totalAmount": { "text": "Total Amount" },
+            "previousBalance": { "text": "Previous Balance" },
+            "netBalance": { "text": "Net Balance" },
+            "containerType": { "text": "Container Type" },
+            "balance": { "text": "Balance" }
+          }
+        },
+        "balanceReport": {
+          "text": "Balance Report",
+          "labels": {
+            "SI": { "text": "SI#" },
+            "customerName": { "text": "Customer Name" },
+            "amount": { "text": "Amount" },
+            "totalAmount": { "text": "Total Amount" }
+          }
+        },
+        "containerBalanceReport": {
+          "text": "Container Balance Report",
+          "labels": {
+            "SI": { "text": "SI#" },
+            "customerName": { "text": "Customer Name" },
+            "quantity": { "text": "Quantity" },
+            "totalAmount": { "text": "Total Amount" }
           }
         }
       }
