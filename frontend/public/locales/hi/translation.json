@@ -1,7 +1,7 @@
 {
   "table": {
     "masters": {
-      "text": "Masters",
+      "text": "मास्टर्स",
       "subHeaders": {
         "businessEntity": {
           "text": "ग्राहक/किसान",
@@ -68,7 +68,7 @@
       }
     },
     "transaction-customer": {
-      "text": "लेन-देन(ग्राहक)",
+      "text": "लेन-देन (ग्राहक)",
       "subHeaders": {
         "saleRecord": {
           "text": "बिक्री की एंट्री",
