@@ -4,76 +4,76 @@
       "text": "Masters",
       "subHeaders": {
         "businessEntity": {
-          "text": "Business Entity",
+          "text": "ग्राहक/किसान",
           "labels": {
-            "name": { "text": "Name" },
-            "fullNameEng": { "text": "Full Name (English)" },
-            "fullNameLocalLang": { "text": "Full Name (Local Language)" },
-            "entityType": { "text": "Entity Type" },
-            "currentBalance": { "text": "Current Balance" },
-            "openingBalance": { "text": "Opening Balance" },
-            "phone": { "text": "Phone" },
-            "email": { "text": "Email" },
-            "address": { "text": "Address" },
-            "accountGroup": { "text": "Account Group" },
-            "customerGroup": { "text": "Customer Group" },
-            "action": { "text": "Action" }
+            "name": { "text": "नाम" },
+            "fullNameEng": { "text": "पूरा नाम (English)" },
+            "fullNameLocalLang": { "text": "पूरा नाम (क्षेत्रीय भाषा)" },
+            "entityType": { "text": "ग्राहक/किसान" },
+            "currentBalance": { "text": "वर्तमान बकाया" },
+            "openingBalance": { "text": "प्रारम्भिक बकाया" },
+            "phone": { "text": "फोन" },
+            "email": { "text": "ई-मेल " },
+            "address": { "text": "वर्तमान पता" },
+            "accountGroup": { "text": "खाता समूह" },
+            "customerGroup": { "text": "ग्राहक समूह" },
+            "action": { "text": "प्रक्रिया" }
           }
         },
         "vegetables": {
-          "text": "Vegetables",
+          "text": "सब्जी",
           "labels": {
-            "name": { "text": "Name (English)" },
-            "vegetableName": { "text": "Vegetable Name (English)" },
-            "vegetableNameLocal": { "text": "Vegetable Name (Local)" },
-            "unit": { "text": "Unit" },
-            "uploadPhoto": { "text": "Upload Photo" },
-            "nameLocalLang": { "text": "Name (Local)" },
-            "action": { "text": "Action" }
+            "name": { "text": "नाम  (English)" },
+            "vegetableName": { "text": "सब्जी का नाम (English)" },
+            "vegetableNameLocal": { "text": "सब्जी का नाम (क्षेत्रीय भाषा)" },
+            "unit": { "text": "इकाई" },
+            "uploadPhoto": { "text": "फोटो अपलोड करें" },
+            "nameLocalLang": { "text": "नाम (क्षेत्रीय भाषा)" },
+            "action": { "text": "प्रक्रिया" }
           }
         },
         "units": {
-          "text": "Units",
+          "text": "इकाई",
           "labels": {
-            "name": { "text": "Name" },
-            "unitNameEng": { "text": "Unit Name (English)" },
-            "unitNameLocal": { "text": "Unit Name (Local Language)" },
-            "containerCharge": { "text": "Container Charge" },
-            "maintainInventory": { "text": "Maintain Inventory" },
-            "action": { "text": "Action" }
+            "name": { "text": "नाम" },
+            "unitNameEng": { "text": "इकाई का नाम (English)" },
+            "unitNameLocal": { "text": "इकाई का नाम (क्षेत्रीय भाषा)" },
+            "containerCharge": { "text": "अधिभार" },
+            "maintainInventory": { "text": "हिसाब-किताब रखें " },
+            "action": { "text": "प्रक्रिया" }
           }
         },
         "customerGroups": {
-          "text": "Customer Groups",
+          "text": "ग्राहक समूह ",
           "labels": {
-            "name": { "text": "Name (English)" },
-            "nameLocalLang": { "text": "Name (Local)" },
-            "customerGroupNameEng": { "text": "Customer Group Name (English)" },
+            "name": { "text": "नाम  (English)" },
+            "nameLocalLang": { "text": "नाम (क्षेत्रीय भाषा)" },
+            "customerGroupNameEng": { "text": "समूह का नाम (English)" },
             "customerGroupNameLocalLang": {
-              "text": "Customer Group Name (Local)"
+              "text": "समूह का नाम (क्षेत्रीय भाषा)"
             },
-            "action": { "text": "Action" }
+            "action": { "text": "प्रक्रिया" }
           }
         },
         "accountGroups": {
-          "text": "Account Groups",
+          "text": "खाता समूह",
           "labels": {
-            "name": { "text": "Name (English)" },
-            "nameLocalLang": { "text": "Name (Local)" },
-            "acctGroupNameEng": { "text": "Account Group Name (English)" },
-            "acctGroupNameLocalLang": { "text": "Account Group Name (Local)" },
-            "action": { "text": "Action" }
+            "name": { "text": "नाम (English)" },
+            "nameLocalLang": { "text": "नाम (क्षेत्रीय भाषा)" },
+            "acctGroupNameEng": { "text": "खाता समूह का नाम (English)" },
+            "acctGroupNameLocalLang": { "text": "खाता समूह का नाम (क्षेत्रीय भाषा)" },
+            "action": { "text": "प्रक्रिया" }
           }
         }
       }
     },
     "transaction-customer": {
-      "text": "Transactions(Customers)",
+      "text": "लेन-देन(ग्राहक)",
       "subHeaders": {
         "saleRecord": {
-          "text": "Sale Record",
+          "text": "बिक्री की एंट्री",
           "labels": {
-            "SI": { "text": "SI#" },
+            "SI": { "text": "क्र.#" },
             "vegetables": { "text": "सब्जी" },
             "qty": { "text": "मात्रा" },
             "firstUnit": { "text": "प्रथम मात्रक" },
@@ -81,7 +81,7 @@
             "nameOfFarmer": { "text": "किसान का नाम " },
             "nameOfCustomer": { "text": "ग्राहक का नाम " },
             "customerName": { "text": "ग्राहक का नाम" },
-            "date": { "text": "दिनाँक " },
+            "date": { "text": "तिथि " },
             "unit": { "text": "मात्रक " },
             "kgUnit": { "text": "किग्रा /मात्रक " },
             "amount": { "text": "रकम " },
@@ -92,75 +92,75 @@
           }
         },
         "saleBill": {
-          "text": "Sale Bill",
+          "text": "ग्राहक बिक्री बिल",
           "labels": {
-            "dateOfSale": { "text": "Date" },
-            "customerName": { "text": "Customer Name" },
-            "amount": { "text": "Amount" },
-            "action": { "text": "Action" }
+            "dateOfSale": { "text": "तिथि" },
+            "customerName": { "text": "ग्राहक का नाम " },
+            "amount": { "text": "रकम" },
+            "action": { "text": "प्रक्रिया" }
           }
         },
         "moneyReceipt": {
-          "text": "Money Receipt",
+          "text": "ग्राहक रसीद",
           "labels": {
-            "dateOfReceipt": { "text": "Date Of Receipt" },
-            "customerName": { "text": "Customer Name" },
-            "amount": { "text": "Amount" },
-            "remarks": { "text": "Remarks" },
-            "action": { "text": "Action" }
+            "dateOfReceipt": { "text": "रसीद की तिथि " },
+            "customerName": { "text": "ग्राहक का नाम" },
+            "amount": { "text": "रकम" },
+            "remarks": { "text": "टिप्पणी" },
+            "action": { "text": "प्रक्रिया" }
           }
         },
         "containerReturn": {
-          "text": "Container Return",
+          "text": "क्रेट / अन्य पात्र की वापसी",
           "labels": {
-            "dateOfReceipt": { "text": "Date Of Receipt" },
-            "customerName": { "text": "Customer Name" },
-            "containerType": { "text": "Container Type" },
-            "qty": { "text": "Quantity" },
-            "action": { "text": "Action" }
+            "dateOfReceipt": { "text": "प्राप्ति की तिथि" },
+            "customerName": { "text": "ग्राहक का नाम " },
+            "containerType": { "text": "पात्र का प्रकार (क्रेट /अन्य)" },
+            "qty": { "text": "प्राप्त मात्रा " },
+            "action": { "text": "प्रक्रिया" }
           }
         }
       }
     },
     "reports": {
-      "text": "Report",
+      "text": "रिपोर्ट",
       "subHeaders": {
         "billPrint": {
-          "text": "Bill Print",
+          "text": "ग्राहक बिल प्रिन्ट",
           "labels": {
-            "sendBill": { "text": "Send Bill" },
-            "customerName": { "text": "Customer Name" },
-            "whatsappNumber": { "text": "Whatsapp Number" },
-            "customer": { "text": "Customer" },
-            "date": { "text": "Date" },
-            "itemName": { "text": "Item Name" },
-            "weight": { "text": "Weight" },
-            "rate": { "text": "Rate" },
-            "amount": { "text": "Amount" },
-            "additionalCharge": { "text": "Additional Charge" },
-            "totalAmount": { "text": "Total Amount" },
-            "previousBalance": { "text": "Previous Balance" },
-            "netBalance": { "text": "Net Balance" },
-            "containerType": { "text": "Container Type" },
-            "balance": { "text": "Balance" }
+            "sendBill": { "text": "बिल भेजें" },
+            "customerName": { "text": "ग्राहक का नाम " },
+            "whatsappNumber": { "text": "Whatsapp नंबर" },
+            "customer": { "text": "ग्राहक" },
+            "date": { "text": "तिथि" },
+            "itemName": { "text": "वस्तु का नाम" },
+            "weight": { "text": "भार" },
+            "rate": { "text": "बिक्री दर" },
+            "amount": { "text": "रकम" },
+            "additionalCharge": { "text": "अतिरिक्त  प्रभार" },
+            "totalAmount": { "text": "कुल रकम" },
+            "previousBalance": { "text": "पूर्व बकाया" },
+            "netBalance": { "text": "कुल बकाया" },
+            "containerType": { "text": "पात्र का प्रकार" },
+            "balance": { "text": "बकाया" }
           }
         },
         "balanceReport": {
-          "text": "Balance Report",
+          "text": "बकाया रिपोर्ट",
           "labels": {
-            "SI": { "text": "SI#" },
-            "customerName": { "text": "Customer Name" },
-            "amount": { "text": "Amount" },
-            "totalAmount": { "text": "Total Amount" }
+            "SI": { "text": "क्र .#" },
+            "customerName": { "text": "ग्राहक का नाम" },
+            "amount": { "text": "रकम" },
+            "totalAmount": { "text": "कुल रकम" }
           }
         },
         "containerBalanceReport": {
-          "text": "Container Balance Report",
+          "text": "क्रेट /  अन्य पात्र बकाया रिपोर्ट",
           "labels": {
-            "SI": { "text": "SI#" },
-            "customerName": { "text": "Customer Name" },
-            "quantity": { "text": "Quantity" },
-            "totalAmount": { "text": "Total Amount" }
+            "SI": { "text": "क्र.#" },
+            "customerName": { "text": "ग्राहक का नाम" },
+            "quantity": { "text": "बकाया मात्रा" },
+            "totalAmount": { "text": "कुल बकाया रकम" }
           }
         }
       }
