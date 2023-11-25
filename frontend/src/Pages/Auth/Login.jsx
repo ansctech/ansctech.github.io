@@ -68,7 +68,7 @@ function Login() {
       <div className={styles.container}>
         {/* Logo */}
         <img
-          src={require("../../assets/img/logo.jpg")}
+          src={require("../../assets/img/logo.png")}
           alt="Logo"
           className={styles.logo}
         />
