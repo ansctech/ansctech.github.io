@@ -4,7 +4,7 @@ import { Layout, Menu, Drawer } from "antd";
 import LayoutContent from "../Content";
 import { MenuOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
-import Logo from "../../assets/img/logo.jpg";
+import Logo from "../../assets/img/logo.png";
 import useItems from "./menu-items";
 import { useSelector } from "react-redux";
 import useAuth from "../../hooks/Authentication/useAuth";
