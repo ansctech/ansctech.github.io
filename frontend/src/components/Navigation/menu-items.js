@@ -21,7 +21,7 @@ const useItems = () => {
         "/account-groups"
       ),
     ]),
-    getItem("Transactions (Customers)", "/customers", "", [
+    getItem("table.transaction-customer.text", "/customers", "", [
       getItem(
         t("table.transaction-customer.subHeaders.saleBill.text"),
         "/sale-bill"
@@ -35,7 +35,7 @@ const useItems = () => {
         "/container-return"
       ),
     ]),
-    getItem("Transactions (Farmers)", "/farmers", "", [
+    getItem("table.transaction-farmer.text", "/farmers", "", [
       getItem("Payment", "10"),
       getItem("Container Return", "/container-receipt"),
     ]),
