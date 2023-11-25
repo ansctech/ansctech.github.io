@@ -67,6 +67,17 @@
         }
       }
     },
+    "transaction-farmer": {
+      "text": "लेन-देन (किसान)",
+      "subHeaders": {
+        "payment":{
+          "text": "भुगतान",
+          "labels": {
+            
+          }
+        }
+        }
+        },
     "transaction-customer": {
       "text": "लेन-देन (ग्राहक)",
       "subHeaders": {
