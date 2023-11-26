@@ -15,6 +15,7 @@ import {
   Text,
   View,
   StyleSheet,
+  Font,
   PDFViewer,
 } from "@react-pdf/renderer";
 import useSaleRecord from "../../hooks/TransactionCustomers/useSaleRecord";
@@ -27,6 +28,14 @@ import useSaleBill from "../../hooks/TransactionFarmers/useSaleBill";
 
 import useFetch from "../../hooks/global/useFetch";
 import { useTranslation } from "react-i18next";
+import hinFont from '../../assets/fonts/TiroDevanagariHindi-Regular.ttf';
+
+Font.register({
+  family: 'Tiro Devanagari',
+  fonts:[{
+    src: hinFont
+  }]
+})
 
 function BillPrint() {
   const [form] = Form.useForm();
@@ -214,7 +223,7 @@ function BillPrint() {
 
   const styles = StyleSheet.create({
     page: {
-      fontFamily: "Helvetica",
+      fontFamily: "Tiro Devanagari",
     },
     section: {
       marginVertical: 5,
@@ -527,7 +536,7 @@ function BillPrint() {
       // Convert to binary
       const reader = new FileReader();
 
-      reader.readAsBinaryString(blob);
+      reader.readAsArrayBuffer(blob);
 
       reader.onload = (event) => {
         const binaryFormat = event.target.result;
